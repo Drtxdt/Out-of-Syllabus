@@ -1,0 +1,18 @@
+{
+  "bytes": 1872886,
+  "engine": "4.7.2-stable (official)",
+  "equivalent": true,
+  "limitations": [
+    "Synthetic idle archive; no actual rendering frame-time measurement",
+    "No human playtime claim"
+  ],
+  "load_ms": 184.848,
+  "loaded": true,
+  "samples": 18001,
+  "save_ms": 273.69,
+  "saved": true,
+  "simulation_ms": 126.422,
+  "suite": "virtual-archive-performance",
+  "ticks": 108000,
+  "virtual_minutes": 30
+}

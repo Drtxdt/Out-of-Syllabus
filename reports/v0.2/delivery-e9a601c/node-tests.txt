@@ -1,0 +1,13 @@
+✔ valid move and errors (0.5127ms)
+✔ MCP isError fails (0.1945ms)
+✔ false or missing assertion fails (0.1038ms)
+✔ runtime errors fail (0.085ms)
+✔ malformed response fails (0.0798ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10.0571

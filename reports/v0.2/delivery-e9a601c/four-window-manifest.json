@@ -1,0 +1,270 @@
+{
+  "passed": true,
+  "project": "E:\\my_game\\Out-of-Syllabus",
+  "dirty": [],
+  "limitations": [
+    "No human blind playtest",
+    "No operating-system DPI scaling validation",
+    "Rendered route uses fixed-fps simulation; measured process times are separate"
+  ],
+  "commit": "0216db7e5ca08add342e376531b40dcee7d4e5c0",
+  "checks": [
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\import.log",
+        "--headless",
+        "--editor",
+        "--import"
+      ],
+      "elapsed_ms": 2561,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\import.log",
+      "runtime_error": false,
+      "name": "import",
+      "profile": "final-0216db7-import"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\domain.log",
+        "--headless",
+        "--script",
+        "res://tests/v02_regression.gd"
+      ],
+      "elapsed_ms": 1032,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\domain.log",
+      "runtime_error": false,
+      "name": "domain",
+      "profile": "final-0216db7-domain"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\adversarial.log",
+        "--headless",
+        "--script",
+        "res://tests/adversarial_contracts.gd"
+      ],
+      "elapsed_ms": 367,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\adversarial.log",
+      "runtime_error": false,
+      "name": "adversarial",
+      "profile": "final-0216db7-adversarial"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\views.log",
+        "--headless",
+        "--script",
+        "res://ui/verify_views.gd"
+      ],
+      "elapsed_ms": 369,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\views.log",
+      "runtime_error": false,
+      "name": "views",
+      "profile": "final-0216db7-views"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\layout.log",
+        "--headless",
+        "--script",
+        "res://ui/verify_layout.gd"
+      ],
+      "elapsed_ms": 1663,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\layout.log",
+      "runtime_error": false,
+      "name": "layout",
+      "profile": "final-0216db7-layout"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\archive.log",
+        "--headless",
+        "--script",
+        "res://tests/archive_performance.gd"
+      ],
+      "elapsed_ms": 1295,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\archive.log",
+      "runtime_error": false,
+      "name": "archive",
+      "profile": "final-0216db7-archive"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\input-accept.log",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--script",
+        "res://tests/input_walkthrough.gd",
+        "--",
+        "--route=res://tests/routes/accept.json"
+      ],
+      "elapsed_ms": 14360,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\input-accept.log",
+      "runtime_error": false,
+      "name": "input-accept",
+      "profile": "final-0216db7-input-accept"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\input-refuse.log",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--script",
+        "res://tests/input_walkthrough.gd",
+        "--",
+        "--route=res://tests/routes/refuse.json"
+      ],
+      "elapsed_ms": 14289,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\input-refuse.log",
+      "runtime_error": false,
+      "name": "input-refuse",
+      "profile": "final-0216db7-input-refuse"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\render-960x540.log",
+        "--fixed-fps",
+        "60",
+        "--resolution",
+        "960x540",
+        "--script",
+        "res://tests/input_walkthrough.gd",
+        "--",
+        "--route=res://tests/routes/accept.json"
+      ],
+      "elapsed_ms": 34787,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\render-960x540.log",
+      "runtime_error": false,
+      "name": "render-960x540",
+      "profile": "final-0216db7-render-960x540"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\render-1280x720.log",
+        "--fixed-fps",
+        "60",
+        "--resolution",
+        "1280x720",
+        "--script",
+        "res://tests/input_walkthrough.gd",
+        "--",
+        "--route=res://tests/routes/accept.json"
+      ],
+      "elapsed_ms": 32373,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\render-1280x720.log",
+      "runtime_error": false,
+      "name": "render-1280x720",
+      "profile": "final-0216db7-render-1280x720"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\render-1366x768.log",
+        "--fixed-fps",
+        "60",
+        "--resolution",
+        "1366x768",
+        "--script",
+        "res://tests/input_walkthrough.gd",
+        "--",
+        "--route=res://tests/routes/accept.json"
+      ],
+      "elapsed_ms": 32195,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\render-1366x768.log",
+      "runtime_error": false,
+      "name": "render-1366x768",
+      "profile": "final-0216db7-render-1366x768"
+    },
+    {
+      "exit_code": 0,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\render-1920x1080.log",
+        "--fixed-fps",
+        "60",
+        "--resolution",
+        "1920x1080",
+        "--script",
+        "res://tests/input_walkthrough.gd",
+        "--",
+        "--route=res://tests/routes/accept.json"
+      ],
+      "elapsed_ms": 32426,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\final-0216db7\\render-1920x1080.log",
+      "runtime_error": false,
+      "name": "render-1920x1080",
+      "profile": "final-0216db7-render-1920x1080"
+    },
+    {
+      "name": "node-result-parser",
+      "exit_code": 0,
+      "command": [
+        "D:\\nodejs\\node.exe",
+        "--test",
+        "--test-isolation=none",
+        "tests/forge_results.test.mjs"
+      ]
+    }
+  ],
+  "failure": null,
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "run_id": "final-0216db7"
+}

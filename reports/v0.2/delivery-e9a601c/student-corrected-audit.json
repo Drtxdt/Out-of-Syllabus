@@ -1,0 +1,24 @@
+{
+  "status": "fail",
+  "file": "assets\\art_source\\v02\\student-corrected.png",
+  "antialiasing": {
+    "semi_transparent_pixels": 638119,
+    "total_pixels": 1573538,
+    "clean": false
+  },
+  "orphan_pixels": {
+    "orphan_pixels": 506,
+    "clean": false
+  },
+  "palette": {
+    "unique_colors": 52700,
+    "max_allowed": 12,
+    "clean": false
+  },
+  "grid_alignment": {
+    "width": 887,
+    "height": 1774,
+    "grid_size": 32,
+    "aligned": false
+  }
+}

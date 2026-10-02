@@ -1,0 +1,12 @@
+{
+  "checks": 484,
+  "engine": "4.7.2-stable (official)",
+  "failures": [],
+  "kind": "unit fixtures, not input walkthrough",
+  "limitations": [
+    "No GUI screenshot or human playtime claim",
+    "Certificate-store errors must be reported from process log separately"
+  ],
+  "profile": "delivery-check-domain",
+  "suite": "v02-domain"
+}

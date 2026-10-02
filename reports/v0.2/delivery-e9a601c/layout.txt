@@ -1,0 +1,12 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+LAYOUT (1280, 720) toolbar=1222.0 modal=(1075.2, 640.8) release_bottom=464.600006103516 visible_bottom=656.599975585938 body=(1009.0, 4385.0)
+FOCUS (1280, 720) bottom=656.60009765625 visible=656.599975585938 scroll=3791
+LAYOUT (1366, 768) toolbar=1308.0 modal=(1147.44, 683.52) release_bottom=467.239990234375 visible_bottom=702.239990234375 body=(1081.0, 4385.0)
+FOCUS (1366, 768) bottom=702.239990234375 visible=702.239990234375 scroll=3748
+LAYOUT (1920, 1080) toolbar=1862.0 modal=(1612.8, 961.2) release_bottom=484.399993896484 visible_bottom=997.400024414063 body=(1546.0, 4385.0)
+FOCUS (1920, 1080) bottom=997.39990234375 visible=997.400024414063 scroll=3470
+LAYOUT (960, 540) toolbar=902.0 modal=(806.4, 480.6) release_bottom=454.700012207031 visible_bottom=486.700012207031 body=(740.0, 4385.0)
+FOCUS (960, 540) bottom=486.699951171875 visible=486.700012207031 scroll=3951
+UI_LAYOUT_CHECKS failures=0
+

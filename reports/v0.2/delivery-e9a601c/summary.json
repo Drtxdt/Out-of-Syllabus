@@ -1,0 +1,65 @@
+{
+  "version": "v0.2",
+  "source_commit": "21521a46c6d013ebb4e9e290a055bf38893902ac",
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "exe_sha256": "0C73B769BD279ED11C3D99454DB290B33B8F29C4DA9C882563DD353BBD7C9B9A",
+  "domain_assertions": 484,
+  "adversarial_assertions": 106,
+  "accept_steps": 156,
+  "refuse_steps": 143,
+  "automated_delivery_checks_passed": true,
+  "all_product_acceptance_complete": false,
+  "unverified": [
+    "Human blind playtests and player duration",
+    "OS DPI scaling and other hardware",
+    "Power loss and truly full filesystem",
+    "Production pixel art approval",
+    "Live Forge editor session in v0.2 (parser and failure checks run)"
+  ],
+  "screenshots": [
+    {
+      "file": "world-960x540.png",
+      "original": "final-0216db7-render-960x540/joint-vacuum-world.png",
+      "sha256": "02c32ec2407100ffb6afade2b4001d4719db2fe4567ff25d6679625df1fd7695",
+      "inspected": true
+    },
+    {
+      "file": "experiment-1280x720.png",
+      "original": "final-0216db7-render-1280x720/experiment-initial-air.png",
+      "sha256": "047192ad485b4c33a557d390dec55d34447eb101a23306c6d5899784f5eb014a",
+      "inspected": true
+    },
+    {
+      "file": "world-1366x768.png",
+      "original": "package-input-accept/joint-vacuum-world.png",
+      "sha256": "81a6ec1fa9aa5995778f0b7fbad1bf054caab4dd4ad14d014e2550be13d05907",
+      "inspected": true
+    },
+    {
+      "file": "battle-1920x1080.png",
+      "original": "final-0216db7-render-1920x1080/battle-drag.png",
+      "sha256": "49b09c622912b5f83c4dce78a3a9c1c3f0bce9275bb1818b8266b817aded479e",
+      "inspected": true
+    },
+    {
+      "file": "prediction-1366x768.png",
+      "original": "package-input-accept/prediction-parameters.png",
+      "sha256": "1479de29105464e6ecd767fe6339fbfe032b892c1005037f69a31fd799b50390",
+      "inspected": true
+    },
+    {
+      "file": "accept-1366x768.png",
+      "original": "package-input-accept/ending-accept.png",
+      "sha256": "149076c95e644aa8031624ea7683454f911b20979370f89b05ee1035e3fe86f4",
+      "inspected": true
+    },
+    {
+      "file": "refuse-1366x768.png",
+      "original": "package-input-refuse/ending-refuse.png",
+      "sha256": "1bfa0b00ce791181995e278f4dd64fe6a5f424e2ca01085baad8a3f7572e652a",
+      "inspected": true
+    }
+  ],
+  "visual_provenance": "960/1280/1920 screenshots:0216db7 (unchanged world scaling and experiment/battle layout). Final 1366 EXE screenshots:21521a4. Core regression/cold import:e9a601c. The only packaged code change after e9a601c is the default engine log path; both packaged input routes were rerun.",
+  "core_verified_commit": "e9a601c9b64eb67acc947c7ddc8d5707995928fc"
+}

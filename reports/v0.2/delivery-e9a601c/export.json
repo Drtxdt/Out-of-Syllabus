@@ -1,0 +1,18 @@
+{
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "commit": "21521a46c6d013ebb4e9e290a055bf38893902ac",
+  "exit_code": 0,
+  "command": [
+    "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+    "--headless",
+    "--path",
+    "E:\\my_game\\Out-of-Syllabus",
+    "--log-file",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\package-export\\export.log",
+    "--export-release",
+    "Windows Desktop",
+    "E:\\my_game\\Out-of-Syllabus\\build\\v0.2\\windows\\OutOfSyllabus.exe"
+  ],
+  "passed": true,
+  "sha256": "0C73B769BD279ED11C3D99454DB290B33B8F29C4DA9C882563DD353BBD7C9B9A"
+}

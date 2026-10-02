@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "commit": "e9a601c9b64eb67acc947c7ddc8d5707995928fc",
+  "exit_code": 0,
+  "runtime_error": false,
+  "command": [
+    "Godot 4.7.2",
+    "--headless",
+    "--editor",
+    "--import",
+    "--path",
+    "E:\\my_game\\Out-of-Syllabus\\build\\cold-delivery",
+    "--log-file",
+    "E:/my_game/Out-of-Syllabus/reports/v0.2/delivery-cold/import.log"
+  ]
+}

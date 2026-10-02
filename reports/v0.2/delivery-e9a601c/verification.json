@@ -1,0 +1,178 @@
+{
+  "limitations": [
+    "No human blind playtest",
+    "No operating-system DPI scaling validation",
+    "Rendered route uses fixed-fps simulation; measured process times are separate"
+  ],
+  "project": "E:\\my_game\\Out-of-Syllabus",
+  "failure": null,
+  "commit": "e9a601c9b64eb67acc947c7ddc8d5707995928fc",
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "checks": [
+    {
+      "name": "import",
+      "exit_code": 0,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\import.log",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\import.log",
+        "--headless",
+        "--editor",
+        "--import"
+      ],
+      "profile": "delivery-check-import",
+      "elapsed_ms": 2549,
+      "runtime_error": false
+    },
+    {
+      "name": "domain",
+      "exit_code": 0,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\domain.log",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\domain.log",
+        "--headless",
+        "--script",
+        "res://tests/v02_regression.gd"
+      ],
+      "profile": "delivery-check-domain",
+      "elapsed_ms": 1023,
+      "runtime_error": false
+    },
+    {
+      "name": "adversarial",
+      "exit_code": 0,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\adversarial.log",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\adversarial.log",
+        "--headless",
+        "--script",
+        "res://tests/adversarial_contracts.gd"
+      ],
+      "profile": "delivery-check-adversarial",
+      "elapsed_ms": 367,
+      "runtime_error": false
+    },
+    {
+      "name": "views",
+      "exit_code": 0,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\views.log",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\views.log",
+        "--headless",
+        "--script",
+        "res://ui/verify_views.gd"
+      ],
+      "profile": "delivery-check-views",
+      "elapsed_ms": 371,
+      "runtime_error": false
+    },
+    {
+      "name": "layout",
+      "exit_code": 0,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\layout.log",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\layout.log",
+        "--headless",
+        "--script",
+        "res://ui/verify_layout.gd"
+      ],
+      "profile": "delivery-check-layout",
+      "elapsed_ms": 1673,
+      "runtime_error": false
+    },
+    {
+      "name": "archive",
+      "exit_code": 0,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\archive.log",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\archive.log",
+        "--headless",
+        "--script",
+        "res://tests/archive_performance.gd"
+      ],
+      "profile": "delivery-check-archive",
+      "elapsed_ms": 1421,
+      "runtime_error": false
+    },
+    {
+      "name": "input-accept",
+      "exit_code": 0,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\input-accept.log",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\input-accept.log",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--script",
+        "res://tests/input_walkthrough.gd",
+        "--",
+        "--route=res://tests/routes/accept.json"
+      ],
+      "profile": "delivery-check-input-accept",
+      "elapsed_ms": 14818,
+      "runtime_error": false
+    },
+    {
+      "name": "input-refuse",
+      "exit_code": 0,
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\input-refuse.log",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\delivery-check\\input-refuse.log",
+        "--headless",
+        "--fixed-fps",
+        "60",
+        "--script",
+        "res://tests/input_walkthrough.gd",
+        "--",
+        "--route=res://tests/routes/refuse.json"
+      ],
+      "profile": "delivery-check-input-refuse",
+      "elapsed_ms": 13977,
+      "runtime_error": false
+    },
+    {
+      "command": [
+        "D:\\nodejs\\node.exe",
+        "--test",
+        "--test-isolation=none",
+        "tests/forge_results.test.mjs"
+      ],
+      "name": "node-result-parser",
+      "exit_code": 0
+    }
+  ],
+  "dirty": [],
+  "passed": true,
+  "run_id": "delivery-check"
+}

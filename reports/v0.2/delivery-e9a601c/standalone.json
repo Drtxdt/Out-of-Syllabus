@@ -1,0 +1,48 @@
+{
+  "failure": null,
+  "passed": true,
+  "sha256": "0C73B769BD279ED11C3D99454DB290B33B8F29C4DA9C882563DD353BBD7C9B9A",
+  "commit": "21521a46c6d013ebb4e9e290a055bf38893902ac",
+  "checks": [
+    {
+      "elapsed_ms": 32623,
+      "exit_code": 0,
+      "report": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\package-input-accept\\input-walkthrough.json",
+      "runtime_error": false,
+      "route": "accept",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\v0.2\\windows\\OutOfSyllabus.exe",
+        "--fixed-fps",
+        "60",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\package-input-accept\\engine.log",
+        "--resolution",
+        "1366x768",
+        "--",
+        "--qa-input",
+        "--route=E:\\my_game\\Out-of-Syllabus\\tests\\routes\\accept.json"
+      ],
+      "passed": true
+    },
+    {
+      "elapsed_ms": 30367,
+      "exit_code": 0,
+      "report": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\package-input-refuse\\input-walkthrough.json",
+      "runtime_error": false,
+      "route": "refuse",
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\v0.2\\windows\\OutOfSyllabus.exe",
+        "--fixed-fps",
+        "60",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2\\package-input-refuse\\engine.log",
+        "--resolution",
+        "1366x768",
+        "--",
+        "--qa-input",
+        "--route=E:\\my_game\\Out-of-Syllabus\\tests\\routes\\refuse.json"
+      ],
+      "passed": true
+    }
+  ]
+}

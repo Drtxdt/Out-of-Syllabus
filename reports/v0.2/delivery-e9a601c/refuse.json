@@ -1,0 +1,45 @@
+{
+  "completion": true,
+  "elapsed_ms": 29131,
+  "engine": "4.7.2-stable (official)",
+  "failures": [],
+  "limitations": [
+    "Headless input validation is not visual screenshot acceptance",
+    "Default route is movement smoke only; both endings require explicit routes"
+  ],
+  "route": "E:\\my_game\\Out-of-Syllabus\\tests\\routes\\refuse.json",
+  "screenshots": [
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2/package-input-refuse/experiment-initial-air.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2/package-input-refuse/experiment-mass-air.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2/package-input-refuse/battle-mass.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2/package-input-refuse/experiment-shape-air.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2/package-input-refuse/experiment-initial-vacuum.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2/package-input-refuse/joint-vacuum-world.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2/package-input-refuse/battle-drag.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.2/package-input-refuse/ending-refuse.png"
+  ],
+  "steps_completed": 143,
+  "suite": "input-only",
+  "timing": {
+    "note": "wall_frame measures consecutive rendered process callbacks with the monotonic clock; other CPU monitors retain samples. Fixed-fps controls simulated time, not human playtime.",
+    "physics": {
+      "max_ms": 5.144,
+      "mean_ms": 2.05028022551681,
+      "p95_ms": 4.266,
+      "samples": 4789
+    },
+    "process": {
+      "max_ms": 37.218,
+      "mean_ms": 8.47551618291921,
+      "p95_ms": 34.318,
+      "samples": 4789
+    },
+    "renderer": "Windows",
+    "wall_frame": {
+      "max_ms": 300.883,
+      "mean_ms": 6.07711484652329,
+      "p95_ms": 4.762,
+      "samples": 4789
+    }
+  }
+}
