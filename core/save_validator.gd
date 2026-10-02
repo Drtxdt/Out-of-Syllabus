@@ -31,21 +31,21 @@ static func event_error(event: Variant, content: GameContent) -> String:
 
 static func validate(data: Variant, content: GameContent) -> String:
  if not data is Dictionary: return "状态必须是对象"
- var required: Array = ["cycle","tick","room","position","direction","profile","world","inventory","visited","histories","track","events","echo_cursors","echo_sample_cursors","deviations","settled","loadout","seq","mode","battle"]
+ var required: Array = ["cycle","tick","room","position","direction","profile","world","inventory","visited","histories","track","events","echo_cursors","echo_sample_cursors","deviations","settled","loadout","seq","mode","battle","evidence","pending_experiment","holds","finale","knowledge_access","checkpoint_locked","dodge_ticks","dodge_cooldown_ticks"]
  if not data.has_all(required): return "状态字段不完整"
  if not number(data.cycle,1,3) or not number(data.tick,0) or not number(data.seq,0): return "世界时钟无效"
  if content.room(str(data.room)).is_empty() or not data.direction in ["up","down","left","right"]: return "位置或朝向无效"
  if not data.position is Array or data.position.size()!=2 or not number(data.position[0]) or not number(data.position[1]): return "坐标无效"
- for key: String in ["profile","world","battle"]:
+ for key: String in ["profile","world","battle","pending_experiment","holds","finale","knowledge_access"]:
   if not data[key] is Dictionary: return key+" 类型无效"
- for key: String in ["inventory","visited","histories","events","echo_cursors","echo_sample_cursors","deviations","settled","loadout"]:
+ for key: String in ["inventory","visited","histories","events","echo_cursors","echo_sample_cursors","deviations","settled","loadout","evidence"]:
   if not data[key] is Array: return key+" 类型无效"
  var p: Dictionary = data.profile
  if not p.has_all(["knowledge","choices","violation","hints","completed"]): return "玩家资料不完整"
  if not p.knowledge is Array or not p.choices is Dictionary or not p.completed is bool or not number(p.violation,0) or not number(p.hints,0): return "玩家资料类型无效"
  for id: Variant in p.knowledge:
   if not id is String or not content.knowledge.has(id): return "未知知识"
- for key: String in ["switch_a","switch_b","lab_gate","pump","experiment","mass","drag","coil_disabled"]:
+ for key: String in ["switch_a","switch_b","lab_gate","pump","experiment","mass","drag","coil_disabled","rig_power"]:
   if not data.world.get(key) is bool: return "机关状态无效"
  if not number(data.world.get("crate"),0,1): return "器材箱状态无效"
  for id: Variant in data.loadout:
@@ -82,4 +82,52 @@ static func validate(data: Variant, content: GameContent) -> String:
   for key: String in ["observed","controlled","repeated","shape","vacuum","won","failed"]:
    if not b[key] is bool: return "论证标记无效"
   if not b.evidence is Array or not b.resolved is Array or not b.last is String: return "论证证据无效"
+ var source_ids: Array=[]
+ for record: Variant in data.evidence:
+  error=evidence_error(record,data,content)
+  if not error.is_empty(): return error
+  if record.source_event_id in source_ids: return "重复证据来源"
+  source_ids.append(record.source_event_id)
+ if not data.pending_experiment.is_empty():
+  error=evidence_error(data.pending_experiment,data,content)
+  if not error.is_empty(): return error
+  if not number(data.pending_experiment.get("finish_tick"),data.tick) or not data.pending_experiment.get("joint") is bool: return "测量进度无效"
+ if not data.checkpoint_locked is bool or not number(data.dodge_ticks,0,10) or not number(data.dodge_cooldown_ticks,0,48): return "交互时间无效"
+ for station: Variant in data.holds:
+  if not station in ["assist_a","assist_b"]: return "未知持有工位"
+  var held: Variant=data.holds[station]
+  if not held is Dictionary or not held.has_all(["actor","begin","end","overlap","context"]): return "持有状态不完整"
+  if not held.actor in ["player","echo_1","echo_2"] or not number(held.begin,0,data.tick) or not number(held.end,data.tick) or not number(held.overlap,0,720) or not held.context is Dictionary: return "持有状态无效"
+ var f: Dictionary=data.finale
+ if not f.has_all(["phase","choice","used","prediction","release_tick","open_tick","close_tick","warning_end","examiner_room","examiner_position","arrival_tick"]): return "结尾状态不完整"
+ if not f.phase in ["none","chosen","ready","warning","chase","caught","escaped","complete"] or not f.choice is bool or not f.used is bool or not f.prediction is Dictionary: return "结尾状态无效"
+ for key: String in ["release_tick","open_tick","close_tick","warning_end","arrival_tick"]:
+  if not number(f[key],-1): return "结尾时钟无效"
+ if content.room(str(f.examiner_room)).is_empty() or not f.examiner_position is Array or f.examiner_position.size()!=2 or not number(f.examiner_position[0]) or not number(f.examiner_position[1]): return "追踪位置无效"
+ for id: Variant in data.knowledge_access:
+  var access: Variant=data.knowledge_access[id]
+  if not content.knowledge.has(id) or not access is Dictionary or not access.has_all(["discovered","understood","authorized"]): return "知识状态无效"
+  for key: String in ["discovered","understood","authorized"]:
+   if not access[key] is bool: return "知识标记无效"
+ if not data.battle.is_empty():
+  if not data.battle.get("cited_ids") is Array: return "论证引用无效"
+  for id: Variant in data.battle.cited_ids:
+   if not data.evidence.any(func(record: Dictionary) -> bool: return record.id==id and record.observed_by_player): return "论证引用了不存在或未读记录"
+ return ""
+
+static func evidence_error(record: Variant,data: Dictionary,_content: GameContent) -> String:
+ if not record is Dictionary or not record.has_all(["id","source_event_id","source_cycle","cycle","tick","room_id","experiment_id","setup","observations","origin_actor","observed_by_player","simulator_version"]): return "证据字段不完整"
+ if not record.id is String or not record.source_event_id is String or not number(record.source_cycle,1,3) or not number(record.cycle,1,3) or not number(record.tick,0) or record.room_id!="lab" or not record.observed_by_player is bool or record.simulator_version!=1: return "证据来源无效"
+ if not record.setup is Dictionary or not record.observations is Dictionary: return "证据结构无效"
+ var setup: Dictionary=ExperimentModel.setup(record.setup)
+ if setup.is_empty() or setup!=record.setup or record.experiment_id!=setup.experiment: return "实验条件不是已执行的参数"
+ var result: Dictionary=ExperimentModel.measure(setup)
+ if record.observations!=result: return "测量结果与科学模型不符"
+ var source: Dictionary={}
+ var tracks: Array=[data.track]
+ for history: Dictionary in data.histories: tracks.append(history.track)
+ for candidate: Dictionary in tracks:
+  for event: Dictionary in candidate.events:
+   if "c%d:e%d" % [event.cycle,event.seq]==record.source_event_id: source=event
+ if source.is_empty() or source.kind!="experiment" or ExperimentModel.setup(source.payload)!=setup: return "证据没有真实释放事件"
  return ""

@@ -64,3 +64,21 @@ position = Vector2(320, 288)
 script = ExtResource("1_a72q0")
 object_id = "to_corridor_3"
 kind = "exit"
+
+[node name="assist_a" type="Node2D" parent="Props"]
+position = Vector2(144, 144)
+script = ExtResource("1_a72q0")
+object_id = "assist_a"
+kind = "switch"
+
+[node name="assist_b" type="Node2D" parent="Props"]
+position = Vector2(464, 144)
+script = ExtResource("1_a72q0")
+object_id = "assist_b"
+kind = "switch"
+
+[node name="rig_power" type="Node2D" parent="Props"]
+position = Vector2(560, 240)
+script = ExtResource("1_a72q0")
+object_id = "rig_power"
+kind = "switch"

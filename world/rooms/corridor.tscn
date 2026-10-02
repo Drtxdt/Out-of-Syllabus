@@ -77,8 +77,8 @@ script = ExtResource("1_24mg0")
 object_id = "caretaker"
 kind = "npc"
 
-[node name="coil" type="Node2D" parent="Props" unique_id=603341247]
-position = Vector2(176, 136)
+[node name="fall_gate" type="Node2D" parent="Props" unique_id=603341247]
+position = Vector2(224, 256)
 script = ExtResource("1_24mg0")
-object_id = "coil"
-kind = "hazard"
+object_id = "fall_gate"
+kind = "experiment"

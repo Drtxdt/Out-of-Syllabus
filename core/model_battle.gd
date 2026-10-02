@@ -2,15 +2,32 @@ class_name ModelBattle
 extends RefCounted
 var definition: EncounterDef
 var state: Dictionary = {}
-func _init(def: EncounterDef = null) -> void:
+var records: Array = []
+func _init(def: EncounterDef = null, available: Array = []) -> void:
+ records = available.duplicate(true)
  definition = def
  if def != null:
   state = {"id": def.id, "round": 1, "actions": 2, "model": "none", "observed": false,
    "controlled": false, "repeated": false, "shape": false, "vacuum": false,
-   "evidence": [], "resolved": [], "won": false, "failed": false, "last": "先观察现象，或选择一个待检验的模型。"}
-func play(card: CardDef) -> Dictionary:
+   "cited_ids": [], "evidence": [], "resolved": [], "won": false, "failed": false, "last": "先观察现象，或选择一个待检验的模型。"}
+func play(card: CardDef, evidence_ids: Array = []) -> Dictionary:
  if state.is_empty() or state.won or state.failed:
   return {"ok": false, "message": "本次论证已经结束。"}
+ var merged: Array = state.cited_ids.duplicate()
+ for id: Variant in evidence_ids:
+  if not id is String: return {"ok":false,"message":"证据编号无效。"}
+  if not id in merged: merged.append(id)
+ var selected: Array = EvidenceEvaluator.records_for(records,merged)
+ for id: Variant in merged:
+  if not records.any(func(record: Dictionary) -> bool: return record.id==id and record.observed_by_player): return {"ok":false,"message":"只能引用已读取的真实实验记录。"}
+ if card.effect in ["observe","experiment","controls","measurement","repeat","shape","vacuum","counterexample"] and selected.is_empty():
+  return {"ok":false,"message":"先到实验台释放并读取记录，再选择证据。"}
+ if card.effect=="repeat":
+  var independent: bool=false
+  for a: Dictionary in selected:
+   for b: Dictionary in selected:
+    if a.source_event_id!=b.source_event_id and a.setup==b.setup: independent=true
+  if not independent: return {"ok":false,"message":"重复实验需要另一份相同条件、独立来源的记录。"}
  match card.effect:
   "observe": state.observed = true
   "experiment":
@@ -46,6 +63,7 @@ func play(card: CardDef) -> Dictionary:
    state.shape = true
   _:
    return {"ok": false, "message": "这张卡不适用于当前实验。"}
+ state.cited_ids = merged
  state.actions -= 1
  state.last = "使用「%s」。%s" % [card.title, evaluate()]
  if not state.won and int(state.actions) == 0:
@@ -59,22 +77,15 @@ func play(card: CardDef) -> Dictionary:
    state.last += "
 反例：" + definition.counterexamples[(int(state.round)-2) % definition.counterexamples.size()]
  return {"ok": true, "message": state.last}
+func conditions() -> Array:
+ return EvidenceEvaluator.evaluate(state,records,definition.requirements)
 func evaluate() -> String:
- var resolved: Array = []
- var proof: bool = "measured" in state.evidence or bool(state.repeated)
- if state.observed: resolved.append("observation")
- if state.controlled: resolved.append("controls")
- if proof and state.controlled: resolved.append("evidence")
- if state.model in ["gravity", "drag"]: resolved.append("mass_independence")
- if definition.id == "drag":
-  if state.model == "drag" and state.shape: resolved.append("air_difference")
-  # Merely declaring vacuum cannot explain the observed in-air measurement.
-  if state.vacuum and state.controlled and state.model in ["gravity", "drag"]: resolved.append("vacuum_control")
- state.resolved = resolved
- state.won = true
- for id: String in definition.requirements:
-  if not id in resolved: state.won = false
- return "全部必需证据已解释。" if state.won else "还有未解释的观察，继续检查模型与条件。"
+ var resolved: Array=[]
+ for condition: Dictionary in conditions():
+  if condition.status=="satisfied": resolved.append(condition.id)
+ state.resolved=resolved
+ state.won=resolved.size()==definition.requirements.size()
+ return "全部必需证据已解释。" if state.won else "还有未解释的实测记录，检查条件与证据来源。"
 func progress() -> int:
  var n: int = 0
  for id: String in definition.requirements:

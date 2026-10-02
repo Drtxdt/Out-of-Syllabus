@@ -29,3 +29,23 @@ static func comparison(vacuum: bool, shape: String) -> Dictionary:
  return {"height": ball.height_m, "initial_velocity": 0.0, "vacuum": vacuum,
   "ball": fall_time(ball.height_m, ball.mass_kg, ball.area_m2, rho, ball.drag_coefficient),
   "paper": fall_time(ball.height_m, paper.mass_kg, area, rho, paper.drag_coefficient), "shape": shape}
+
+static func setup(config: Dictionary) -> Dictionary:
+ var kind: String = str(config.get("experiment",""))
+ var medium: String = str(config.get("medium",""))
+ var shape: String = str(config.get("shape","flat"))
+ if not kind in ["initial","mass","shape"] or not medium in ["air","vacuum"] or not shape in ["flat","crumpled"]: return {}
+ var heavy: Dictionary = {"id":"heavy_ball","mass_kg":0.08,"area_m2":0.00025,"coefficient":0.47}
+ var light: Dictionary = {"id":"light_ball","mass_kg":0.02,"area_m2":0.00025,"coefficient":0.47}
+ var flat: Dictionary = {"id":"flat_paper","mass_kg":0.002,"area_m2":0.006,"coefficient":0.47}
+ var crumpled: Dictionary = {"id":"crumpled_paper","mass_kg":0.002,"area_m2":0.00025,"coefficient":0.47}
+ var specimens: Array = [heavy,flat if shape=="flat" else crumpled]
+ if kind=="mass": specimens=[heavy,light]
+ if kind=="shape": specimens=[flat,crumpled]
+ return {"experiment":kind,"medium":medium,"shape":shape,"height_m":2.0,"initial_velocity_m_s":0.0,"samples":specimens,"controlled_variables":["height","initial_velocity","medium"],"air_density":1.225 if medium=="air" else 0.0}
+
+static func measure(conditions: Dictionary) -> Dictionary:
+ var times: Array = []
+ for specimen: Dictionary in conditions.samples:
+  times.append(fall_time(conditions.height_m,specimen.mass_kg,specimen.area_m2,conditions.air_density,specimen.coefficient))
+ return {"arrival_times_s":times,"comparison":"within_tolerance" if absf(times[0]-times[1])<=0.01 else "different","tolerance_s":0.01}
