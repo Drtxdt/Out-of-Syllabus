@@ -1,6 +1,7 @@
 extends Node2D
 ## Editable code-native apparatus sample, in the 640x360 world coordinate system.
 ## Presentation only: integrator supplies power and valid occupancy projections.
+var drop_fractions: Array = [0.0,0.0]
 var powered: bool = true
 var a_active: bool = false
 var b_active: bool = false
@@ -12,6 +13,7 @@ const LIGHT: Color = Color("92c6bb")
 const GOLD: Color = Color("e1bc78")
 
 func render(data: Dictionary) -> void:
+ drop_fractions=data.get("drop_fractions",[0.0,0.0])
  powered = bool(data.get("powered", true))
  a_active = bool(data.get("a_active", false))
  b_active = bool(data.get("b_active", false))
@@ -31,9 +33,8 @@ func _draw() -> void:
  draw_rect(Rect2(286,116,36,52), FRAME, false, 2)
  draw_rect(Rect2(292,122,24,36), PANEL)
  for y: int in range(126,158,6): draw_line(Vector2(314,y),Vector2(318,y),FRAME,1)
- var drop_y: int = 150 if releasing else 126
- draw_rect(Rect2(295,drop_y,5,5), GOLD)
- draw_rect(Rect2(305,drop_y,5,2), LIGHT)
+ draw_rect(Rect2(295,126+roundi(float(drop_fractions[0])*24),5,5), GOLD)
+ draw_rect(Rect2(305,126+roundi(float(drop_fractions[1])*24),5,2), LIGHT)
  draw_rect(Rect2(286,168,36,6), FRAME)
  draw_rect(Rect2(294,177,20,3), GOLD if a_active and b_active and powered else FRAME)
 

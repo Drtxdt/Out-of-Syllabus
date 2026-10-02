@@ -25,6 +25,7 @@ var return_modal: String = ""
 var rig_visual: Node2D
 var examiner: PixelActor
 var release_display: Label
+var battle_presentation: Dictionary = {}
 func _ready() -> void:
  content = GameContent.new();session = GameSession.new(content);saves = SaveStore.new();settings = InputSettings.new()
  session.changed.connect(update_hud);session.notice.connect(ui.toast)
@@ -53,6 +54,11 @@ func update_hud() -> void:
  if not is_instance_valid(ui) or session == null: return
  ui.header.text = "超纲  /  %s    ·    第 %d 轮    ·    %02d:%02d    ·    回声 %d" % [content.room(session.room_id).title,session.cycle,session.tick/3600,(session.tick/60)%60,session.histories.size()]
  ui.objective.text = "当前问题  →  " + session.objective()
+ var next_actions: Array[String]=[]
+ for history: Dictionary in session.causal_view().histories:
+  if history.next_tick>=session.tick:
+   next_actions.append("回声%d：%s %.1fs" % [history.cycle,"开始维持" if history.action.begins_with("hold_begin") else "结束维持",(history.next_tick-session.tick)/60.0])
+ if not next_actions.is_empty(): ui.objective.text+="\n"+" · ".join(next_actions)
 func update_props() -> void:
  if room_node == null: return
  for prop: WorldProp in room_node.get_node("Props").get_children():
@@ -65,7 +71,7 @@ func update_props() -> void:
   if prop.object_id in ["assist_a","assist_b"]: prop.active=session.holds.has(prop.object_id)
   if prop.kind == "crate": prop.position.x = 224 + 32*int(session.world.crate)
   prop.queue_redraw()
- if rig_visual!=null: rig_visual.render({"powered":session.world.rig_power,"a_active":session.holds.has("assist_a"),"b_active":session.holds.has("assist_b"),"releasing":not session.pending_experiment.is_empty()})
+ if rig_visual!=null: rig_visual.render({"powered":session.world.rig_power,"a_active":session.holds.has("assist_a"),"b_active":session.holds.has("assist_b"),"releasing":not session.pending_experiment.is_empty(),"drop_fractions":session.experiment_display()})
  if examiner!=null:
   examiner.visible=session.finale.phase in ["warning","chase"] and session.finale.examiner_room==session.room_id
   examiner.position=Vector2(session.finale.examiner_position[0],session.finale.examiner_position[1]);examiner.moving=session.finale.phase=="chase"
@@ -133,7 +139,17 @@ func _unhandled_input(event: InputEvent) -> void:
  elif event.is_action_pressed("apply_knowledge"):
   var response: Dictionary=session.command("gate_release","fall_gate")
   ui.toast(response.message)
+func remember_battle_view() -> void:
+ if view_kind!="battle" or not is_instance_valid(active_view) or active_view.is_queued_for_deletion(): return
+ var focused: Control=get_viewport().gui_get_focus_owner()
+ battle_presentation={"ids":active_view.selected_ids.duplicate(),"scroll":ui.get_node("Modal/Margin/Scroll").scroll_vertical,"focus":focused.get_meta("semantic_key","") if focused!=null else ""}
+func restore_battle_view() -> void:
+ if view_kind!="battle" or battle_presentation.is_empty(): return
+ for button: Node in active_view.find_children("*","Button",true,false):
+  if button.get_meta("semantic_key","")==battle_presentation.focus and not button.disabled: button.grab_focus();break
+ ui.get_node("Modal/Margin/Scroll").set_deferred("scroll_vertical",int(battle_presentation.scroll))
 func pause(title: String, subtitle: String = "") -> void:
+ remember_battle_view()
  if session.mode=="model": return_modal="battle"
  if session.mode == "world": session.mode = "menu"
  view_kind=""
@@ -217,13 +233,15 @@ func begin_battle(id: String) -> void:
  if session.battle!=null and session.battle.definition.id==id and not session.battle.state.failed:
   if session.resume_battle(): show_battle()
   return
- if session.start_battle(id): show_battle();save_game(false)
+ if session.start_battle(id): battle_presentation={};show_battle();save_game(false)
  else:
   session.mode="menu";ui.toast("尚缺已读取的质量对照记录；第三轮还需要双回声真空记录。")
 
 func show_battle() -> void:
  if session.battle==null: close_modal();return
+ var replacing: bool=view_kind!="battle"
  var view: Control=mount_view("battle","论证桌 / 用证据检验模型")
+ if replacing and not battle_presentation.is_empty(): view.selected_ids.assign(battle_presentation.ids)
  session.resume_battle();return_modal=""
  var cards: Array=[]
  for id: String in ["observe","experiment"]+session.loadout:
@@ -232,11 +250,12 @@ func show_battle() -> void:
   var allowed: Dictionary=candidate.play(content.cards[id],view.selected_ids)
   cards.append({"id":id,"title":content.cards[id].title,"description":content.cards[id].description,"enabled":allowed.ok,"reason":"" if allowed.ok else allowed.message})
  view.render({"title":session.battle.definition.title,"question":session.battle.definition.question,"state":session.battle.state,"conditions":session.battle.conditions(),"records":session.evidence,"cards":cards})
+ if replacing: restore_battle_view.call_deferred()
 
 func view_action(kind: String,target: String,payload: Dictionary) -> void:
  match kind:
   "selection_changed": show_battle()
-  "close": return_modal="";close_modal()
+  "close": remember_battle_view();return_modal="";close_modal()
   "experiment":
    var response: Dictionary=session.command(kind,target,payload)
    ui.toast(response.message)
@@ -334,6 +353,10 @@ func show_ending() -> void:
 func show_journal() -> void:
  pause("实验日志 / 历史没有被覆盖","当前目标："+session.objective())
  ui.label("已理解："+"、".join(session.profile.knowledge)+"    超纲度："+str(session.profile.violation),20)
+ for record: Dictionary in session.evidence:
+  if not record.observed_by_player: continue
+  var names: Dictionary={"initial":"球与纸片","mass":"同形不同质量","shape":"同纸不同形状"}
+  ui.label("第 %d 轮 · %s · %s · %.3f / %.3f 秒（容差 0.010 秒）\n记录 %s，来源 %s，操作者 %s" % [record.cycle,names.get(record.experiment_id,"实验"),"空气" if record.setup.medium=="air" else "真空",record.observations.arrival_times_s[0],record.observations.arrival_times_s[1],record.id,record.source_event_id,record.origin_actor],17)
  ui.label("世界记录 %d 条 · 当前轨迹 %d 个采样 · 历史 %d 轮" % [session.events.size(),session.track.samples.size(),session.histories.size()],17)
  for room: Dictionary in content.chapter.rooms:
   ui.label(("● " if room.id in session.visited else "○ ")+room.title+"  —  "+room.subtitle,17)

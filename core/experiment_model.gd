@@ -49,3 +49,17 @@ static func measure(conditions: Dictionary) -> Dictionary:
  for specimen: Dictionary in conditions.samples:
   times.append(fall_time(conditions.height_m,specimen.mass_kg,specimen.area_m2,conditions.air_density,specimen.coefficient))
  return {"arrival_times_s":times,"comparison":"within_tolerance" if absf(times[0]-times[1])<=0.01 else "different","tolerance_s":0.01}
+
+static func distance_at(seconds: float, specimen: Dictionary, density: float) -> float:
+ # Same midpoint integration as measurements; presentation cannot change the result.
+ var y: float=0.0
+ var v: float=0.0
+ var elapsed: float=0.0
+ var k: float=0.5*density*float(specimen.coefficient)*float(specimen.area_m2)/float(specimen.mass_kg)
+ while elapsed<seconds and y<2.0:
+  var dt: float=minf(0.001,seconds-elapsed)
+  var mid_v: float=v+(9.81-k*v*absf(v))*dt*0.5
+  y+=mid_v*dt
+  v+=(9.81-k*mid_v*absf(mid_v))*dt
+  elapsed+=dt
+ return clampf(y,0.0,2.0)

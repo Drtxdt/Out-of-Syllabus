@@ -124,6 +124,7 @@ func command(kind: String,target: String,payload: Dictionary={},actor: String="p
   if _replay_source.is_empty() or _replay_source.actor!=actor: return _no("回声缺少真实历史来源。")
   var source: Dictionary=_replay_source.event
   if source.kind!=kind or source.target!=target or source.payload!=payload or context.get("source_event_id")!="c%d:e%d" % [source.cycle,source.seq] or context.get("source_room")!=source.room: return _no("回声来源与封存操作不符。")
+ if not echo and mode!="world" and kind in ["switch","push","pickup","talk","visit","hold_begin","hold_end","dodge","gate_release"]: return _no("请先返回现象界。")
  if not echo and finale.phase=="caught": return _no("请先恢复追逐检查点。")
  if echo and not kind in ["switch","push","experiment","hold_begin","hold_end"]: return {"ok":true,"message":"历史重现，不重复奖励。"}
  if kind in ["switch","push","pickup","talk","experiment","hold_begin","hold_end"] and not _near(actor,target,36.0 if kind.begins_with("hold") else 48.0): return _no("角色不在该装置的可操作位置。")
@@ -189,21 +190,23 @@ func command(kind: String,target: String,payload: Dictionary={},actor: String="p
    holds.erase(target)
   "resolve":
    if target in settled: return {"ok":true,"message":"结果已经结算。"}
-   if battle==null or battle.definition.id!=target: return _no("没有可提交的论证。")
+   if mode!="model" or not _near(actor,"lab_drop") or battle==null or battle.definition.id!=target: return _no("没有可提交的论证。")
    var candidate: ModelBattle=ModelBattle.new(battle.definition,evidence)
    candidate.state=battle.state.duplicate(true);candidate.evaluate()
    if not candidate.state.won: return _no("当前模型没有解释全部真实记录。")
    settled.append(target);world[target]=true;_learn("gravity" if target=="mass" else "drag")
   "choose_future":
-   if not world.drag or not _near(actor,"future_terminal") or not payload.get("accept") is bool: return _no("请完成论证并在档案终端选择。")
+   if target!="future_terminal" or not world.drag or not _near(actor,"future_terminal") or not payload.get("accept") is bool: return _no("请完成论证并在档案终端选择。")
    if finale.phase!="none": return {"ok":true,"message":"本轮选择已记录。"}
+   knowledge_access["future"]={"discovered":true,"understood":false,"authorized":false}
    finale.choice=payload.accept;finale.phase="chosen";profile.choices.future_card=payload.accept
   "predict_gate","calibrate_gate":
-   if finale.phase!="chosen" or not _near(actor,"future_terminal"): return _no("请先在档案终端选择路线。")
+   if target!="future_terminal" or finale.phase!="chosen" or not _near(actor,"future_terminal"): return _no("请先在档案终端选择路线。")
    if kind=="predict_gate":
     if not finale.choice or payload.get("model")!="drag" or payload.get("medium")!="air" or payload.get("shape")!="flat": return _no("数值方法不能选择模型：需要适用于空气中展开纸片的阻力模型。")
     var setup: Dictionary=ExperimentModel.setup({"experiment":"initial","medium":"air","shape":"flat"})
     finale.prediction={"model":"drag","time_s":ExperimentModel.measure(setup).arrival_times_s[1],"origin":"prediction"}
+    _learn("future")
     if not finale.used: profile.violation+=1;finale.used=true
     finale.phase="warning";finale.warning_end=tick+120
     finale.examiner_position=[320.0,288.0];finale.examiner_room="archive"
@@ -253,6 +256,13 @@ func _advance_holds() -> void:
     holds.erase(station)
     if tick<int(held.end): deviations.append({"tick":tick,"message":"%s 的 %s 操作中断：供电或站位与原计划不同。" % [held.actor,station]})
 
+func experiment_display() -> Array:
+ if pending_experiment.is_empty(): return [0.0,0.0]
+ var fractions: Array=[]
+ var elapsed: float=(tick-int(pending_experiment.tick))/60.0
+ for specimen: Dictionary in pending_experiment.setup.samples:
+  fractions.append(ExperimentModel.distance_at(elapsed,specimen,pending_experiment.setup.air_density)/2.0)
+ return fractions
 func _advance_experiment() -> void:
  if pending_experiment.is_empty(): return
  if pending_experiment.joint and not _rig_ready():

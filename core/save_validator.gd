@@ -14,7 +14,7 @@ static func track_error(track: Variant, content: GameContent) -> String:
   if not sample is Dictionary: return "采样必须是对象"
   if not integer(sample.get("tick"),0) or int(sample.tick) < previous: return "采样时间无效"
   if content.room(str(sample.get("room",""))).is_empty(): return "采样房间无效"
-  if not number(sample.get("x")) or not number(sample.get("y")): return "采样坐标无效"
+  if not number(sample.get("x"),0,640) or not number(sample.get("y"),0,360): return "采样坐标无效"
   if not sample.get("direction") in ["up","down","left","right"] or not sample.get("moving") is bool: return "采样姿态无效"
   previous = int(sample.tick)
  previous = -1
@@ -31,6 +31,13 @@ static func event_error(event: Variant, content: GameContent) -> String:
  if not event.actor is String or not event.kind is String or not event.target is String or not event.payload is Dictionary: return "事件类型无效"
  if event.kind=="switch" and (not event.payload.get("value") is bool or (event.payload.has("expected") and not event.payload.expected is bool)): return "机关事件参数无效"
  if event.kind=="experiment" and ExperimentModel.setup(event.payload).is_empty(): return "实验事件参数无效"
+ if event.kind not in ["switch","push","pickup","talk","visit","experiment","read_evidence","hold_begin","hold_end","resolve","choose_future","predict_gate","calibrate_gate","gate_release","dodge","ending","play_card"]: return "未知事件类型"
+ if event.kind=="hold_end":
+  for key: String in ["duration","overlap_ticks"]:
+   if event.payload.has(key) and not integer(event.payload[key],0): return "维持事件时间无效"
+  if event.payload.has("valid") and not event.payload.valid is bool: return "维持事件结果无效"
+ if event.kind=="choose_future" and not event.payload.get("accept") is bool: return "路线选择无效"
+ if event.kind=="play_card" and not event.payload.get("evidence_ids") is Array: return "出牌引用无效"
  if content.room(str(event.room)).is_empty(): return "事件房间无效"
  return ""
 
@@ -40,19 +47,19 @@ static func validate(data: Variant, content: GameContent) -> String:
  if not data.has_all(required): return "状态字段不完整"
  if not integer(data.cycle,1,3) or not integer(data.tick,0) or not integer(data.seq,0): return "世界时钟无效"
  if content.room(str(data.room)).is_empty() or not data.direction in ["up","down","left","right"]: return "位置或朝向无效"
- if not data.position is Array or data.position.size()!=2 or not number(data.position[0]) or not number(data.position[1]): return "坐标无效"
+ if not data.position is Array or data.position.size()!=2 or not number(data.position[0],0,640) or not number(data.position[1],0,360): return "坐标无效"
  for key: String in ["profile","world","battle","pending_experiment","holds","finale","knowledge_access"]:
   if not data[key] is Dictionary: return key+" 类型无效"
  for key: String in ["inventory","visited","histories","events","echo_cursors","echo_sample_cursors","deviations","settled","loadout","evidence"]:
   if not data[key] is Array: return key+" 类型无效"
  var p: Dictionary = data.profile
  if not p.has_all(["knowledge","choices","violation","hints","completed"]): return "玩家资料不完整"
- if not p.knowledge is Array or not p.choices is Dictionary or not p.completed is bool or not number(p.violation,0) or not number(p.hints,0): return "玩家资料类型无效"
+ if not p.knowledge is Array or not p.choices is Dictionary or not p.completed is bool or not integer(p.violation,0,1) or not integer(p.hints,0): return "玩家资料类型无效"
  for id: Variant in p.knowledge:
   if not id is String or not content.knowledge.has(id): return "未知知识"
  for key: String in ["switch_a","switch_b","lab_gate","pump","experiment","mass","drag","coil_disabled","rig_power"]:
   if not data.world.get(key) is bool: return "机关状态无效"
- if not number(data.world.get("crate"),0,1): return "器材箱状态无效"
+ if not integer(data.world.get("crate"),0,1): return "器材箱状态无效"
  for id: Variant in data.loadout:
   if not id is String or not content.cards.has(id): return "未知卡牌"
  for id: Variant in data.visited:

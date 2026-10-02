@@ -26,7 +26,7 @@ static func evaluate(state: Dictionary, records: Array, requirements: PackedStri
  var repeated: bool = false
  for a: Dictionary in used:
   for b: Dictionary in used:
-   if a.source_event_id!=b.source_event_id and a.setup==b.setup and a.observations==b.observations: repeated=true
+   if a.source_event_id!=b.source_event_id and a.setup==b.setup and a.observations.comparison==b.observations.comparison: repeated=true
  var proof: bool = ("measured" in state.evidence) or (state.repeated and repeated)
  var flags: Dictionary = {"observation":state.observed and not used.is_empty(),"controls":state.controlled and not used.is_empty(),"evidence":proof and state.controlled,"mass_independence":mass and state.model in ["gravity","drag"],"air_difference":air and shape and state.shape and state.model=="drag","vacuum_control":air and vacuum and state.vacuum and state.controlled}
  var reasons: Dictionary = {"observation":"读取并引用一份实测记录。","controls":"引用记录并核对高度与初速度。","evidence":"引用测量；重复路径需两次独立、相同条件的记录。","mass_independence":"需要同形不同质量的实测记录与重力模型（给定条件及容差）。","air_difference":"需要空气中球/纸与同纸形状对照，并加入阻力修正。","vacuum_control":"需要同一释放条件下的空气和真空实测，真空不能抹去空气记录。"}
