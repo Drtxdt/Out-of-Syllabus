@@ -19,6 +19,10 @@ config/features=PackedStringArray("4.7", "GL Compatibility")
 
 ForgeRuntime="*uid://b3gayui2xn6ok"
 
+[debug]
+
+file_logging/log_path="user://v0.2/logs/godot.log"
+
 [display]
 
 window/size/viewport_width=1280
