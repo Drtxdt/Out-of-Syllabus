@@ -39,6 +39,7 @@ func clear_body() -> void:
   body.remove_child(child);child.queue_free()
 func open(title: String, subtitle: String = "") -> void:
  clear_body();shade.show();panel.show()
+ $Modal/Margin/Scroll.scroll_vertical = 0
  var heading: Label = label(title,30);heading.add_theme_color_override("font_color",GOLD)
  if not subtitle.is_empty(): label(subtitle,18)
  var line: HSeparator = HSeparator.new();body.add_child(line)
@@ -56,4 +57,8 @@ func row() -> HBoxContainer:
  var node: HBoxContainer = HBoxContainer.new();node.add_theme_constant_override("separation",10);body.add_child(node);return node
 func focus_first() -> void:
  var candidates: Array[Node] = body.find_children("*","Button",true,false)
- if not candidates.is_empty(): (candidates[0] as Button).grab_focus()
+ for candidate: Node in candidates:
+  var control: Button = candidate as Button
+  if not control.disabled:
+   control.grab_focus()
+   return

@@ -7,7 +7,6 @@ var _data: Dictionary = {}
 func render(data: Dictionary) -> void:
  _data = data.duplicate(true)
  begin_render()
- line("落体实验台", true)
  line("固定高度 2.00 米 · 初速度 0 · 测量容差 ±0.01 秒\n配置时暂停；释放后世界与回声继续运行。")
  var choices: Dictionary = data.get("choices", {})
  var pending: bool = not data.get("pending", {}).is_empty() if data.get("pending", {}) is Dictionary else bool(data.get("pending", false))
