@@ -194,7 +194,7 @@ func _initialize() -> void:
  if probe.get("evidence") == null:
   check(false,"v0.2 core required")
  else:
-  test_evidence();test_holds();test_replay_rig();test_checkpoint();test_storage();test_legacy_invariants();test_drag_paths();test_finale_routes();test_recorded_three_cycles()
+  test_evidence();test_holds();test_replay_rig();test_checkpoint();test_storage();test_legacy_invariants();test_drag_paths();test_finale_routes();test_recorded_three_cycles();test_input_settings_contract()
  var report: Dictionary = {"suite":"v02-domain","kind":"unit fixtures, not input walkthrough","checks":checks,"failures":failures,"engine":Engine.get_version_info().string,"profile":RuntimePaths.profile_id(),"limitations":["No GUI screenshot or human playtime claim","Certificate-store errors must be reported from process log separately"]}
  write_text(RuntimePaths.report_path("v02-regression.json"),JSON.stringify(report,"  "))
  print("V02 REGRESSION: ",checks," checks; failures=",failures)
@@ -458,4 +458,21 @@ func test_recorded_three_cycles() -> void:
  check(restored.restart_cycle(),"cycle-start retry restores preserved two histories")
  check(restored.cycle==3 and restored.tick==0 and canonical(restored.histories)==sealed,"cycle retry starts current loop without editing past")
 
+
+
+func test_input_settings_contract() -> void:
+ var settings: InputSettings=InputSettings.new()
+ check(settings.path.begins_with(RuntimePaths.data_root()),"settings use isolated QA profile")
+ var old_up: int=settings.keys.move_up
+ var old_left: int=settings.keys.move_left
+ settings.bind_key("move_up",old_left)
+ check(settings.keys.move_up==old_left and settings.keys.move_left==old_up,"conflicting key binding swaps instead of losing an action")
+ var loaded: InputSettings=InputSettings.new()
+ check(loaded.keys.move_up==old_left and loaded.keys.move_left==old_up,"remapping persists inside QA profile")
+ var seen: Dictionary={}
+ for action_name: String in loaded.keys:
+  check(not seen.has(loaded.keys[action_name]),"key binding unique " + action_name)
+  seen[loaded.keys[action_name]]=true
+  check(InputMap.has_action(action_name) and not InputMap.action_get_events(action_name).is_empty(),"configured action has input event " + action_name)
+ loaded.bind_key("move_up",old_up)
 
