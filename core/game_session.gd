@@ -76,11 +76,16 @@ func actor_pose(actor: String) -> Dictionary:
  if actor=="player": return {"room":room_id,"position":player_position}
  for h: Dictionary in histories:
   if actor!="echo_%d" % h.cycle: continue
-  var result: Dictionary={}
-  for point: Dictionary in h.track.samples:
-   if int(point.tick)>tick: break
-   result={"room":point.room,"position":Vector2(point.x,point.y)}
-  return result
+  var samples: Array=h.track.samples
+  var left: int=0
+  var right: int=samples.size()
+  while left<right:
+   var middle: int=(left+right)/2
+   if int(samples[middle].tick)<=tick: left=middle+1
+   else: right=middle
+  if left==0: return {}
+  var point: Dictionary=samples[left-1]
+  return {"room":point.room,"position":Vector2(point.x,point.y)}
  return {}
 
 func _near(actor: String, object_id: String, distance: float=48.0) -> bool:
@@ -305,7 +310,11 @@ func causal_view() -> Dictionary:
   var row: Dictionary={"cycle":h.cycle,"next_tick":-1,"action":"已结束"}
   for ev: Dictionary in h.track.events:
    if int(ev.tick)>tick and ev.kind.begins_with("hold"):
-    row.next_tick=ev.tick;row.action=ev.kind+" / "+ev.target;break
+    row.next_tick=ev.tick;row.action=ev.kind+" / "+ev.target
+    row.expected="实验供电接通；原角色在实验室工位 36 像素内；工位可用。"
+    var actor: String="echo_%d" % h.cycle
+    row.actual="供电%s；角色%s；工位%s。" % ["接通" if world.rig_power else "断开","已到位" if _near(actor,ev.target,36) else "尚未到位","占用中" if holds.has(ev.target) else "空闲"]
+    break
   rows.append(row)
  return {"tick":tick,"histories":rows,"holds":holds.duplicate(true),"deviations":deviations.duplicate(true),"can_retry":not checkpoint.is_empty()}
 
@@ -416,6 +425,13 @@ func objective() -> String:
  if finale.phase=="caught": return "被监考者拦截：打开检查点，恢复追逐前的局部记录。"
  if finale.phase=="escaped": return "在观测塔记录终端提交最后的实验档案。"
  if finale.phase in ["warning","chase","ready"]: return "靠近走廊落体闸门释放，等待安全窗口；进入观测塔。"
+ if cycle>=2 and not histories.is_empty():
+  var last_end: int=-1
+  for history: Dictionary in histories:
+   for action: Dictionary in history.track.events:
+    if action.kind=="hold_end": last_end=maxi(last_end,int(action.tick))
+  var contribution_done: bool=track.events.any(func(e: Dictionary) -> bool: return e.kind=="hold_end" and e.target=="assist_b" and e.payload.get("valid",false) and e.payload.get("overlap_ticks",0)>=360) if cycle==2 else evidence.any(func(e: Dictionary) -> bool: return e.setup.medium=="vacuum")
+  if last_end>=0 and tick>last_end and not contribution_done: return "历史协作窗口已结束：在因果面板选择重试本轮，历史时刻不会移动。"
  if cycle==1:
   if not "kit" in inventory: return "接通教室 A，去器材室取得实验包并接通 B。"
   if not "observation" in profile.knowledge: return "在实验室释放球与纸片；完成后读取真实测量。"

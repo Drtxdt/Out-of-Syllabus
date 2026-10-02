@@ -1,6 +1,12 @@
-# v0.2 status
+# v0.2 进度
 
-- Baseline: 4f50f15; original workspace clean; old build and player paths preserved.
-- S0: isolated baseline 94/94 checks; hardened suite 102/102 checks. Portable copy of locked Godot keeps editor data inside build/qa-engine. Node result-parser tests run without subprocess isolation because sandbox denies child spawn. Windows certificate-store read error remains environmental; GUI/Forge runtime checks pending.
-- S1–S5: implementation pending. Contracts: V02_CONTRACTS.md.
-- No claims of human playtest duration or completion rate.
+基线 `4f50f15`；旧档和旧包保留。引擎固定 4.7.2，主线负责核心、最终集成及唯一 GUI，UI/资产与 QA 在隔离工作区交付本地提交。
+
+- S0：迁移路径、独立 QA profile、schema 3/content 2、候选恢复、有效备份链、命令来源校验已经落地。
+- S1：四类实验、仪器释放演出、玩家读取、跨循环证据、两条合法论证路径已经接通。
+- S2：实验室 A/B/C、真实持续持有与重叠、逐 tick 快进、断电偏差、窗口重试、冻结历史已经接通。
+- S3：预测/实测两条落体闸门路线、预警追逐闪避、局部重试、一次违规与观测塔提交已经接通。
+- S4：独立实验台/论证桌/因果面板、改键、焦点和滚动、四尺寸整数世界缩放已经实现。imagegen 生成样板已归档，像素验收未过的图没有进入游戏；运行时继续使用明确标识的可编辑占位。
+- S5：最终自动化验收、独立包导出与输入通关正在归档到 `reports/v0.2/`，以 `docs/VALIDATION.md` 的实际结果为准。
+
+不将自动输入通关视为真人盲测；系统 DPI 缩放、真人时长与独立玩家理解仍未验收。尚未进入第二章，也没有推送或发布。

@@ -1,38 +1,38 @@
-# 超纲 OUT OF SYLLABUS
+# 超纲 OUT OF SYLLABUS · v0.2
 
-知识改变解法，过去的自己影响现在。此仓库是独立 Godot 4.7.2 工程，当前交付 **v0.1.0 可玩灰盒**：六个区域、三个循环、两场模型论证、两条历史回声和两个结尾。
+一个可玩的科学悬疑序章：真实释放产生可追溯的证据，前两轮的自己维持实验工位，第三轮完成联合真空实验。接受未授权的数值方法后，需要亲手躲避监考者并通过落体闸门。
 
-这不是已达到 45–60 分钟及公开发行标准的 Demo。M0 工具链与主要机制已有实现；关卡节奏、正式美术、必要的双回声协作谜题和外部玩家测试仍需迭代。详见 docs/ROADMAP.md。
+保留六个区域、三轮循环、两场论证和两个结尾。角色、监考者及部分装置仍是有标识的可编辑占位；本版本尚未经过真人盲测，不宣称 45–60 分钟试玩时长或公开发行质量。
 
 ## 运行
 
-安装版无需 Godot：运行 `build/windows/OutOfSyllabus.exe`。开发版用 `D:\Godot_v4.7.2\Godot_v4.7.2-stable_win64.exe` 打开本目录的 project.godot，按 F6 运行主场景或 F5 运行项目。也可运行 `tools/run.ps1`。
+新版独立 Windows 包：`build/v0.2/windows/OutOfSyllabus.exe`，无需安装 Godot。旧版 `build/windows/` 保留。
 
-WASD 移动，E 交互，空格闪避，J 日志，K 卡组，F 等待五秒，Q 在异常装置附近应用知识，Esc 设置，F5 保存，F9 读取。所有按键可在设置中修改。菜单、对话和论证暂停世界时钟。
+开发用 Godot **4.7.2.stable.official.ed1daf0bf** 打开 `project.godot`。脚本从自身位置解析项目根目录；设置 `GODOT_PATH` 或传 `-Godot <引擎路径>`，不再依赖迁移前的盘符。
 
-首次路线：教室接通 A → 走廊 → 器材室取实验包、接通 B → 实验室记录下落 → 观测塔结束循环。第二轮到实验室解释质量反例；第三轮启动真空泵并解释空气差异，最后进入档案室。日志与当前目标提供引导。
+```powershell
+./tools/run.ps1 -Godot <Godot可执行文件>
+./tools/verify.ps1 -Godot <Godot可执行文件> -RunId my-check -Render
+./tools/export.ps1 -Godot <Godot可执行文件>
+```
 
-## 开发与验证
+WASD 移动，E 交互，空格闪避，J 日志，K 卡组，F 逐 tick 等待关键动作，Q 释放附近的落体闸门，Esc 设置/返回，F5 保存，F9 读取。设置可改键并处理冲突。配置、记录和论证暂停世界；点击释放后世界与回声继续运行。
 
-- `tools/verify.ps1`：导入与核心回归检查。
-- `tools/verify.ps1 -Render`：额外运行真实 GPU 场景和分辨率冒烟测试。
-- `tools/export.ps1`：生成 Windows x64 发布包。
-- `node tools/forge_check.mjs`：MCP 编辑器树、实际运行、游戏树、截图、错误读取；会重启本项目编辑器。
-- `python tools/install_templates.py`：安装固定版本的 Windows 模板，分段下载官方归档。
+## 序章路线
 
-`tools/.venv` 是美术工具专用 Python 环境。七个 skill 安装于用户 `.codex/skills`，SHA 与位置见 toolchain.lock.json；重启 Codex 或新开一轮后重新发现。sprite-gen 的嵌套 CLI 素材生产尚未验收，正式入口优先使用内置 imagegen。
+1. 第一轮：接通教室联锁 A，器材室取实验包并接通联锁 B；实验室释放球与纸片并读取记录。站在实验室稳压工位 A，按 F 等待 02:00 预约，E 开始维持，再 F 结算 12 秒。去观测塔封存。
+2. 第二轮：取实验包，等待历史开启实验室门。在实验台完成同形不同质量实验，读取并引用记录，使用观察、控制变量、测量、重力模型完成论证。到安全锁 B 等待回声 A 开始，维持 12 秒，其中有效重叠须至少 6 秒。观测塔封存。
+3. 第三轮：取实验包、开启真空泵，完成同纸不同形状的空气对照。等两个回声维持 A/B，自己在 C 释放球与纸片的真空对照并读取。引用空气、质量、形状、真空记录完成阻力论证。
+4. 档案室选择未来预测或已有实测校准。预测必须选择适用的阻力模型，实际使用才记一次违规并触发追逐。去走廊亲手释放闸门，在纸片落地后的窗口进入观测塔，提交记录才完成序章。
 
-另一台机器可先运行 `python tools/bootstrap_forge.py` 重建固定的 MCP 服务器。
+因果面板显示下一动作、预期与实际条件。实验供电可主动断开以观察历史失败。窗口错过时恢复实验检查点或重试本轮；封存历史不会挪动。追逐被抓可恢复局部检查点，无需重打三轮。
 
-Godot Forge 固定源码构建，项目配置在 `.codex/config.toml`。需要 Codex 信任本项目后加载；当前会话已用 SDK 实际连接验证。个人 MCP 配置未修改。
+## 存档与验证
 
-## 文档
+正式新版存档与设置位于 Godot 用户目录下的 `v0.2/`（schema 3、content version 2）。旧目录、旧档及旧测试包不自动转换。未来版本拒绝降级；损坏主档隔离，备份通过完整校验后才恢复。
 
-- docs/GAME_DESIGN.md：体验、范围、循环和结尾。
-- docs/ARCHITECTURE.md：模块边界、回放、存档与迁移。
-- docs/KNOWLEDGE_CARDS.md：科学规则与卡牌解法。
-- docs/ASSET_PIPELINE.md：像素规格、来源与生产验收。
-- docs/ROADMAP.md：开发队列与人工时间估算。
-- docs/VALIDATION.md：实际验证及未完成门槛。
+测试必须指定唯一 `-- --qa-profile=<run-id>`，或 `OOS_QA_PROFILE`。存档、设置、日志和截图保存在 `reports/v0.2/<run-id>/`；独立 EXE 测试用 `OOS_QA_ROOT` 指定绝对报告父目录。验证脚本将运行时错误、超时及失败断言记为失败，并保存提交、引擎、命令与退出码。
 
-存档位于 Godot 的用户数据目录（Windows `%APPDATA%/Godot/app_userdata/超纲 · OUT OF SYLLABUS`），设置独立保存。测试使用独立文件名，不覆盖玩家 progress.json。
+`node tools/forge_check.mjs` 只连接已经启动的同项目、同 QA profile 游戏；不会启动、重启或停止用户编辑器。Node 使用当前运行时。Forge 是可选编辑器辅助，完整输入验收由 Godot 内的按键/UI 驱动脚本完成，禁止修改世界状态或直接结算。
+
+参见 `docs/NEXT_SPRINT_STATUS.md`、`docs/VALIDATION.md`、`docs/V02_CONTRACTS.md`、`docs/ROADMAP.md`。未自动推送、发布或上传构建。

@@ -4,3 +4,7 @@
 script = ExtResource("1")
 id = "future"
 title = "数值积分"
+tier = 3
+prerequisites = PackedStringArray("drag")
+valid_domains = PackedStringArray("falling_with_drag")
+unlocks = PackedStringArray("gate_prediction")

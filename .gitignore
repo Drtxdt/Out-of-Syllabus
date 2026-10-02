@@ -10,3 +10,6 @@ reports/*.log
 
 reports/replay_*.json
 .godot-forge/
+
+# Raw v0.2 QA runs stay local; curated acceptance artifacts are added explicitly.
+reports/v0.2/
