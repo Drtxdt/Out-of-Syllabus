@@ -9,7 +9,7 @@ func _init(def: EncounterDef = null, available: Array = []) -> void:
  if def != null:
   state = {"id": def.id, "round": 1, "actions": 2, "model": "none", "observed": false,
    "controlled": false, "repeated": false, "shape": false, "vacuum": false,
-   "cited_ids": [], "evidence": [], "resolved": [], "won": false, "failed": false, "last": "先观察现象，或选择一个待检验的模型。"}
+   "suspended": false, "cited_ids": [], "evidence": [], "resolved": [], "won": false, "failed": false, "last": "先观察现象，或选择一个待检验的模型。"}
 func play(card: CardDef, evidence_ids: Array = []) -> Dictionary:
  if state.is_empty() or state.won or state.failed:
   return {"ok": false, "message": "本次论证已经结束。"}

@@ -49,9 +49,9 @@ func _read(file_path: String) -> Dictionary:
 func migrate(payload: Dictionary) -> Dictionary:
  return payload.duplicate(true)
 func _future(payload: Dictionary) -> bool:
- return int(payload.get("schema",0)) > SCHEMA or int(payload.get("content_version",0)) > 2
+ return (SaveValidator.number(payload.get("schema")) and payload.schema>SCHEMA) or (SaveValidator.number(payload.get("content_version")) and payload.content_version>2)
 func _valid(payload: Dictionary, content: GameContent) -> bool:
- if int(payload.get("schema",0)) != SCHEMA or payload.get("content_version") != 2 or payload.get("chapter") != "fall": return false
+ if payload.get("schema") != SCHEMA or payload.get("content_version") != 2 or payload.get("chapter") != "fall": return false
  if not SaveValidator.validate(payload.get("state"),content).is_empty(): return false
  var point: Variant = payload.get("checkpoint")
  if not point is Dictionary or (not point.is_empty() and not SaveValidator.validate(point,content).is_empty()): return false
@@ -63,7 +63,7 @@ func load_session(session: GameSession) -> bool:
  var payload: Dictionary = _read(path)
  if _future(payload):
   last_error = "存档来自更新版本，不能降级读取。";return false
- if not payload.is_empty() and int(payload.get("schema",0))<SCHEMA:
+ if not payload.is_empty() and SaveValidator.number(payload.get("schema")) and payload.schema<SCHEMA:
   last_error="这是旧版记录，请使用保留的旧版游戏；v0.2 另开新记录。";return false
  payload = migrate(payload)
  if not _valid(payload,session.content):

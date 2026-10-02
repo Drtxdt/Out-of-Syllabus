@@ -25,6 +25,7 @@ var checkpoint: Dictionary = {}
 var battle: ModelBattle
 var loadout: Array = ["gravity", "control", "measurement", "shape", "vacuum", "drag"]
 var _seq: int = 0
+var _replay_source: Dictionary = {}
 var evidence: Array = []
 var pending_experiment: Dictionary = {}
 var holds: Dictionary = {}
@@ -54,7 +55,9 @@ func advance(steps: int = 1, moving: bool = false) -> void:
    var cursor: int = int(echo_cursors[h])
    while cursor < actions.size() and int(actions[cursor].tick) <= tick:
     var ev: Dictionary = actions[cursor]
+    _replay_source={"actor":"echo_%d" % int(histories[h].cycle),"event":ev}
     var result: Dictionary = command(ev.kind,ev.target,ev.payload,"echo_%d" % int(histories[h].cycle),{"source_cycle":histories[h].cycle,"source_event_id":"c%d:e%d" % [histories[h].cycle,ev.seq],"source_room":ev.room})
+    _replay_source={}
     if not result.ok: _deviation(ev,result.message)
     cursor+=1
    echo_cursors[h]=cursor
@@ -117,7 +120,11 @@ func echo_poses() -> Array:
  return poses
 func command(kind: String,target: String,payload: Dictionary={},actor: String="player",context: Dictionary={}) -> Dictionary:
  var echo: bool=actor!="player"
- if echo and context.is_empty(): return _no("回声缺少真实历史来源。")
+ if echo:
+  if _replay_source.is_empty() or _replay_source.actor!=actor: return _no("回声缺少真实历史来源。")
+  var source: Dictionary=_replay_source.event
+  if source.kind!=kind or source.target!=target or source.payload!=payload or context.get("source_event_id")!="c%d:e%d" % [source.cycle,source.seq] or context.get("source_room")!=source.room: return _no("回声来源与封存操作不符。")
+ if not echo and finale.phase=="caught": return _no("请先恢复追逐检查点。")
  if echo and not kind in ["switch","push","experiment","hold_begin","hold_end"]: return {"ok":true,"message":"历史重现，不重复奖励。"}
  if kind in ["switch","push","pickup","talk","experiment","hold_begin","hold_end"] and not _near(actor,target,36.0 if kind.begins_with("hold") else 48.0): return _no("角色不在该装置的可操作位置。")
  var message: String="操作已记录。"
@@ -146,7 +153,7 @@ func command(kind: String,target: String,payload: Dictionary={},actor: String="p
     finale.phase="escaped"
    room_id=target;player_position=Vector2(320,224)
    if not target in visited: visited.append(target)
-   if finale.phase=="chase": finale.examiner_room=target;finale.examiner_position=[320.0,288.0];finale.arrival_tick=tick+60
+   if finale.phase in ["warning","chase"]: finale.examiner_room=target;finale.examiner_position=[320.0,288.0];finale.arrival_tick=tick+60
   "experiment":
    if target!="lab_drop" or not pending_experiment.is_empty(): return _no("释放架正在工作。")
    var setup: Dictionary=ExperimentModel.setup(payload)
@@ -216,13 +223,14 @@ func command(kind: String,target: String,payload: Dictionary={},actor: String="p
    if dodge_cooldown_ticks>0: return _no("闪避尚未恢复。")
    dodge_ticks=10;dodge_cooldown_ticks=48
   "ending":
+   if target!="cycle_console": return _no("请提交到观测塔记录终端。")
    if profile.completed: return {"ok":true,"message":"本章已完成。"}
    if finale.phase!="escaped" or not _near(actor,"cycle_console"): return _no("抵达观测塔并提交记录后才能完成。")
    profile.completed=true;finale.phase="complete"
   _:
    return _no("不支持的操作。")
  _record(kind,target,payload,actor,context)
- if kind in ["predict_gate","calibrate_gate"]: checkpoint_locked=false;set_checkpoint();checkpoint_locked=true
+ if kind in ["predict_gate","calibrate_gate"]: checkpoint_locked=true;checkpoint=snapshot()
  return {"ok":true,"message":message}
 
 func _learn(id: String) -> void:
@@ -299,7 +307,7 @@ func can_cycle() -> bool:
    if cycle==2 and event.target=="assist_b" and int(event.payload.get("overlap_ticks",0))>=360: calibrated=true
  return calibrated and ((cycle==1 and world.experiment and "observation" in profile.knowledge) or (cycle==2 and world.mass))
 func next_cycle() -> bool:
- if not can_cycle() or cycle >= 3: return false
+ if not can_cycle() or cycle >= 3 or not _near("player","cycle_console") or mode=="model": return false
  sample()
  histories.append({"cycle":cycle,"track":track.duplicate(true)})
  cycle += 1;tick = 0;room_id = "classroom";player_position = Vector2(320,224)
@@ -318,8 +326,15 @@ func start_battle(id: String) -> bool:
  if id=="drag" and not evidence.any(func(record: Dictionary) -> bool: return record.observed_by_player and record.setup.medium=="vacuum"): return false
  battle=ModelBattle.new(content.encounters[id],evidence);mode="model"
  return true
+func suspend_battle() -> void:
+ if battle!=null: battle.state.suspended=true
+ mode="world"
+func resume_battle() -> bool:
+ if battle==null or not _near("player","lab_drop"): return false
+ battle.state.suspended=false;mode="model"
+ return true
 func play_card(id: String, ids: Array=[]) -> Dictionary:
- if battle==null or not content.cards.has(id): return _no("没有当前论证或未知卡牌。")
+ if mode!="model" or battle==null or battle.state.suspended or not content.cards.has(id): return _no("没有当前论证或未知卡牌。")
  var result: Dictionary=battle.play(content.cards[id],ids)
  if result.ok: _record("play_card",id,{"evidence_ids":ids},"player",{})
  return result
@@ -342,7 +357,7 @@ func snapshot() -> Dictionary:
   "profile":profile.duplicate(true),"world":world.duplicate(true),"inventory":inventory.duplicate(),"visited":visited.duplicate(),
   "histories":histories.duplicate(true),"track":track.duplicate(true),"events":events.duplicate(true),"echo_cursors":echo_cursors.duplicate(),
   "echo_sample_cursors":echo_sample_cursors.duplicate(),"deviations":deviations.duplicate(true),"settled":settled.duplicate(),
-  "evidence":evidence.duplicate(true),"pending_experiment":pending_experiment.duplicate(true),"holds":holds.duplicate(true),"finale":finale.duplicate(true),"knowledge_access":knowledge_access.duplicate(true),"checkpoint_locked":checkpoint_locked,"dodge_ticks":dodge_ticks,"dodge_cooldown_ticks":dodge_cooldown_ticks,"loadout":loadout.duplicate(),"seq":_seq,"mode":"model" if mode=="model" else "world","battle":battle.state.duplicate(true) if battle != null else {}}
+  "evidence":evidence.duplicate(true),"pending_experiment":pending_experiment.duplicate(true),"holds":holds.duplicate(true),"finale":finale.duplicate(true),"knowledge_access":knowledge_access.duplicate(true),"checkpoint_locked":checkpoint_locked,"dodge_ticks":dodge_ticks,"dodge_cooldown_ticks":dodge_cooldown_ticks,"loadout":loadout.duplicate(),"seq":_seq,"mode":"menu" if finale.phase=="caught" else ("model" if battle!=null and not battle.state.suspended else "world"),"battle":battle.state.duplicate(true) if battle != null else {}}
 func restore(data: Dictionary) -> bool:
  if not SaveValidator.validate(data,content).is_empty(): return false
  if not data.has_all(["cycle","tick","room","position","profile","world","histories","track"]): return false
@@ -376,7 +391,7 @@ func restore(data: Dictionary) -> bool:
  echo_cursors = base.echo_cursors.duplicate();echo_sample_cursors = base.echo_sample_cursors.duplicate()
  deviations = base.deviations.duplicate(true);settled = base.settled.duplicate();loadout = base.loadout.duplicate();_seq = int(base.seq)
  evidence=base.evidence.duplicate(true);pending_experiment=base.pending_experiment.duplicate(true);holds=base.holds.duplicate(true);finale=base.finale.duplicate(true);knowledge_access=base.knowledge_access.duplicate(true);checkpoint_locked=base.checkpoint_locked;dodge_ticks=int(base.dodge_ticks);dodge_cooldown_ticks=int(base.dodge_cooldown_ticks)
- mode = "world";battle = null
+ mode = base.mode;battle = null
  if not base.battle.is_empty():
   battle = ModelBattle.new(content.encounters[base.battle.id],evidence);battle.state = base.battle.duplicate(true);mode = base.mode
  changed.emit()

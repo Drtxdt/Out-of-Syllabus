@@ -91,10 +91,12 @@ func _physics_process(delta: float) -> void:
  session.advance(1,player.moving)
  update_echoes();update_props();update_nearest();update_hud()
  if session.finale.phase=="caught" and not ui.panel.visible:
-  pause("监考者拦截 / 局部重试")
-  ui.label("这次尝试失败了。恢复追逐前的记录，违规不会重复累加。",23)
-  ui.button("恢复追逐检查点",func() -> void: restore_now())
-  ui.focus_first()
+  show_caught()
+func show_caught() -> void:
+ pause("监考者拦截 / 局部重试")
+ ui.label("这次尝试失败了。恢复追逐前的记录，违规不会重复累加。",23)
+ ui.button("恢复追逐检查点",func() -> void: restore_now())
+ ui.focus_first()
 func update_echoes() -> void:
  var poses: Array = session.echo_poses()
  while echo_nodes.size()<poses.size():
@@ -139,7 +141,8 @@ func pause(title: String, subtitle: String = "") -> void:
 func close_modal() -> void:
  if return_modal=="battle" and session.battle!=null:
   return_modal="";show_battle();return
- session.mode="world";ui.close();view_kind="";player.position=session.player_position
+ if session.finale.phase=="caught": show_caught();return
+ session.suspend_battle();ui.close();view_kind="";player.position=session.player_position
 func footer_button() -> void:
  ui.button("返回现象界",close_modal);ui.focus_first()
 func show_welcome() -> void:
@@ -200,6 +203,8 @@ func show_experiment() -> void:
   if session.cycle>=2 and session.tick<7200: session.checkpoint_locked=true
  var view: Control=mount_view("experiment","实验台 / 条件与证据")
  view.render({"records":session.evidence,"pending":session.pending_experiment,"pump":session.world.pump,"cycle":session.cycle})
+ for child: Node in ui.body.get_children():
+  if child.name=="EnterBattle": ui.body.remove_child(child);child.queue_free()
  if session.cycle>=2:
   var encounter: String="mass" if session.cycle==2 else "drag"
   if not encounter in session.settled:
@@ -210,7 +215,8 @@ func show_experiment() -> void:
 func begin_battle(id: String) -> void:
  session.mode="world"
  if session.battle!=null and session.battle.definition.id==id and not session.battle.state.failed:
-  session.mode="model";show_battle();return
+  if session.resume_battle(): show_battle()
+  return
  if session.start_battle(id): show_battle();save_game(false)
  else:
   session.mode="menu";ui.toast("尚缺已读取的质量对照记录；第三轮还需要双回声真空记录。")
@@ -218,7 +224,7 @@ func begin_battle(id: String) -> void:
 func show_battle() -> void:
  if session.battle==null: close_modal();return
  var view: Control=mount_view("battle","论证桌 / 用证据检验模型")
- session.mode="model";return_modal=""
+ session.resume_battle();return_modal=""
  var cards: Array=[]
  for id: String in ["observe","experiment"]+session.loadout:
   var candidate: ModelBattle=ModelBattle.new(session.battle.definition,session.evidence)
@@ -243,7 +249,7 @@ func view_action(kind: String,target: String,payload: Dictionary) -> void:
   "finish_battle":
    if session.finish_battle():
     return_modal="";close_modal();session.set_checkpoint();save_game(false)
-  "start_battle": session.battle=null;begin_battle(target)
+  "start_battle": begin_battle(target)
   "wait_next": close_modal();wait_five()
   "rewind": restore_now()
   "restart_cycle":
@@ -318,8 +324,8 @@ func use_finale(model: String) -> void:
 func show_ending() -> void:
  pause("序章结束 / 记录仍在继续")
  var accepted: bool = session.profile.choices.get("future_card",false)
- ui.label("未经授权的知识已被检测。
-走廊尽头，一个身影转向了你。" if accepted else "你把实验条件写在了答案旁边。
+ ui.label("未经授权的计算引来了监考者。
+你抓住了落体窗口，把追踪留在塔门之外。" if accepted else "你把实验条件写在了答案旁边。
 钟声没有再响。至少这一次没有。",28)
  ui.label("你解释了一个现象，也找到了模型的边界。
 你的过去确实参与了实验，你的选择也确实改变了这次脱离。
@@ -381,6 +387,7 @@ func load_game() -> void:
  if saves.load_session(session):
   load_room();ui.close()
   if session.mode=="model":show_battle()
+  elif session.finale.phase=="caught":show_caught()
   ui.toast("记录已恢复。" if saves.last_error.is_empty() else saves.last_error)
  else: ui.toast(saves.last_error)
 func show_settings() -> void:
