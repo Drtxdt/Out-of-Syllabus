@@ -549,6 +549,36 @@
   },
   {
     "kind": "click",
+    "label": "尝试忽略阻力的重力模型"
+  },
+  {
+    "kind": "assert",
+    "path": "profile.violation",
+    "value": 0
+  },
+  {
+    "kind": "click",
+    "label": "高度：2.0 米"
+  },
+  {
+    "kind": "click",
+    "label": "选择重力＋阻力模型并计算"
+  },
+  {
+    "kind": "assert",
+    "path": "finale.phase",
+    "value": "chosen"
+  },
+  {
+    "kind": "click",
+    "label": "高度：1.0 米"
+  },
+  {
+    "kind": "screenshot",
+    "name": "prediction-parameters"
+  },
+  {
+    "kind": "click",
     "label": "选择重力＋阻力模型并计算"
   },
   {

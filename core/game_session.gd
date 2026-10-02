@@ -208,9 +208,15 @@ func command(kind: String,target: String,payload: Dictionary={},actor: String="p
   "predict_gate","calibrate_gate":
    if target!="future_terminal" or finale.phase!="chosen" or not _near(actor,"future_terminal"): return _no("请先在档案终端选择路线。")
    if kind=="predict_gate":
-    if not finale.choice or payload.get("model")!="drag" or payload.get("medium")!="air" or payload.get("shape")!="flat": return _no("数值方法不能选择模型：需要适用于空气中展开纸片的阻力模型。")
+    if not finale.choice or payload.get("model")!="drag" or payload.get("medium")!="air" or payload.get("shape")!="flat" or payload.get("height_m",2.0)!=2.0 or payload.get("initial_velocity_m_s",0.0)!=0.0: return _no("数值方法不能选择模型：需要适用于空气中展开纸片的阻力模型。")
     var setup: Dictionary=ExperimentModel.setup({"experiment":"initial","medium":"air","shape":"flat"})
-    finale.prediction={"model":"drag","time_s":ExperimentModel.measure(setup).arrival_times_s[1],"origin":"prediction"}
+    var arrival: float=ExperimentModel.measure(setup).arrival_times_s[1]
+    var trajectory: Array=[]
+    for point: int in range(7):
+     var at: float=arrival*point/6.0
+     trajectory.append({"time_s":at,"distance_m":ExperimentModel.distance_at(at,setup.samples[1],setup.air_density)})
+    finale.prediction={"model":"drag","time_s":arrival,"origin":"prediction","setup":setup,"trajectory":trajectory,"window_s":3.0}
+    message="预测纸片 %.3f 秒落地；从亲手释放起计时，落地后的通行窗口为 3 秒。轨迹已存入日志，预测不是实测。" % arrival
     _learn("future")
     if not finale.used: profile.violation+=1;finale.used=true
     finale.phase="warning";finale.warning_end=tick+120

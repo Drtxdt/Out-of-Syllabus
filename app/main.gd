@@ -26,6 +26,9 @@ var rig_visual: Node2D
 var examiner: PixelActor
 var release_display: Label
 var battle_presentation: Dictionary = {}
+var forecast_medium: String="air"
+var forecast_shape: String="flat"
+var forecast_height: float=2.0
 func _ready() -> void:
  var qa_input: bool="--qa-input" in OS.get_cmdline_user_args()
  if qa_input and RuntimePaths.profile_id().is_empty(): get_tree().quit(2);return
@@ -322,6 +325,14 @@ func show_finale() -> void:
  elif session.finale.phase=="chosen":
   if session.finale.choice:
    ui.label("当前装置：2米，空气，展开纸片。选择模型；计算只在模型适用时有效。",22)
+   var parameters: HBoxContainer=ui.row()
+   ui.button("介质："+("空气" if forecast_medium=="air" else "真空"),func() -> void:
+    forecast_medium="vacuum" if forecast_medium=="air" else "air";show_finale(),parameters)
+   ui.button("纸片："+("平展" if forecast_shape=="flat" else "揉团"),func() -> void:
+    forecast_shape="crumpled" if forecast_shape=="flat" else "flat";show_finale(),parameters)
+   ui.button("高度：%.1f 米" % forecast_height,func() -> void:
+    forecast_height=1.0 if forecast_height==2.0 else 2.0;show_finale(),parameters)
+   ui.label("点击参数可切换；必须与闸门实际条件相符。初速度固定为 0。",17)
    ui.button("尝试忽略阻力的重力模型",func() -> void: use_finale("gravity"))
    ui.button("选择重力＋阻力模型并计算",func() -> void: use_finale("drag"))
   else:
@@ -341,7 +352,7 @@ func finish_chapter(accept: bool) -> void:
  if result.ok: save_game(false);show_finale()
 
 func use_finale(model: String) -> void:
- var result: Dictionary=session.command("predict_gate","future_terminal",{"model":model,"medium":"air","shape":"flat"})
+ var result: Dictionary=session.command("predict_gate","future_terminal",{"model":model,"medium":forecast_medium,"shape":forecast_shape,"height_m":forecast_height,"initial_velocity_m_s":0.0})
  ui.toast(result.message)
  if result.ok: return_modal="";close_modal();save_game(false)
 
@@ -362,6 +373,13 @@ func show_journal() -> void:
   if not record.observed_by_player: continue
   var names: Dictionary={"initial":"球与纸片","mass":"同形不同质量","shape":"同纸不同形状"}
   ui.label("第 %d 轮 · %s · %s · %.3f / %.3f 秒（容差 0.010 秒）\n记录 %s，来源 %s，操作者 %s" % [record.cycle,names.get(record.experiment_id,"实验"),"空气" if record.setup.medium=="air" else "真空",record.observations.arrival_times_s[0],record.observations.arrival_times_s[1],record.id,record.source_event_id,record.origin_actor],17)
+ if not session.finale.prediction.is_empty():
+  var prediction: Dictionary=session.finale.prediction
+  ui.label("闸门%s：纸片 %.3f 秒到达；释放后落地，再开放 3 秒。" % ["预测（不是实测）" if prediction.origin=="prediction" else "实测校准",prediction.time_s],19)
+  if prediction.has("trajectory"):
+   var points: Array[String]=[]
+   for point: Dictionary in prediction.trajectory: points.append("%.3fs → %.2fm" % [point.time_s,point.distance_m])
+   ui.label("数值轨迹："+"；".join(points),17)
  ui.label("世界记录 %d 条 · 当前轨迹 %d 个采样 · 历史 %d 轮" % [session.events.size(),session.track.samples.size(),session.histories.size()],17)
  for room: Dictionary in content.chapter.rooms:
   ui.label(("● " if room.id in session.visited else "○ ")+room.title+"  —  "+room.subtitle,17)

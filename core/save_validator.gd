@@ -121,7 +121,17 @@ static func validate(data: Variant, content: GameContent) -> String:
  if (f.phase=="caught") != (data.mode=="menu"): return "拦截状态与暂停不一致"
  if not f.prediction.is_empty():
   if not number(f.prediction.get("time_s"),0.01,60) or not f.prediction.get("origin") in ["prediction","measurement"]: return "闸门预测无效"
-  if f.prediction.origin=="prediction" and f.prediction.get("model")!="drag": return "预测模型无效"
+  if f.prediction.origin=="prediction":
+   if f.prediction.get("model")!="drag" or not f.prediction.get("trajectory") is Array or f.prediction.trajectory.size()!=7 or f.prediction.get("window_s")!=3.0: return "预测模型无效"
+   var setup: Dictionary=ExperimentModel.setup({"experiment":"initial","medium":"air","shape":"flat"})
+   if f.prediction.get("setup")!=setup: return "预测条件无效"
+   var arrival: float=ExperimentModel.measure(setup).arrival_times_s[1]
+   if absf(float(f.prediction.time_s)-arrival)>0.000000001: return "预测时刻无效"
+   for index: int in range(7):
+    var point: Variant=f.prediction.trajectory[index]
+    var at: float=arrival*index/6.0
+    if not point is Dictionary or not number(point.get("time_s"),0,60) or not number(point.get("distance_m"),0,2): return "轨迹结构无效"
+    if absf(float(point.time_s)-at)>0.000000001 or absf(float(point.distance_m)-ExperimentModel.distance_at(at,setup.samples[1],setup.air_density))>0.000000001: return "轨迹数值无效"
   if f.prediction.origin=="measurement" and not data.evidence.any(func(r: Dictionary) -> bool: return r.id==f.prediction.get("evidence_id") and r.observed_by_player): return "校准缺少实测来源"
  for key: String in ["release_tick","open_tick","close_tick","warning_end","arrival_tick"]:
   if not number(f[key],-1): return "结尾时钟无效"

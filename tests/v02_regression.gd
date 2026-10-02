@@ -350,6 +350,8 @@ func prepare_finale(accepted: bool) -> Variant:
  check(not s.profile.completed and s.profile.violation==0,"choice alone does not finish or violate")
  if accepted:
   denied(s,"predict_gate","future_terminal",{"model":"gravity","medium":"air","shape":"flat"})
+  denied(s,"predict_gate","future_terminal",{"model":"drag","medium":"air","shape":"flat","height_m":1.0})
+  denied(s,"predict_gate","future_terminal",{"model":"drag","medium":"vacuum","shape":"flat"})
   check(s.command("predict_gate","future_terminal",{"model":"drag","medium":"air","shape":"flat"}).ok,"valid numerical prediction")
   check(s.profile.violation==1 and s.finale.used,"actual future use records one violation")
   denied(s,"predict_gate","future_terminal",{"model":"drag","medium":"air","shape":"flat"})
