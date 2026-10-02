@@ -8,6 +8,13 @@ var started_ms: int = 0
 var route_name: String = "smoke"
 var auto_dodge: bool = false
 var screenshots: Array[String] = []
+var wall_frame_ms: Array[float] = []
+var previous_frame_usec: int = 0
+
+func _process(_delta: float) -> void:
+ var now: int=Time.get_ticks_usec()
+ if previous_frame_usec>0: wall_frame_ms.append((now-previous_frame_usec)/1000.0)
+ previous_frame_usec=now
 var process_ms: Array[float] = []
 var physics_ms: Array[float] = []
 
@@ -219,7 +226,7 @@ func timing(values: Array[float]) -> Dictionary:
 
 func finish() -> void:
  release_motion()
- var report: Dictionary = {"suite":"input-only","route":route_name,"steps_completed":steps_completed,"failures":failures,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started_ms,"screenshots":screenshots,"timing":{"process":timing(process_ms),"physics":timing(physics_ms),"renderer":DisplayServer.get_name(),"note":"CPU timing samples from Godot Performance monitors. Fixed-fps simulation does not measure wall-clock FPS or player playtime."},"completion":app.session.profile.completed if app != null else false,"limitations":["Headless input validation is not visual screenshot acceptance","Default route is movement smoke only; both endings require explicit routes"]}
+ var report: Dictionary = {"suite":"input-only","route":route_name,"steps_completed":steps_completed,"failures":failures,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started_ms,"screenshots":screenshots,"timing":{"wall_frame":timing(wall_frame_ms),"process":timing(process_ms),"physics":timing(physics_ms),"renderer":DisplayServer.get_name(),"note":"wall_frame measures consecutive rendered process callbacks with the monotonic clock; other CPU monitors retain samples. Fixed-fps controls simulated time, not human playtime."},"completion":app.session.profile.completed if app != null else false,"limitations":["Headless input validation is not visual screenshot acceptance","Default route is movement smoke only; both endings require explicit routes"]}
  var file: FileAccess = FileAccess.open(RuntimePaths.report_path("input-walkthrough.json"),FileAccess.WRITE)
  if file == null:
   fail("Could not write input report")
