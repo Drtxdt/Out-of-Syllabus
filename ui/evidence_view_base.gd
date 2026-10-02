@@ -64,3 +64,20 @@ func record_text(record: Dictionary) -> String:
  var experiment: String = str(setup.get("experiment", record.get("experiment_id", "")))
  var labels: Dictionary = {"initial":"球与纸片", "mass":"同形不同质量", "shape":"同纸不同形状", "air":"空气", "vacuum":"真空", "flat":"平展", "crumpled":"揉团"}
  return "%s · 第 %s 轮 · %s / %s\n实测 %s 秒；容差 ±%s 秒\n来源 %s · %s" % [record.get("id", ""), record.get("cycle", record.get("source_cycle", 1)), labels.get(experiment, experiment), labels.get(str(setup.get("medium", "")), "未标明介质"), observations.get("arrival_times_s", {}), observations.get("tolerance_s", 0.01), record.get("source_event_id", "未知"), "已读取" if bool(record.get("observed_by_player", false)) else "仪器待读取"]
+
+func display_name(id: String) -> String:
+ var names: Dictionary = {
+  "none":"未选择", "mass":"质量假说", "gravity":"重力模型", "drag":"阻力模型",
+  "observation":"现象观察", "controls":"控制变量", "evidence":"实测论据", "mass_independence":"质量无关",
+  "air_difference":"空气中的差异", "vacuum_control":"真空对照", "hold_begin":"开始维持", "hold_end":"结束维持",
+  "assist_a":"A 稳压工位", "assist_b":"B 安全锁", "lab_drop":"C 释放记录", "rig_power":"实验供电",
+  "player":"当前的你", "lab":"实验室", "air":"空气", "vacuum":"真空", "flat":"平展", "crumpled":"揉团"}
+ if names.has(id): return str(names[id])
+ if id.begins_with("echo_"): return "第 %s 轮回声" % id.trim_prefix("echo_")
+ if id.begins_with("echo:"): return "第 %s 轮回声" % id.trim_prefix("echo:")
+ return id
+
+func display_action(action: String) -> String:
+ var parts: PackedStringArray = action.split(" / ")
+ for index: int in range(parts.size()): parts[index] = display_name(parts[index])
+ return " · ".join(parts)

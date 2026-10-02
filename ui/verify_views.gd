@@ -21,13 +21,22 @@ func run() -> void:
   root.add_child(view)
   view.call("render", samples[key])
   await process_frame
+  if key == "experiment":
+   view.size.x = 920
+   await process_frame
+   check(view.get_node("ReleaseExperiment").position.y < 350, "release stays within compact configuration area")
+   var choice: Button = view.get_node("ExperimentChoices/Experiment_mass") as Button
+   choice.grab_focus()
+   choice.pressed.emit()
+   await process_frame
+   check(root.gui_get_focus_owner() == view.get_node("ExperimentChoices/Experiment_mass"), "configuration focus survives selection")
   if key == "battle":
    var evidence: CheckBox = view.get_node("Evidence_c1_e1") as CheckBox
    check(evidence != null, "stable evidence node")
    evidence.grab_focus()
    evidence.button_pressed = true
    await process_frame
-   var card: Button = view.get_node("Card_measure") as Button
+   var card: Button = view.get_node("Cards/Card_measure") as Button
    var received: Array = []
    view.connect("action_requested", func(kind: String, target: String, payload: Dictionary) -> void: received.append([kind,target,payload]))
    card.pressed.emit()

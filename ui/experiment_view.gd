@@ -28,7 +28,14 @@ func render(data: Dictionary) -> void:
  end_render()
 
 func _choice(key: String, title: String, options: Array, selected: String, locked: bool) -> void:
- line(title)
+ var row: HBoxContainer = HBoxContainer.new()
+ row.name = key + "Choices"
+ row.add_theme_constant_override("separation", 8)
+ add_child(row)
+ var caption: Label = Label.new()
+ caption.text = title
+ caption.custom_minimum_size.x = 48
+ row.add_child(caption)
  match key:
   "Experiment": experiment = selected
   "Medium": medium = selected
@@ -41,6 +48,8 @@ func _choice(key: String, title: String, options: Array, selected: String, locke
   pick.set_meta("semantic_key", str(pick.name))
   pick.text = ("● " if selected == id else "○ ") + str(option.title)
   pick.custom_minimum_size.y = 40
+  pick.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+  pick.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
   pick.disabled = locked
   pick.pressed.connect(func() -> void:
    match key:
@@ -49,4 +58,4 @@ func _choice(key: String, title: String, options: Array, selected: String, locke
     "Shape": shape = id
    _data.erase("choices")
    render(_data))
-  add_child(pick)
+  row.add_child(pick)
