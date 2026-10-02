@@ -342,7 +342,7 @@ func snapshot() -> Dictionary:
   "profile":profile.duplicate(true),"world":world.duplicate(true),"inventory":inventory.duplicate(),"visited":visited.duplicate(),
   "histories":histories.duplicate(true),"track":track.duplicate(true),"events":events.duplicate(true),"echo_cursors":echo_cursors.duplicate(),
   "echo_sample_cursors":echo_sample_cursors.duplicate(),"deviations":deviations.duplicate(true),"settled":settled.duplicate(),
-  "evidence":evidence.duplicate(true),"pending_experiment":pending_experiment.duplicate(true),"holds":holds.duplicate(true),"finale":finale.duplicate(true),"knowledge_access":knowledge_access.duplicate(true),"checkpoint_locked":checkpoint_locked,"dodge_ticks":dodge_ticks,"dodge_cooldown_ticks":dodge_cooldown_ticks,"loadout":loadout.duplicate(),"seq":_seq,"mode":"model" if battle != null else "world","battle":battle.state.duplicate(true) if battle != null else {}}
+  "evidence":evidence.duplicate(true),"pending_experiment":pending_experiment.duplicate(true),"holds":holds.duplicate(true),"finale":finale.duplicate(true),"knowledge_access":knowledge_access.duplicate(true),"checkpoint_locked":checkpoint_locked,"dodge_ticks":dodge_ticks,"dodge_cooldown_ticks":dodge_cooldown_ticks,"loadout":loadout.duplicate(),"seq":_seq,"mode":"model" if mode=="model" else "world","battle":battle.state.duplicate(true) if battle != null else {}}
 func restore(data: Dictionary) -> bool:
  if not SaveValidator.validate(data,content).is_empty(): return false
  if not data.has_all(["cycle","tick","room","position","profile","world","histories","track"]): return false
@@ -378,7 +378,7 @@ func restore(data: Dictionary) -> bool:
  evidence=base.evidence.duplicate(true);pending_experiment=base.pending_experiment.duplicate(true);holds=base.holds.duplicate(true);finale=base.finale.duplicate(true);knowledge_access=base.knowledge_access.duplicate(true);checkpoint_locked=base.checkpoint_locked;dodge_ticks=int(base.dodge_ticks);dodge_cooldown_ticks=int(base.dodge_cooldown_ticks)
  mode = "world";battle = null
  if not base.battle.is_empty():
-  battle = ModelBattle.new(content.encounters[base.battle.id],evidence);battle.state = base.battle.duplicate(true);mode = "model"
+  battle = ModelBattle.new(content.encounters[base.battle.id],evidence);battle.state = base.battle.duplicate(true);mode = base.mode
  changed.emit()
  return true
 func set_checkpoint() -> void:
