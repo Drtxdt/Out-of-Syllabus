@@ -27,6 +27,8 @@ var examiner: PixelActor
 var release_display: Label
 var battle_presentation: Dictionary = {}
 func _ready() -> void:
+ var qa_input: bool="--qa-input" in OS.get_cmdline_user_args()
+ if qa_input and RuntimePaths.profile_id().is_empty(): get_tree().quit(2);return
  content = GameContent.new();session = GameSession.new(content);saves = SaveStore.new();settings = InputSettings.new()
  session.changed.connect(update_hud);session.notice.connect(ui.toast)
  for entry: Array in [["因果面板",show_causal],["实验日志",show_journal],["卡组",show_loadout],["等待关键动作",wait_five],["检查点",restore_checkpoint],["保存",save_game],["设置",show_settings]]:
@@ -34,6 +36,9 @@ func _ready() -> void:
  if ResourceLoader.exists("res://assets/audio/confirm.wav"): feedback_sound.stream = load("res://assets/audio/confirm.wav")
  load_room();session.set_checkpoint();session.cycle_checkpoint=session.snapshot()
  if not suppress_intro: show_welcome()
+ if qa_input:
+  var driver: Node=Node.new()
+  driver.set_script(load("res://qa/input_driver.gd"));add_child(driver)
 func load_room() -> void:
  if room_node != null:
   world_node.remove_child(room_node);room_node.queue_free()

@@ -28,3 +28,5 @@ S0 retains schema2 solely until baseline validated. v0.2 switches to schema3/con
 Battle State 增加 `suspended: bool`：模型模式必须有未挂起论证，世界模式只允许显式挂起论证。追逐被捕存为 menu 并只能通过检查点重试。证据数值校验采用 1e-9 的序列化误差界限（远小于 0.01s 实验容差），仍重算科学结果，不放过伪造结果。未来方法有独立 KnowledgeAccess，理解不会授予许可。
 
 RuntimePaths 支持绝对 `OOS_QA_ROOT` / `--qa-root`，导出游戏测试同样隔离。GUI/无头脚本始终显式指定日志路径。沙箱外隔离运行已确认 Windows 证书错误不会出现；最终脚本不忽略任何运行时错误。
+
+独立包输入验收：`tools/verify_export.ps1 -RunId exe-check -Render`。发布模板不运行外部 SceneTree 脚本，故使用包内同一输入驱动器；只有显式 `--qa-input` 且存在隔离 profile 时启用，正常玩家启动不加载。驱动器只发移动/按键/UI事件，结果仍由正常会话结算。
