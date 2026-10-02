@@ -43,7 +43,10 @@ func render(data: Dictionary) -> void:
   check.toggled.connect(func(pressed: bool) -> void:
    if pressed and not id in selected_ids: selected_ids.append(id)
    elif not pressed: selected_ids.erase(id)
-   render(_data))
+   render(_data)
+   # The adapter can recompute card availability from the selected evidence.
+   # Emit after the standalone redraw so the adapter's fresh projection wins.
+   action_requested.emit("selection_changed", "", {"evidence_ids":selected_ids.duplicate()}))
   add_child(check)
  selected_ids.assign(selected_ids.filter(func(id: String) -> bool: return id in available))
  if available.is_empty(): line("没有已读取的记录。返回实验室测量并读取仪器。")

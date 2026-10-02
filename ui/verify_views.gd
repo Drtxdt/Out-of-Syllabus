@@ -33,9 +33,13 @@ func run() -> void:
   if key == "battle":
    var evidence: CheckBox = view.get_node("Evidence_c1_e1") as CheckBox
    check(evidence != null, "stable evidence node")
+   var selections: Array = []
+   view.connect("action_requested", func(kind: String, _target: String, payload: Dictionary) -> void:
+    if kind == "selection_changed": selections.append(payload.evidence_ids))
    evidence.grab_focus()
    evidence.button_pressed = true
    await process_frame
+   check(selections == [["c1:e1"]], "selection change notifies adapter")
    var card: Button = view.get_node("Cards/Card_measure") as Button
    var received: Array = []
    view.connect("action_requested", func(kind: String, target: String, payload: Dictionary) -> void: received.append([kind,target,payload]))
