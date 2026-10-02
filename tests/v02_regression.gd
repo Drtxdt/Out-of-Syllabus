@@ -194,8 +194,61 @@ func _initialize() -> void:
  if probe.get("evidence") == null:
   check(false,"v0.2 core required")
  else:
-  test_evidence();test_holds();test_checkpoint();test_storage()
+  test_evidence();test_holds();test_replay_rig();test_checkpoint();test_storage()
  var report: Dictionary = {"suite":"v02-domain","kind":"unit fixtures, not input walkthrough","checks":checks,"failures":failures,"engine":Engine.get_version_info().string,"profile":RuntimePaths.profile_id(),"limitations":["No GUI screenshot or human playtime claim","Certificate-store errors must be reported from process log separately"]}
  write_text(RuntimePaths.report_path("v02-regression.json"),JSON.stringify(report,"  "))
  print("V02 REGRESSION: ",checks," checks; failures=",failures)
  quit(0 if failures.is_empty() else 1)
+
+func replay_track(cycle_number: int, station: String, position: Vector2, leave_tick: int = 7921) -> Dictionary:
+ return {"cycle":cycle_number,"track":{"samples":[
+  {"tick":7199,"room":"lab","x":position.x,"y":position.y,"direction":"up","moving":false},
+  {"tick":leave_tick,"room":"lab","x":304.0,"y":240.0,"direction":"down","moving":true}],
+  "events":[{"seq":1,"cycle":cycle_number,"tick":7200,"actor":"player","room":"lab","kind":"hold_begin","target":station,"payload":{}},
+  {"seq":2,"cycle":cycle_number,"tick":7920,"actor":"player","room":"lab","kind":"hold_end","target":station,"payload":{}}]}}
+
+func rig_fixture(echo_count: int = 2, leave_tick: int = 7921) -> Variant:
+ var s: Variant = fixture()
+ s.cycle = 3;s.tick = 7198;s.world.pump = true
+ if echo_count >= 1:
+  s.histories.append(replay_track(1,"assist_a",Vector2(144,144),leave_tick))
+  s.echo_cursors.append(0);s.echo_sample_cursors.append(0)
+ if echo_count >= 2:
+  s.histories.append(replay_track(2,"assist_b",Vector2(464,144)))
+  s.echo_cursors.append(0);s.echo_sample_cursors.append(0)
+ return s
+
+func test_replay_rig() -> void:
+ for count: int in [0,1]:
+  var incomplete: Variant = rig_fixture(count)
+  incomplete.advance(2)
+  denied(incomplete,"experiment","lab_drop",{"experiment":"initial","medium":"vacuum","shape":"flat"})
+ var s: Variant = rig_fixture()
+ var sealed: String = canonical(s.histories)
+ s.advance(2)
+ check(s.holds.size() == 2,"two historical roles hold A and B simultaneously")
+ check(s.holds.get("assist_a",{}).get("actor","") != s.holds.get("assist_b",{}).get("actor",""),"historical station actors distinct")
+ measure(s,"initial","vacuum")
+ check(canonical(s.histories) == sealed,"replaying measurement preserves sealed history")
+ var left: Variant = rig_fixture(2,7201)
+ left.advance(3)
+ check(not left.holds.has("assist_a"),"historical pose leaving releases A without rendering")
+ denied(left,"experiment","lab_drop",{"experiment":"initial","medium":"vacuum","shape":"flat"})
+ var power: Variant = rig_fixture()
+ power.player_position = Vector2(560,240)
+ check(power.command("switch","rig_power",{"value":false}).ok,"player may cut rig power")
+ power.advance(2)
+ check(power.holds.is_empty(),"power loss prevents historical hold")
+ check(not power.deviations.is_empty(),"failed history has actionable causal deviation")
+ check(canonical(power.histories) == sealed,"causal failure cannot rewrite history")
+ var late: Variant = rig_fixture()
+ late.advance(723)
+ check(late.holds.is_empty(),"missed window does not silently shift history")
+ denied(late,"experiment","lab_drop",{"experiment":"initial","medium":"vacuum","shape":"flat"})
+ var regular: Variant = rig_fixture()
+ var fast: Variant = rig_fixture()
+ regular.advance(2)
+ fast.wait_next()
+ check(fast.tick == regular.tick,"wait stops at actual next historical action")
+ check(canonical(fast.world) == canonical(regular.world) and canonical(fast.holds) == canonical(regular.holds),"wait settles same rig actions as ticks")
+
