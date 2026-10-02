@@ -206,5 +206,9 @@ func finish() -> void:
  else:
   file.store_string(JSON.stringify(report,"  "));file.close()
  print("INPUT WALKTHROUGH: ",JSON.stringify(report))
+ if is_instance_valid(app): app.queue_free()
+ app=null
+ await process_frame
+ await process_frame
  quit(0 if failures.is_empty() else 1)
 
