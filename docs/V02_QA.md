@@ -11,3 +11,18 @@ Route is a JSON array. Supported steps: click(label: Button name or text), actio
 Actual checks so far: 2026-10-03, Godot 4.7.2, input smoke 7/7 steps passed on the pre-v0.2 baseline. Domain draft syntax loaded and deliberately rejected schema 2/missing v0.2 core. Windows sandbox root certificate-store read errors occurred and are environment errors, not clean engine success. Cold editor import also reported exit resource leaks. No GUI, screenshot, ending or human-time validation was performed by this workstream yet.
 
 Save fault tests distinguish simulated hooks from a real failure where a regular file occupies the intended parent directory. Neither covers disk-full or physical disk loss.
+
+## Expanded coverage and discovered gaps (core 42ac40e)
+
+Actual domain run on 2026-10-03: 396 assertions passed, covering two drag proof paths, accept/refuse route state machines, manual falling-gate timing, chase catch and local rewind, dodge duration, completion idempotency and restore. Fixtures are unit setup, not three-loop user input completion.
+
+`tests/adversarial_contracts.gd` deliberately keeps strict failure assertions for production gaps. Observed on 42ac40e:
+
+- Evidence metadata accepts array origin_actor, source_cycle inconsistent with source_event_id, and future evidence tick. Science result recomputation correctly rejects forged observations.
+- Restore accepts model mode without a battle and world mode with one, plus fractional cycle numbers. Contradictory modes normalize silently instead of rejecting atomically.
+- Historical switch payload `value: []` passes validation; invalid input should reject before restore.
+- Finale prediction has no nested numeric/origin checks; a string time_s survives restore. Completed phase can disagree with profile.completed.
+- Echo command context is accepted merely when nonempty and near a target. A fabricated c1:e999 source with wrong room can mutate power, without a matching sealed event.
+- Caught phase snapshots normalize mode to world; reloading unpauses simulation while still caught (additional regression pending rerun when authored).
+
+Future versions in backup, unknown/predicted cited IDs, invalid checkpoint dictionaries and modified observed measurements correctly reject. These cases are maintained alongside failing cases, not marked as skips or expected passes.

@@ -194,7 +194,7 @@ func _initialize() -> void:
  if probe.get("evidence") == null:
   check(false,"v0.2 core required")
  else:
-  test_evidence();test_holds();test_replay_rig();test_checkpoint();test_storage()
+  test_evidence();test_holds();test_replay_rig();test_checkpoint();test_storage();test_legacy_invariants();test_drag_paths();test_finale_routes()
  var report: Dictionary = {"suite":"v02-domain","kind":"unit fixtures, not input walkthrough","checks":checks,"failures":failures,"engine":Engine.get_version_info().string,"profile":RuntimePaths.profile_id(),"limitations":["No GUI screenshot or human playtime claim","Certificate-store errors must be reported from process log separately"]}
  write_text(RuntimePaths.report_path("v02-regression.json"),JSON.stringify(report,"  "))
  print("V02 REGRESSION: ",checks," checks; failures=",failures)
@@ -251,4 +251,159 @@ func test_replay_rig() -> void:
  fast.wait_next()
  check(fast.tick == regular.tick,"wait stops at actual next historical action")
  check(canonical(fast.world) == canonical(regular.world) and canonical(fast.holds) == canonical(regular.holds),"wait settles same rig actions as ticks")
+
+
+func test_legacy_invariants() -> void:
+ check(content.chapter.rooms.size()==6,"six authored rooms retained")
+ check(content.cards.size()==13,"thirteen cards including future retained")
+ var object_ids: Dictionary={}
+ for room: Dictionary in content.chapter.rooms:
+  check(ResourceLoader.exists("res://world/rooms/"+room.id+".tscn"),"room scene " + room.id)
+  for object: Dictionary in room.objects:
+   check(not object_ids.has(object.id),"stable unique object " + object.id)
+   object_ids[object.id]=true
+ var free_a: float=ExperimentModel.fall_time(2,0.01,0.006,0)
+ var free_b: float=ExperimentModel.fall_time(2,10,0.001,0)
+ check(is_equal_approx(free_a,free_b),"vacuum mass independent")
+ check(absf(free_a-sqrt(4.0/9.81))<0.0001,"vacuum analytic limit")
+ check(ExperimentModel.fall_time(2,0.002,0.006)>ExperimentModel.fall_time(2,0.002,0.00025),"shape alters drag with same mass")
+ check(ExperimentModel.fall_time(-1,1,1)<0,"invalid height rejects")
+ check(ExperimentModel.fall_time(2,1,1,1,-1)<0,"invalid drag coefficient rejects")
+ var s: Variant=fixture()
+ var id: String=measure(s)
+ var model: ModelBattle=ModelBattle.new(content.encounters.mass,s.evidence)
+ check(not model.play(content.cards.measurement,[id]).ok,"measurement first requires controlled conditions")
+ check(not model.play(content.cards.experiment,[id]).ok,"design first requires observation")
+ check(not model.play(content.cards.future,[id]).ok,"future card cannot bypass model domain")
+ for card: String in ["observe","control","measurement","weight"]: model.play(content.cards[card],[id])
+ check(not model.state.won,"heavier-faster model conflicts with record")
+ check(model.conditions().any(func(c: Dictionary) -> bool: return c.status=="contradicted"),"wrong model explains contradiction explicitly")
+ check(not model.play(content.cards.domain,[id]).ok,"domain restriction cannot rescue wrong model")
+ model.play(content.cards.rebuttal,[id])
+ check(model.state.model=="none","counterexample withdraws mass hypothesis")
+ var budget: ModelBattle=ModelBattle.new(content.encounters.mass,s.evidence)
+ for _i: int in range(16): budget.play(content.cards.observe,[id])
+ check(budget.state.failed,"finite round budget fails unfinished argument")
+ var previous: String=canonical(budget.state)
+ check(not budget.play(content.cards.gravity,[id]).ok and canonical(budget.state)==previous,"failed battle does not accept more cards")
+ var p: Variant=GameSession.new(content)
+ var before: int=p.tick
+ p.mode="menu";p.advance(300)
+ check(p.tick==before,"modal stops world and echo time")
+ p.mode="world"
+ denied(p,"visit","archive")
+ denied(p,"switch","drag",{"value":true})
+ denied(p,"pickup","kit")
+ p.player_position=Vector2(432,136)
+ check(p.command("switch","switch_a",{"value":true}).ok,"switch near correct room")
+ denied(p,"switch","switch_a",{"expected":false,"value":false})
+ denied(p,"switch","switch_a",{"value":"true"})
+ # Echo switch attribution and replay cursor progression do not depend on rendering.
+ var replay: Variant=GameSession.new(content)
+ replay.cycle=2
+ replay.histories=[{"cycle":1,"track":{"samples":[{"tick":0,"room":"storage","x":448,"y":128,"direction":"up","moving":false}],"events":[{"seq":1,"cycle":1,"tick":1,"actor":"player","room":"storage","kind":"switch","target":"switch_b","payload":{"value":true}}]}}]
+ replay.echo_cursors=[0];replay.echo_sample_cursors=[0]
+ var sealed: String=canonical(replay.histories)
+ replay.advance(2)
+ check(replay.world.switch_b,"offscreen historical switch acts")
+ check(replay.events.size()==1 and replay.events[0].room=="storage" and replay.events[0].source_event_id=="c1:e1","echo preserves original room and source")
+ check(replay.track.events.is_empty(),"echo does not recursively enter player track")
+ replay.advance(20)
+ check(replay.events.size()==1,"replay cursor avoids duplicate application")
+ check(canonical(replay.histories)==sealed,"replay leaves sealed source unchanged")
+
+func full_drag_fixture(repeat: bool=false) -> Variant:
+ var s: Variant=fixture()
+ measure(s,"mass")
+ if repeat: measure(s,"mass")
+ measure(s,"initial")
+ measure(s,"shape")
+ s.cycle=3;s.tick=7198;s.world.pump=true
+ s.histories=[replay_track(1,"assist_a",Vector2(144,144)),replay_track(2,"assist_b",Vector2(464,144))]
+ s.echo_cursors=[0,0];s.echo_sample_cursors=[0,0]
+ s.advance(2)
+ measure(s,"initial","vacuum")
+ return s
+
+func test_drag_paths() -> void:
+ for repeat: bool in [false,true]:
+  var s: Variant=full_drag_fixture(repeat)
+  var ids: Array=[]
+  for record: Dictionary in s.evidence: ids.append(record.id)
+  if not check(s.start_battle("drag"),"start full drag proof"): continue
+  play_proof(s,ids,repeat)
+  check(not s.battle.state.won,"gravity alone cannot erase air difference")
+  check(s.play_card("vacuum",ids).ok,"vacuum citation")
+  check(not s.battle.state.won,"vacuum alone cannot erase air counterexample")
+  check(s.play_card("shape",ids).ok,"shape citation")
+  check(s.play_card("drag",ids).ok,"drag model revision")
+  check(s.battle.state.won,"complete drag path " + ("repeat" if repeat else "measurement"))
+  check(s.finish_battle() and s.world.drag,"drag settlement " + str(repeat))
+  check("drag" in s.profile.knowledge,"drag knowledge granted")
+  check(s.knowledge_access.drag.understood and s.knowledge_access.drag.authorized,"understanding and authorization represented independently")
+
+func prepare_finale(accepted: bool) -> Variant:
+ var s: Variant=fixture()
+ var calibration: String=measure(s,"initial")
+ s.cycle=3;s.world.drag=true;s.room_id="archive";s.player_position=Vector2(320,160)
+ check(s.command("choose_future","future_terminal",{"accept":accepted}).ok,"choose final route " + str(accepted))
+ check(not s.profile.completed and s.profile.violation==0,"choice alone does not finish or violate")
+ if accepted:
+  denied(s,"predict_gate","future_terminal",{"model":"gravity","medium":"air","shape":"flat"})
+  check(s.command("predict_gate","future_terminal",{"model":"drag","medium":"air","shape":"flat"}).ok,"valid numerical prediction")
+  check(s.profile.violation==1 and s.finale.used,"actual future use records one violation")
+  denied(s,"predict_gate","future_terminal",{"model":"drag","medium":"air","shape":"flat"})
+  check(s.profile.violation==1,"duplicate prediction cannot double violation")
+ else:
+  denied(s,"calibrate_gate","future_terminal",{"evidence_id":"fake-prediction"})
+  check(s.command("calibrate_gate","future_terminal",{"evidence_id":calibration}).ok,"existing measurement calibrates refuse route")
+  check(s.profile.violation==0,"measurement route has no violation")
+ return s
+
+func complete_finale(s: Variant) -> void:
+ s.room_id="corridor";s.player_position=Vector2(224,256)
+ denied(s,"visit","tower")
+ check(s.command("gate_release","fall_gate").ok,"manual falling-gate release")
+ var opening: int=int(s.finale.open_tick)
+ s.advance(opening-s.tick-1)
+ denied(s,"visit","tower")
+ s.advance(1)
+ check(s.command("visit","tower").ok,"tower entry during measured/predicted window")
+ check(not s.profile.completed and s.finale.phase=="escaped","arrival does not auto-submit")
+ s.player_position=Vector2(320,144)
+ check(s.command("ending","cycle_console").ok,"tower terminal submits record")
+ var violation: int=s.profile.violation
+ var event_count: int=s.events.size()
+ check(s.command("ending","cycle_console").ok,"repeat ending safely acknowledged")
+ check(s.events.size()==event_count and s.profile.violation==violation,"ending idempotent")
+ check(s.profile.completed and s.finale.phase=="complete","finale complete persisted")
+ var restored: Variant=GameSession.new(content)
+ check(restored.restore(s.snapshot()),"completed finale snapshot valid")
+ check(restored.profile.completed and restored.profile.violation==violation,"completion survives restore")
+
+func test_finale_routes() -> void:
+ var accepted: Variant=prepare_finale(true)
+ accepted.advance(120)
+ check(accepted.finale.phase=="chase","warning transitions to chase on clock")
+ accepted.advance(120)
+ check(accepted.finale.phase=="caught" and accepted.mode=="menu","examiner contact creates retry state")
+ check(accepted.rewind(),"caught can restore local checkpoint")
+ check(accepted.finale.phase=="warning" and accepted.profile.violation==1,"rewind preserves once-only ability use")
+ complete_finale(accepted)
+ var refused: Variant=prepare_finale(false)
+ complete_finale(refused)
+ var late: Variant=prepare_finale(false)
+ late.room_id="corridor";late.player_position=Vector2(224,256)
+ late.command("gate_release","fall_gate")
+ late.advance(int(late.finale.close_tick)-late.tick+1)
+ denied(late,"visit","tower")
+ check(late.command("gate_release","fall_gate").ok,"missed falling-gate window can be released again")
+ var dodging: Variant=prepare_finale(true)
+ dodging.finale.phase="chase";dodging.finale.examiner_position=[320.0,160.0]
+ check(dodging.command("dodge","").ok,"dodge begins")
+ dodging.advance()
+ check(dodging.finale.phase=="chase","dodge avoids contact")
+ denied(dodging,"dodge","")
+ dodging.advance(10)
+ check(dodging.finale.phase=="caught","expired dodge no longer avoids contact")
 
