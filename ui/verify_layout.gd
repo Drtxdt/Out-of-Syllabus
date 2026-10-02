@@ -23,6 +23,8 @@ func run() -> void:
   root.add_child(viewport)
   var ui: GameUI = load("res://ui/game_ui.tscn").instantiate()
   viewport.add_child(ui)
+  ui.objective.text = "当前问题：统一高度与初速度，读取实测记录，再检验重力与阻力模型。\n第 1 轮回声：即将维持 A 稳压工位，距离下一动作还有 12 秒。\n第 2 轮回声：即将维持 B 安全锁，准备亲手操作 C 释放记录。"
+  ui.prompt.text = "附近交互：按 E 操作实验装置；按 Shift 闪避；按 J 查看实验日志。"
   var world: SubViewportContainer = SubViewportContainer.new()
   world.set_script(load("res://app/world_frame.gd"))
   var world_viewport: SubViewport = SubViewport.new()
@@ -47,6 +49,10 @@ func run() -> void:
   var visible_bottom: float = scroll.get_global_rect().end.y
   print("LAYOUT ",dimensions," toolbar=",ui.toolbar.size.x," modal=",ui.panel.size," release_bottom=",release_bottom," visible_bottom=",visible_bottom," body=",ui.body.size)
   check(ui.toolbar.get_global_rect().end.x <= dimensions.x, "%s toolbar remains on-screen" % dimensions)
+  var footer: PanelContainer = ui.get_node("Footer")
+  check(absf(footer.get_global_rect().end.y - dimensions.y) <= 1, "%s adaptive footer stays bottom-aligned" % dimensions)
+  check(ui.prompt.get_global_rect().end.y <= dimensions.y, "%s multiline objective leaves prompt visible" % dimensions)
+  check(ui.objective.get_global_rect().end.y <= ui.prompt.get_global_rect().position.y, "%s objective and prompt do not overlap" % dimensions)
   check(ui.body.size.x <= scroll.size.x, "%s experiment avoids horizontal overflow" % dimensions)
   check(release_bottom <= visible_bottom, "%s release visible above 40 records" % dimensions)
   var close: Button = view.get_node("CloseExperiment")
