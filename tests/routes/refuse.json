@@ -74,6 +74,10 @@
     "label": "Medium_air"
   },
   {
+    "kind": "screenshot",
+    "name": "experiment-initial-air"
+  },
+  {
     "kind": "click",
     "label": "ReleaseExperiment"
   },
@@ -211,6 +215,10 @@
     "label": "Medium_air"
   },
   {
+    "kind": "screenshot",
+    "name": "experiment-mass-air"
+  },
+  {
     "kind": "click",
     "label": "ReleaseExperiment"
   },
@@ -241,6 +249,10 @@
   },
   {
     "kind": "select_all"
+  },
+  {
+    "kind": "screenshot",
+    "name": "battle-mass"
   },
   {
     "kind": "click",
@@ -383,6 +395,10 @@
     "label": "Medium_air"
   },
   {
+    "kind": "screenshot",
+    "name": "experiment-shape-air"
+  },
+  {
     "kind": "click",
     "label": "ReleaseExperiment"
   },
@@ -425,6 +441,10 @@
     "label": "Medium_vacuum"
   },
   {
+    "kind": "screenshot",
+    "name": "experiment-initial-vacuum"
+  },
+  {
     "kind": "click",
     "label": "ReleaseExperiment"
   },
@@ -433,6 +453,10 @@
     "path": "pending_experiment",
     "value": {},
     "timeout_frames": 300
+  },
+  {
+    "kind": "screenshot",
+    "name": "joint-vacuum-world"
   },
   {
     "kind": "interact",
@@ -455,6 +479,10 @@
   },
   {
     "kind": "select_all"
+  },
+  {
+    "kind": "screenshot",
+    "name": "battle-drag"
   },
   {
     "kind": "click",

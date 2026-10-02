@@ -8,6 +8,8 @@ var started_ms: int = 0
 var route_name: String = "smoke"
 var auto_dodge: bool = false
 var screenshots: Array[String] = []
+var process_ms: Array[float] = []
+var physics_ms: Array[float] = []
 
 func _initialize() -> void:
  if RuntimePaths.profile_id().is_empty():
@@ -20,7 +22,10 @@ func fail(message: String) -> void:
  push_error(message)
 
 func frame(count: int = 1) -> void:
- for _i: int in range(count): await physics_frame
+ for _i: int in range(count):
+  await physics_frame
+  process_ms.append(Performance.get_monitor(Performance.TIME_PROCESS)*1000.0)
+  physics_ms.append(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS)*1000.0)
 
 func action(name: String, pressed: bool) -> void:
  var event: InputEventAction = InputEventAction.new()
@@ -68,13 +73,13 @@ func move_to(target: Vector2, limit: int = 1800) -> bool:
   if delta.length() <= 4.0:
    release_motion();await frame();return true
   if app.session.mode != "world":
-   release_motion();fail("Movement attempted while modal: " + str(app.session.mode));return false
+   release_motion();fail("Movement attempted while modal: " + str(app.session.mode) + " position=" + str(app.session.player_position) + " examiner=" + str(app.session.finale.examiner_position));return false
   action("move_right",delta.x > 2.5)
   action("move_left",delta.x < -2.5)
   action("move_down",delta.y > 2.5)
   action("move_up",delta.y < -2.5)
   if auto_dodge:
-   action("dodge",_i % 49 == 0)
+   action("dodge",app.session.dodge_cooldown_ticks == 0)
   await frame()
   var current: Vector2 = app.session.player_position
   stagnant = stagnant + 1 if current.distance_to(previous) < 0.01 else 0
@@ -121,6 +126,8 @@ func step(data: Dictionary) -> bool:
   "assert_pursuer":
    if app.session.finale.phase!="chase" or app.session.finale.examiner_room!=app.session.room_id:
     fail("Active chase has no pursuer in player room");return false
+   if not app.session.events.any(func(event: Dictionary) -> bool: return event.kind=="dodge" and event.actor=="player"):
+    fail("Pursuit route has no real player dodge event");return false
   "read_all":
    for _i: int in range(30):
     var candidates: Array[Button]=[]
@@ -148,7 +155,7 @@ func step(data: Dictionary) -> bool:
    if DisplayServer.get_name()=="headless":
     print("SCREENSHOT SKIPPED: headless renderer")
    else:
-    await process_frame
+    await RenderingServer.frame_post_draw
     var image: Image=root.get_texture().get_image()
     var path: String=RuntimePaths.report_path(str(data.get("name","frame"))+".png")
     if image.save_png(path)!=OK: fail("Screenshot write failed");return false
@@ -156,6 +163,10 @@ func step(data: Dictionary) -> bool:
   "action": await tap(str(data.action))
   "move": return await move_to(Vector2(float(data.x),float(data.y)))
   "interact": return await interact(str(data.id))
+  "interact_near":
+   if app.nearest.get("id","")!=str(data.id):
+    fail("Near interaction expected " + str(data.id) + ", got " + str(app.nearest));return false
+   await tap("interact")
   "wait": await frame(int(data.get("frames",60)))
   "until":
    for _i: int in range(int(data.get("timeout_frames",1800))):
@@ -197,9 +208,17 @@ func run() -> void:
   steps_completed += 1
  finish()
 
+func timing(values: Array[float]) -> Dictionary:
+ if values.is_empty(): return {"samples":0}
+ var ordered: Array[float]=values.duplicate()
+ ordered.sort()
+ var total: float=0.0
+ for value: float in ordered: total+=value
+ return {"samples":ordered.size(),"mean_ms":total/ordered.size(),"p95_ms":ordered[mini(ordered.size()-1,int(ceil(ordered.size()*0.95))-1)],"max_ms":ordered.back()}
+
 func finish() -> void:
  release_motion()
- var report: Dictionary = {"suite":"input-only","route":route_name,"steps_completed":steps_completed,"failures":failures,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started_ms,"screenshots":screenshots,"completion":app.session.profile.completed if app != null else false,"limitations":["Headless input validation is not visual screenshot acceptance","Default route is movement smoke only; both endings require explicit routes"]}
+ var report: Dictionary = {"suite":"input-only","route":route_name,"steps_completed":steps_completed,"failures":failures,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started_ms,"screenshots":screenshots,"timing":{"process":timing(process_ms),"physics":timing(physics_ms),"renderer":DisplayServer.get_name(),"note":"CPU timing samples from Godot Performance monitors. Fixed-fps simulation does not measure wall-clock FPS or player playtime."},"completion":app.session.profile.completed if app != null else false,"limitations":["Headless input validation is not visual screenshot acceptance","Default route is movement smoke only; both endings require explicit routes"]}
  var file: FileAccess = FileAccess.open(RuntimePaths.report_path("input-walkthrough.json"),FileAccess.WRITE)
  if file == null:
   fail("Could not write input report")

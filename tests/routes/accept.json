@@ -74,6 +74,10 @@
     "label": "Medium_air"
   },
   {
+    "kind": "screenshot",
+    "name": "experiment-initial-air"
+  },
+  {
     "kind": "click",
     "label": "ReleaseExperiment"
   },
@@ -211,6 +215,10 @@
     "label": "Medium_air"
   },
   {
+    "kind": "screenshot",
+    "name": "experiment-mass-air"
+  },
+  {
     "kind": "click",
     "label": "ReleaseExperiment"
   },
@@ -241,6 +249,10 @@
   },
   {
     "kind": "select_all"
+  },
+  {
+    "kind": "screenshot",
+    "name": "battle-mass"
   },
   {
     "kind": "click",
@@ -383,6 +395,10 @@
     "label": "Medium_air"
   },
   {
+    "kind": "screenshot",
+    "name": "experiment-shape-air"
+  },
+  {
     "kind": "click",
     "label": "ReleaseExperiment"
   },
@@ -425,6 +441,10 @@
     "label": "Medium_vacuum"
   },
   {
+    "kind": "screenshot",
+    "name": "experiment-initial-vacuum"
+  },
+  {
     "kind": "click",
     "label": "ReleaseExperiment"
   },
@@ -433,6 +453,10 @@
     "path": "pending_experiment",
     "value": {},
     "timeout_frames": 300
+  },
+  {
+    "kind": "screenshot",
+    "name": "joint-vacuum-world"
   },
   {
     "kind": "interact",
@@ -455,6 +479,10 @@
   },
   {
     "kind": "select_all"
+  },
+  {
+    "kind": "screenshot",
+    "name": "battle-drag"
   },
   {
     "kind": "click",
@@ -524,6 +552,26 @@
     "label": "选择重力＋阻力模型并计算"
   },
   {
+    "kind": "until",
+    "path": "finale.phase",
+    "value": "caught",
+    "timeout_frames": 600
+  },
+  {
+    "kind": "click",
+    "label": "恢复追逐检查点"
+  },
+  {
+    "kind": "assert",
+    "path": "finale.phase",
+    "value": "warning"
+  },
+  {
+    "kind": "assert",
+    "path": "profile.violation",
+    "value": 1
+  },
+  {
     "kind": "auto_dodge",
     "enabled": true
   },
@@ -546,14 +594,20 @@
     "id": "fall_gate"
   },
   {
-    "kind": "wait",
-    "frames": 52
+    "kind": "move",
+    "x": 164,
+    "y": 232
   },
   {
     "kind": "assert_pursuer"
   },
   {
-    "kind": "interact",
+    "kind": "move",
+    "x": 180,
+    "y": 284
+  },
+  {
+    "kind": "interact_near",
     "id": "to_tower"
   },
   {

@@ -26,3 +26,11 @@ Actual domain run on 2026-10-03: 396 assertions passed, covering two drag proof 
 - Caught phase snapshots normalize mode to world; reloading unpauses simulation while still caught (additional regression pending rerun when authored).
 
 Future versions in backup, unknown/predicted cited IDs, invalid checkpoint dictionaries and modified observed measurements correctly reject. These cases are maintained alongside failing cases, not marked as skips or expected passes.
+
+## Final headless verification after 5ec7949 (2026-10-03)
+
+Actual reruns: domain 477/477, adversarial 70/70; virtual archive round-trip passed (108000 ticks, 18001 samples, 1,872,886 bytes, save 273 ms, load 188 ms in this run). Both full input-only routes pass and verify persisted completion: refuse 143/143, accept 149/149. Accept intentionally gets caught, activates the UI checkpoint restore, verifies violation remains one, then escapes using actual movement/dodge events while the examiner is in the same room. No production state writes occur in this harness.
+
+The route generator preserves reproducible JSON routes. It inserts screenshot steps for four experiment configurations, both argument desks, the joint vacuum world scene and ending. Headless runs explicitly skip captures; graphical runs wait for frame_post_draw and save actual viewport pixels under the QA report path.
+
+Input reports include Godot Performance TIME_PROCESS/TIME_PHYSICS_PROCESS monitor sample max/p95/mean. These are monitor snapshots, not an independent per-frame stopwatch; monitors can retain a recent measurement across multiple samples. Fixed-fps headless execution is accelerated simulation, not an FPS or human playtime measurement. The tested runs still emitted the sandbox certificate-store error; main integration is separately testing outside that restriction. No GUI was launched by this QA workstream.
