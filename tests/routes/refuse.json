@@ -1,0 +1,586 @@
+[
+  {
+    "kind": "click",
+    "label": "开始新的记录"
+  },
+  {
+    "kind": "interact",
+    "id": "switch_a"
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 250
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_1"
+  },
+  {
+    "kind": "move",
+    "x": 440,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "to_storage"
+  },
+  {
+    "kind": "move",
+    "x": 160,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "kit"
+  },
+  {
+    "kind": "move",
+    "x": 448,
+    "y": 190
+  },
+  {
+    "kind": "interact",
+    "id": "switch_b"
+  },
+  {
+    "kind": "move",
+    "x": 100,
+    "y": 250
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_2"
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 200
+  },
+  {
+    "kind": "interact",
+    "id": "to_lab"
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "click",
+    "label": "Experiment_initial"
+  },
+  {
+    "kind": "click",
+    "label": "Medium_air"
+  },
+  {
+    "kind": "click",
+    "label": "ReleaseExperiment"
+  },
+  {
+    "kind": "until",
+    "path": "pending_experiment",
+    "value": {},
+    "timeout_frames": 300
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "read_all"
+  },
+  {
+    "kind": "click",
+    "label": "CloseExperiment"
+  },
+  {
+    "kind": "move",
+    "x": 144,
+    "y": 168
+  },
+  {
+    "kind": "action",
+    "action": "wait"
+  },
+  {
+    "kind": "interact",
+    "id": "assist_a"
+  },
+  {
+    "kind": "action",
+    "action": "wait"
+  },
+  {
+    "kind": "assert",
+    "path": "holds",
+    "value": {}
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 260
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_3"
+  },
+  {
+    "kind": "move",
+    "x": 224,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "to_tower"
+  },
+  {
+    "kind": "interact",
+    "id": "cycle_console"
+  },
+  {
+    "kind": "click",
+    "label": "封存第 1 轮，醒来"
+  },
+  {
+    "kind": "assert",
+    "path": "cycle",
+    "value": 2
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 250
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_1"
+  },
+  {
+    "kind": "move",
+    "x": 440,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "to_storage"
+  },
+  {
+    "kind": "move",
+    "x": 160,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "kit"
+  },
+  {
+    "kind": "move",
+    "x": 100,
+    "y": 250
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_2"
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 200
+  },
+  {
+    "kind": "until",
+    "path": "world.lab_gate",
+    "value": true,
+    "timeout_frames": 2400
+  },
+  {
+    "kind": "interact",
+    "id": "to_lab"
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "click",
+    "label": "Experiment_mass"
+  },
+  {
+    "kind": "click",
+    "label": "Medium_air"
+  },
+  {
+    "kind": "click",
+    "label": "ReleaseExperiment"
+  },
+  {
+    "kind": "until",
+    "path": "pending_experiment",
+    "value": {},
+    "timeout_frames": 300
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "read_all"
+  },
+  {
+    "kind": "click",
+    "label": "CloseExperiment"
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "click",
+    "label": "EnterBattle"
+  },
+  {
+    "kind": "select_all"
+  },
+  {
+    "kind": "click",
+    "label": "Card_observe"
+  },
+  {
+    "kind": "click",
+    "label": "Card_control"
+  },
+  {
+    "kind": "click",
+    "label": "Card_measurement"
+  },
+  {
+    "kind": "click",
+    "label": "Card_gravity"
+  },
+  {
+    "kind": "click",
+    "label": "FinishBattle"
+  },
+  {
+    "kind": "assert",
+    "path": "world.mass",
+    "value": true
+  },
+  {
+    "kind": "move",
+    "x": 464,
+    "y": 168
+  },
+  {
+    "kind": "action",
+    "action": "wait"
+  },
+  {
+    "kind": "interact",
+    "id": "assist_b"
+  },
+  {
+    "kind": "action",
+    "action": "wait"
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 260
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_3"
+  },
+  {
+    "kind": "move",
+    "x": 224,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "to_tower"
+  },
+  {
+    "kind": "interact",
+    "id": "cycle_console"
+  },
+  {
+    "kind": "click",
+    "label": "封存第 2 轮，醒来"
+  },
+  {
+    "kind": "assert",
+    "path": "cycle",
+    "value": 3
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 250
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_1"
+  },
+  {
+    "kind": "move",
+    "x": 440,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "to_storage"
+  },
+  {
+    "kind": "move",
+    "x": 160,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "kit"
+  },
+  {
+    "kind": "interact",
+    "id": "pump"
+  },
+  {
+    "kind": "move",
+    "x": 100,
+    "y": 250
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_2"
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 200
+  },
+  {
+    "kind": "until",
+    "path": "world.lab_gate",
+    "value": true,
+    "timeout_frames": 2400
+  },
+  {
+    "kind": "interact",
+    "id": "to_lab"
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "click",
+    "label": "Experiment_shape"
+  },
+  {
+    "kind": "click",
+    "label": "Medium_air"
+  },
+  {
+    "kind": "click",
+    "label": "ReleaseExperiment"
+  },
+  {
+    "kind": "until",
+    "path": "pending_experiment",
+    "value": {},
+    "timeout_frames": 300
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "read_all"
+  },
+  {
+    "kind": "click",
+    "label": "CloseExperiment"
+  },
+  {
+    "kind": "move",
+    "x": 304,
+    "y": 176
+  },
+  {
+    "kind": "action",
+    "action": "wait"
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "click",
+    "label": "Experiment_initial"
+  },
+  {
+    "kind": "click",
+    "label": "Medium_vacuum"
+  },
+  {
+    "kind": "click",
+    "label": "ReleaseExperiment"
+  },
+  {
+    "kind": "until",
+    "path": "pending_experiment",
+    "value": {},
+    "timeout_frames": 300
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "read_all"
+  },
+  {
+    "kind": "click",
+    "label": "CloseExperiment"
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "click",
+    "label": "EnterBattle"
+  },
+  {
+    "kind": "select_all"
+  },
+  {
+    "kind": "click",
+    "label": "Card_observe"
+  },
+  {
+    "kind": "click",
+    "label": "Card_control"
+  },
+  {
+    "kind": "click",
+    "label": "Card_measurement"
+  },
+  {
+    "kind": "click",
+    "label": "Card_gravity"
+  },
+  {
+    "kind": "click",
+    "label": "Card_shape"
+  },
+  {
+    "kind": "click",
+    "label": "Card_vacuum"
+  },
+  {
+    "kind": "click",
+    "label": "Card_drag"
+  },
+  {
+    "kind": "click",
+    "label": "FinishBattle"
+  },
+  {
+    "kind": "assert",
+    "path": "world.drag",
+    "value": true
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 260
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_3"
+  },
+  {
+    "kind": "move",
+    "x": 432,
+    "y": 240
+  },
+  {
+    "kind": "interact",
+    "id": "to_archive"
+  },
+  {
+    "kind": "interact",
+    "id": "future_terminal"
+  },
+  {
+    "kind": "click",
+    "label": "拒绝调用 · 用实测校准"
+  },
+  {
+    "kind": "click",
+    "label": "校准 · "
+  },
+  {
+    "kind": "auto_dodge",
+    "enabled": false
+  },
+  {
+    "kind": "move",
+    "x": 320,
+    "y": 270
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_5"
+  },
+  {
+    "kind": "move",
+    "x": 224,
+    "y": 230
+  },
+  {
+    "kind": "interact",
+    "id": "fall_gate"
+  },
+  {
+    "kind": "wait",
+    "frames": 100
+  },
+  {
+    "kind": "interact",
+    "id": "to_tower"
+  },
+  {
+    "kind": "assert",
+    "path": "room_id",
+    "value": "tower"
+  },
+  {
+    "kind": "interact",
+    "id": "cycle_console"
+  },
+  {
+    "kind": "click",
+    "label": "提交序章记录"
+  },
+  {
+    "kind": "assert",
+    "path": "profile.completed",
+    "value": true
+  },
+  {
+    "kind": "assert",
+    "path": "profile.violation",
+    "value": 0
+  },
+  {
+    "kind": "assert_saved"
+  },
+  {
+    "kind": "screenshot",
+    "name": "ending-refuse"
+  }
+]

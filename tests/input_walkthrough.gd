@@ -6,6 +6,8 @@ var failures: Array[String] = []
 var steps_completed: int = 0
 var started_ms: int = 0
 var route_name: String = "smoke"
+var auto_dodge: bool = false
+var screenshots: Array[String] = []
 
 func _initialize() -> void:
  if RuntimePaths.profile_id().is_empty():
@@ -71,6 +73,8 @@ func move_to(target: Vector2, limit: int = 1800) -> bool:
   action("move_left",delta.x < -2.5)
   action("move_down",delta.y > 2.5)
   action("move_up",delta.y < -2.5)
+  if auto_dodge:
+   action("dodge",_i % 49 == 0)
   await frame()
   var current: Vector2 = app.session.player_position
   stagnant = stagnant + 1 if current.distance_to(previous) < 0.01 else 0
@@ -80,12 +84,13 @@ func move_to(target: Vector2, limit: int = 1800) -> bool:
  release_motion();fail("Movement timed out toward " + str(target));return false
 
 func release_motion() -> void:
+ action("dodge",false)
  for name: String in ["move_right","move_left","move_down","move_up"]: action(name,false)
 
 func interact(id: String) -> bool:
  var object: Dictionary = app.content.object(id)
  if object.is_empty(): fail("Missing object: " + id);return false
- var target: Vector2 = (Vector2(float(object.x),float(object.y)) + Vector2(0,28)).clamp(Vector2(44,60),Vector2(596,300))
+ var target: Vector2 = (Vector2(float(object.x),float(object.y)) + Vector2(0,-24 if id=="fall_gate" else 24)).clamp(Vector2(44,60),Vector2(596,300))
  if not await move_to(target): return false
  await frame(2)
  if app.nearest.get("id","") != id:
@@ -104,6 +109,50 @@ func read_state(path: String) -> Variant:
 func step(data: Dictionary) -> bool:
  match str(data.get("kind","")):
   "click": return await click(str(data.label))
+  "assert_saved":
+   if not app.saves.last_error.is_empty():
+    fail("Save error: " + app.saves.last_error);return false
+   var envelope: Variant=JSON.parse_string(FileAccess.get_file_as_string(app.saves.path))
+   if not envelope is Dictionary or not envelope.get("payload") is String or envelope.payload.sha256_text()!=envelope.get("sha256"):
+    fail("Saved envelope missing or invalid");return false
+   var payload: Variant=JSON.parse_string(envelope.payload)
+   if not payload is Dictionary or not payload.get("state") is Dictionary or not payload.state.profile.completed or payload.state.profile.violation!=app.session.profile.violation:
+    fail("Completion and violation are not persisted");return false
+  "assert_pursuer":
+   if app.session.finale.phase!="chase" or app.session.finale.examiner_room!=app.session.room_id:
+    fail("Active chase has no pursuer in player room");return false
+  "read_all":
+   for _i: int in range(30):
+    var candidates: Array[Button]=[]
+    buttons(app,candidates)
+    var found: String=""
+    for button: Button in candidates:
+     if str(button.name).begins_with("Read_") and not button.disabled:
+      found=str(button.name);break
+    if found.is_empty(): return true
+    if not await click(found): return false
+   fail("Too many instrument reads");return false
+  "select_all":
+   for _i: int in range(30):
+    var candidates: Array[Button]=[]
+    buttons(app,candidates)
+    var found: String=""
+    for button: Button in candidates:
+     if button is CheckBox and str(button.name).begins_with("Evidence_") and not button.button_pressed:
+      found=str(button.name);break
+    if found.is_empty(): return true
+    if not await click(found): return false
+   fail("Too many evidence selections");return false
+  "auto_dodge": auto_dodge=bool(data.enabled)
+  "screenshot":
+   if DisplayServer.get_name()=="headless":
+    print("SCREENSHOT SKIPPED: headless renderer")
+   else:
+    await process_frame
+    var image: Image=root.get_texture().get_image()
+    var path: String=RuntimePaths.report_path(str(data.get("name","frame"))+".png")
+    if image.save_png(path)!=OK: fail("Screenshot write failed");return false
+    screenshots.append(path)
   "action": await tap(str(data.action))
   "move": return await move_to(Vector2(float(data.x),float(data.y)))
   "interact": return await interact(str(data.id))
@@ -143,13 +192,14 @@ func run() -> void:
  for entry: Variant in route:
   if not entry is Dictionary:
    fail("Route step must be object");break
+  print("INPUT STEP ",steps_completed," ",JSON.stringify(entry)," cycle=",app.session.cycle," tick=",app.session.tick," room=",app.session.room_id)
   if not await step(entry): break
   steps_completed += 1
  finish()
 
 func finish() -> void:
  release_motion()
- var report: Dictionary = {"suite":"input-only","route":route_name,"steps_completed":steps_completed,"failures":failures,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started_ms,"completion":app.session.profile.completed if app != null else false,"limitations":["Headless input validation is not visual screenshot acceptance","Default route is movement smoke only; both endings require explicit routes"]}
+ var report: Dictionary = {"suite":"input-only","route":route_name,"steps_completed":steps_completed,"failures":failures,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started_ms,"screenshots":screenshots,"completion":app.session.profile.completed if app != null else false,"limitations":["Headless input validation is not visual screenshot acceptance","Default route is movement smoke only; both endings require explicit routes"]}
  var file: FileAccess = FileAccess.open(RuntimePaths.report_path("input-walkthrough.json"),FileAccess.WRITE)
  if file == null:
   fail("Could not write input report")

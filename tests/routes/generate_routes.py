@@ -1,0 +1,48 @@
+import json
+from pathlib import Path
+r=[]
+def add(kind,**kw): r.append(dict(kind=kind,**kw))
+def click(label):add('click',label=label)
+def interact(id):add('interact',id=id)
+def move(x,y):add('move',x=x,y=y)
+def assertion(path,value):add('assert',path=path,value=value)
+def action(action):add('action',action=action)
+def storage(cycle):
+ if cycle==1:interact('switch_a')
+ move(320,250);interact('to_corridor_1');move(440,240);interact('to_storage')
+ move(160,240);interact('kit')
+ if cycle==1:move(448,190);interact('switch_b')
+ if cycle==3:interact('pump')
+ move(100,250);interact('to_corridor_2');move(320,200)
+ if cycle>1:add('until',path='world.lab_gate',value=True,timeout_frames=2400)
+ interact('to_lab')
+def experiment(kind,medium='air'):
+ interact('lab_drop');click('Experiment_'+kind);click('Medium_'+medium);click('ReleaseExperiment')
+ add('until',path='pending_experiment',value={},timeout_frames=300)
+ interact('lab_drop');add('read_all');click('CloseExperiment')
+def seal(cycle):
+ move(320,260);interact('to_corridor_3');move(224,240);interact('to_tower');interact('cycle_console');click(f'封存第 {cycle} 轮，醒来');assertion('cycle',cycle+1)
+def battle(drag=False):
+ interact('lab_drop');click('EnterBattle');add('select_all')
+ for card in ['observe','control','measurement','gravity']+(['shape','vacuum','drag'] if drag else []):click('Card_'+card)
+ click('FinishBattle');assertion('world.drag' if drag else 'world.mass',True)
+click('开始新的记录');storage(1);experiment('initial');move(144,168);action('wait');interact('assist_a');action('wait');add('assert',path='holds',value={});seal(1)
+storage(2);experiment('mass');battle();move(464,168);action('wait');interact('assist_b');action('wait');seal(2)
+storage(3);experiment('shape');move(304,176);action('wait');experiment('initial','vacuum');battle(True)
+move(320,260);interact('to_corridor_3');move(432,240);interact('to_archive');interact('future_terminal')
+for accept in [False,True]:
+ route=list(r)
+ def a(kind,**kw):route.append(dict(kind=kind,**kw))
+ a('click',label='借用未来知识' if accept else '拒绝调用 · 用实测校准')
+ a('click',label='选择重力＋阻力模型并计算' if accept else '校准 · ')
+ a('auto_dodge',enabled=accept)
+ a('move',x=320,y=270);a('interact',id='to_corridor_5')
+ a('move',x=224,y=230);a('interact',id='fall_gate')
+ a('wait',frames=52 if accept else 100)
+ if accept:a('assert_pursuer')
+ a('interact',id='to_tower');a('assert',path='room_id',value='tower')
+ a('interact',id='cycle_console');a('click',label='提交序章记录')
+ a('assert',path='profile.completed',value=True);a('assert',path='profile.violation',value=1 if accept else 0)
+ a('assert_saved')
+ a('screenshot',name='ending-'+('accept' if accept else 'refuse'))
+ Path('tests/routes/'+('accept' if accept else 'refuse')+'.json').write_text(json.dumps(route,ensure_ascii=False,indent=2),encoding='utf-8')
