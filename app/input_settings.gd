@@ -5,9 +5,11 @@ const LABELS: Dictionary = {"move_up":"向上","move_down":"向下","move_left":
 var keys: Dictionary = DEFAULTS.duplicate()
 var reduced_effects: bool = true
 var volume: float = 0.4
+var path: String
 func _init() -> void:
+ path = RuntimePaths.data_root() + "/settings.cfg"
  var config: ConfigFile = ConfigFile.new()
- if config.load("user://settings.cfg") == OK:
+ if config.load(path) == OK:
   for action: String in keys: keys[action] = int(config.get_value("input",action,keys[action]))
   reduced_effects = bool(config.get_value("accessibility","reduced_effects",true))
   volume = float(config.get_value("audio","volume",0.4))
@@ -28,6 +30,6 @@ func save() -> void:
  var config: ConfigFile = ConfigFile.new()
  for action: String in keys: config.set_value("input",action,keys[action])
  config.set_value("accessibility","reduced_effects",reduced_effects)
- config.set_value("audio","volume",volume);config.save("user://settings.cfg")
+ config.set_value("audio","volume",volume);config.save(path)
 func display(action: String) -> String:
  return OS.get_keycode_string(int(keys[action]))

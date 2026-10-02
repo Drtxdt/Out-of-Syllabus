@@ -46,7 +46,7 @@ func advance(steps: int = 1, moving: bool = false) -> void:
     var ev: Dictionary = actions[cursor]
     if ev.get("room", "") == room_id and ev.kind in ["talk", "pickup"]:
      notice.emit("历史回忆 · " + str(ev.payload.get("text", "过去的你拿起了" + str(ev.payload.get("title", ev.target)))))
-    var result: Dictionary = command(ev.kind, ev.target, ev.payload, "echo_%d" % int(histories[h].cycle))
+    var result: Dictionary = command(ev.kind, ev.target, ev.payload, "echo_%d" % int(histories[h].cycle), {"source_cycle":histories[h].cycle,"source_event_id":ev.seq,"source_room":ev.room})
     if not result.ok:
      var message: String = "历史 %d · %s：%s" % [histories[h].cycle,ev.target,result.message]
      deviations.append({"tick":tick,"message":message})
@@ -68,7 +68,7 @@ func echo_poses() -> Array:
   pose["cycle"] = histories[h].cycle
   if pose.room == room_id: poses.append(pose)
  return poses
-func command(kind: String, target: String, payload: Dictionary = {}, actor: String = "player") -> Dictionary:
+func command(kind: String, target: String, payload: Dictionary = {}, actor: String = "player", context: Dictionary = {}) -> Dictionary:
  var echo: bool = actor != "player"
  var ok: bool = true
  var message: String = ""
@@ -124,7 +124,8 @@ func command(kind: String, target: String, payload: Dictionary = {}, actor: Stri
    return {"ok":false,"message":"不支持的操作。"}
  if ok:
   _seq += 1
-  var event: Dictionary = {"seq":_seq,"cycle":cycle,"tick":tick,"actor":actor,"room":room_id,"kind":kind,"target":target,"payload":payload.duplicate(true)}
+  var event: Dictionary = {"seq":_seq,"cycle":cycle,"tick":tick,"actor":actor,"room":context.get("source_room",room_id),"kind":kind,"target":target,"payload":payload.duplicate(true)}
+  event.merge(context)
   events.append(event)
   if not echo: track.events.append(event.duplicate(true))
   changed.emit()
@@ -170,6 +171,7 @@ func snapshot() -> Dictionary:
   "echo_sample_cursors":echo_sample_cursors.duplicate(),"deviations":deviations.duplicate(true),"settled":settled.duplicate(),
   "loadout":loadout.duplicate(),"seq":_seq,"mode":"model" if battle != null else "world","battle":battle.state.duplicate(true) if battle != null else {}}
 func restore(data: Dictionary) -> bool:
+ if not SaveValidator.validate(data,content).is_empty(): return false
  if not data.has_all(["cycle","tick","room","position","profile","world","histories","track"]): return false
  if int(data.cycle) < 1 or int(data.cycle) > 3 or content.room(str(data.room)).is_empty(): return false
  if not data.position is Array or data.position.size() != 2: return false
@@ -183,7 +185,7 @@ func restore(data: Dictionary) -> bool:
   if data.has(key) and not data[key] is Array: return false
  if data.has("battle") and not data.battle is Dictionary: return false
  if int(data.tick) < 0: return false
- var base: Dictionary = snapshot()
+ var base: Dictionary = GameSession.new(content).snapshot()
  base.merge(data,true)
  if not base.world.has_all(world.keys()): return false
  if base.histories.size() > 3 or base.histories.size() != base.echo_cursors.size(): return false

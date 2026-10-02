@@ -68,7 +68,7 @@ func _initialize() -> void:
  check(s.command("ending","chapter_fall",{"accept":true}).ok,"accept ending")
  s.command("ending","chapter_fall",{"accept":true})
  check(s.profile.violation==1,"ending idempotent")
- var store: SaveStore=SaveStore.new("user://regression.json")
+ var store: SaveStore=SaveStore.new(RuntimePaths.data_root()+"/regression.json")
  check(store.save_session(s),"atomic initial save")
  var restored: GameSession=GameSession.new(content)
  check(store.load_session(restored),"save reload")
@@ -87,7 +87,7 @@ func _initialize() -> void:
  declined.command("ending","chapter_fall",{"accept":false})
  check(declined.profile.completed and declined.profile.violation==0,"refuse ending")
  var compress: GameSession=GameSession.new(content);compress.profile.knowledge.append("gravity")
- compress.histories=[{"cycle":1,"track":{"samples":[],"events":[{"tick":30,"kind":"switch","target":"pump","payload":{"value":true}}]}}];compress.echo_cursors=[0];compress.echo_sample_cursors=[0]
+ compress.histories=[{"cycle":1,"track":{"samples":[],"events":[{"seq":1,"cycle":1,"tick":30,"actor":"player","room":"storage","kind":"switch","target":"pump","payload":{"value":true}}]}}];compress.echo_cursors=[0];compress.echo_sample_cursors=[0]
  check(not compress.compress_lab().ok and compress.tick==30,"compression stops at causal change")
  check(not restored.restore({}),"invalid snapshot rejected")
  var ids: Dictionary={}
@@ -107,7 +107,27 @@ func _initialize() -> void:
  check(JSON.stringify(JSON.parse_string(JSON.stringify(replay_a.snapshot())))==JSON.stringify(JSON.parse_string(JSON.stringify(replay_b.snapshot()))),"continuous and resumed replay deterministic")
  check(not replay_a.command("switch","drag",{"value":true}).ok,"switch cannot forge encounter success")
  check(ExperimentModel.fall_time(2,1,1,1,-1)<0,"invalid drag coefficient")
+ # Repeated corruption must never replace the only valid backup.
+ store.fail_step="";check(store.save_session(s),"save valid after backup recovery")
+ bad=FileAccess.open(store.path,FileAccess.WRITE);bad.store_string("broken again");bad.close()
+ check(store.load_session(restored),"recover after second corruption")
+ var stable: String=JSON.stringify(restored.snapshot())
+ for fault: String in ["open","write","copy","rename"]:
+  store.fail_step="";store.save_session(s)
+  store.fail_step=fault
+  check(not store.save_session(s),"fault injection "+fault)
+ store.fail_step=""
+ var malformed: Dictionary=s.snapshot();malformed.histories[0].track.events[0].payload=[]
+ check(not restored.restore(malformed) and JSON.stringify(restored.snapshot())==stable,"nested error leaves session unchanged")
+ var attributed: bool=false
+ for event: Dictionary in s.events:
+  if event.actor.begins_with("echo_") and event.target=="switch_b": attributed=event.room=="storage" and event.has("source_event_id")
+ # This session may have no late echo events; validate a dedicated replay.
+ var attribution: GameSession=GameSession.new(content)
+ attribution.histories=compress.histories.duplicate(true);attribution.echo_cursors=[0];attribution.echo_sample_cursors=[0]
+ attribution.advance(31)
+ check(attribution.events[0].room=="storage" and attribution.room_id=="classroom","echo original room retained")
  var report: Dictionary={"checks":checks,"failures":failures,"engine":Engine.get_version_info().string}
- var output: FileAccess=FileAccess.open("res://reports/regression.json",FileAccess.WRITE);output.store_string(JSON.stringify(report,"  "));output.close()
+ var output: FileAccess=FileAccess.open(RuntimePaths.report_path("regression.json"),FileAccess.WRITE);output.store_string(JSON.stringify(report,"  "));output.close()
  print("REGRESSION: ",checks," checks; failures=",failures)
  quit(0 if failures.is_empty() else 1)

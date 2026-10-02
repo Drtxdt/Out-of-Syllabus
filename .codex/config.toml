@@ -1,5 +1,5 @@
 [mcp_servers.godot]
-command = "D:/nodejs/node.exe"
-args = ["E:/my_code/Out-of-Syllabus/tools/godot-forge/dist/index.js", "--project", "E:/my_code/Out-of-Syllabus", "--godot", "D:/Godot_v4.7.2/Godot_v4.7.2-stable_win64.exe", "--launch", "gui"]
+command = "node"
+args = ["--input-type=module", "-e", "import fs from 'node:fs'; import path from 'node:path'; import {pathToFileURL} from 'node:url'; let p=process.cwd(); if(!fs.existsSync(path.join(p,'project.godot'))){const candidates=fs.readdirSync(p,{withFileTypes:true}).filter(d=>d.isDirectory()&&fs.existsSync(path.join(p,d.name,'project.godot'))); if(candidates.length!==1) throw Error('Run from the game workspace'); p=path.join(p,candidates[0].name);} await import(pathToFileURL(path.join(p,'tools/forge_launch.mjs')).href);"]
 startup_timeout_sec = 60
 tool_timeout_sec = 90

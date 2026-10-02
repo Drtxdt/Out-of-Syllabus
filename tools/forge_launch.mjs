@@ -1,0 +1,11 @@
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const godot = process.env.GODOT_PATH;
+if (!godot) throw new Error('Set GODOT_PATH to the locked Godot 4.7.2 executable.');
+const version = spawnSync(godot,['--version'],{encoding:'utf8',windowsHide:true});
+if (version.status !== 0 || version.stdout.trim() !== '4.7.2.stable.official.ed1daf0bf') throw new Error('Godot version mismatch');
+console.error(`Forge project: ${root}; Godot: ${godot}`);
+const child = spawnSync(process.execPath,[path.join(root,'tools/godot-forge/dist/index.js'),'--project',root,'--godot',godot,'--launch','none'],{stdio:'inherit',cwd:root,windowsHide:true});
+process.exitCode = child.status ?? 1;

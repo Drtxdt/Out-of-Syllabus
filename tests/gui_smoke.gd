@@ -6,13 +6,13 @@ func _initialize() -> void:
 func capture(label: String) -> void:
  await process_frame
  await RenderingServer.frame_post_draw
- var error: Error=root.get_texture().get_image().save_png("res://reports/"+label+".png")
+ var error: Error=root.get_texture().get_image().save_png(RuntimePaths.report_path(label+".png"))
  if error != OK: failures.append("screenshot "+label)
 func run() -> void:
  game=load("res://app/main.tscn").instantiate()
  game.suppress_intro=true
  root.add_child(game)
- game.saves=SaveStore.new("user://gui_smoke.json")
+ game.saves=SaveStore.new(RuntimePaths.data_root()+"/gui_smoke.json")
  for size: Vector2i in [Vector2i(1280,720),Vector2i(1920,1080),Vector2i(2560,1440)]:
   root.size=size
   game.show_welcome()
