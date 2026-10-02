@@ -4,6 +4,8 @@ These are source references, **not approved runtime sprites**. `.gdignore` preve
 
 Generation used the built-in imagegen tool, not a paid CLI fallback. `student-generated.png` and `student-corrected.png` were visually inspected. Both fail `quality_audit.py --grid 32 --max-colors 12 --json`; exact diagnostics are beside each image. The correction still contains a wrong-facing frame and unsuitable raster dimensions. Do not silently rescale this into a production sprite sheet.
 
+`laboratory-concept.png` was also visually inspected: the three stations and walkable lower half are readable. It is a useful composition reference, but its 1672×941 dimensions and 112916 colors fail the production palette/grid audit. It remains source-only with its audit, not a replacement for the editable TileMapLayer.
+
 Locked palette: `111e28 172930 284247 426069 537879 92c6bb d8e2dd e1bc78 b48655 6f4a3a d88775 292b36`. Intended student frame 32×48 logical pixels, sheet 3 columns × 4 rows, down/left/right/up, idle/step A/step B. Binary alpha and a stable feet baseline are required. Native world grid is 32×32 at 640×360.
 
 `world/lab_rig_visual.gd` is a separate, editable code-native apparatus sample at the canonical A=(144,144), B=(464,144), C=(304,152) positions. Add it at local origin under the lab visual root only. Call `render({powered,a_active,b_active,releasing})` with presentation values. It does not decide interaction range, holds, outcomes or timing. It uses integer rectangles and the locked palette; headless script parsing passed. Actual in-engine screenshot acceptance remains integration work.
