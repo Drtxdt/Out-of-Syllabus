@@ -35,6 +35,11 @@ for accept in [False,True]:
  route=list(r)
  def a(kind,**kw):route.append(dict(kind=kind,**kw))
  a('click',label='借用未来知识' if accept else '拒绝调用 · 用实测校准')
+ if accept:
+  a('click',label='尝试忽略阻力的重力模型');a('assert',path='profile.violation',value=0)
+  a('click',label='高度：2.0 米');a('click',label='选择重力＋阻力模型并计算')
+  a('assert',path='finale.phase',value='chosen');a('click',label='高度：1.0 米')
+  a('screenshot',name='prediction-parameters')
  a('click',label='选择重力＋阻力模型并计算' if accept else '校准 · ')
  if accept:
   a('until',path='finale.phase',value='caught',timeout_frames=600)

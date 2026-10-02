@@ -132,7 +132,12 @@ static func validate(data: Variant, content: GameContent) -> String:
     var at: float=arrival*index/6.0
     if not point is Dictionary or not number(point.get("time_s"),0,60) or not number(point.get("distance_m"),0,2): return "轨迹结构无效"
     if absf(float(point.time_s)-at)>0.000000001 or absf(float(point.distance_m)-ExperimentModel.distance_at(at,setup.samples[1],setup.air_density))>0.000000001: return "轨迹数值无效"
-  if f.prediction.origin=="measurement" and not data.evidence.any(func(r: Dictionary) -> bool: return r.id==f.prediction.get("evidence_id") and r.observed_by_player): return "校准缺少实测来源"
+  if f.prediction.origin=="measurement":
+   var calibration: Dictionary={}
+   for record: Dictionary in data.evidence:
+    if record.id==f.prediction.get("evidence_id") and record.observed_by_player: calibration=record;break
+   if calibration.is_empty() or calibration.setup.experiment!="initial" or calibration.setup.medium!="air" or calibration.setup.shape!="flat": return "校准缺少同条件实测来源"
+   if absf(float(f.prediction.time_s)-float(calibration.observations.arrival_times_s[1]))>0.000000001: return "校准时刻与实测不符"
  for key: String in ["release_tick","open_tick","close_tick","warning_end","arrival_tick"]:
   if not number(f[key],-1): return "结尾时钟无效"
  if content.room(str(f.examiner_room)).is_empty() or not f.examiner_position is Array or f.examiner_position.size()!=2 or not number(f.examiner_position[0]) or not number(f.examiner_position[1]): return "追踪位置无效"
@@ -152,6 +157,9 @@ static func evidence_error(record: Variant,data: Dictionary,_content: GameConten
  if not record.id is String or not record.source_event_id is String or not integer(record.source_cycle,1,3) or not integer(record.cycle,1,3) or not integer(record.tick,0) or record.room_id!="lab" or not record.observed_by_player is bool or record.simulator_version!=1: return "证据来源无效"
  if not record.origin_actor is String or not record.origin_actor in ["player","echo_1","echo_2"]: return "证据操作者无效"
  if record.cycle>data.cycle or (record.cycle==data.cycle and record.tick>data.tick): return "证据来自未来"
+ if record.id!="record_"+record.source_event_id: return "证据编号与来源不一致"
+ if record.origin_actor=="player" and record.source_cycle!=record.cycle: return "玩家证据循环不一致"
+ if record.origin_actor!="player" and (record.origin_actor!="echo_%d" % record.source_cycle or record.source_cycle>=record.cycle): return "回声证据角色不一致"
  if not record.setup is Dictionary or not record.observations is Dictionary: return "证据结构无效"
  var setup: Dictionary=ExperimentModel.setup(record.setup)
  if setup.is_empty() or setup!=record.setup or record.experiment_id!=setup.experiment: return "实验条件不是已执行的参数"

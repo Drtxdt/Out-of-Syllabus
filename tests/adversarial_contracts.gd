@@ -54,6 +54,12 @@ func test_malformed() -> void:
  bad=valid.duplicate(true)
  bad.finale.phase="complete";bad.profile.completed=false
  reject_restore(bad,"completed phase disagrees with profile")
+ var calibrated: Variant=prepare_finale(false)
+ bad=calibrated.snapshot();bad.finale.prediction.time_s=10.0
+ reject_restore(bad,"calibration time forged against source measurement")
+ var predicted: Variant=prepare_finale(true)
+ bad=predicted.snapshot();bad.finale.prediction.trajectory[2].distance_m=1.99
+ reject_restore(bad,"forecast trajectory forged")
  var store: SaveStore=SaveStore.new(RuntimePaths.data_root()+"/malformed-envelope.json")
  var payload: Dictionary={"schema":3,"content_version":2,"chapter":"fall","state":valid,"checkpoint":{},"cycle_checkpoint":{}}
  payload.checkpoint={"world":"broken"}
