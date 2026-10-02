@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/card_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "experiment"
+title = "基础实验"
+kind = "实验"
+description = "固定释放高度与初速度，使比较有效。"
+effect = "experiment"
+tier = 1

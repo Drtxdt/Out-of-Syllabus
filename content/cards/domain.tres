@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/card_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "domain"
+title = "有效域审查"
+kind = "假设"
+description = "检查空气与形状条件；限制适用域不等于删除反例。"
+effect = "domain"
+tier = 1

@@ -1,0 +1,48 @@
+{
+  "godot": "4.7.2.stable.official.ed1daf0bf",
+  "skills": [
+    {
+      "repo": "vl4dt/godot-skills",
+      "ref": "main",
+      "commit": "1ae280d35f2cc3931d4d8eb63f4bac82d6acf4a0",
+      "paths": [
+        "skills/godot-project-setup",
+        "skills/godot-gdscript-patterns",
+        "skills/godot-debugging",
+        "skills/godot-ui",
+        "skills/godot-animation"
+      ],
+      "installed": true
+    },
+    {
+      "repo": "gpwork4u/sprite-gen",
+      "ref": "main",
+      "commit": "a23e84690e7f93e4490de8fe5b98f335726f4a9e",
+      "paths": [
+        "."
+      ],
+      "installed": true
+    },
+    {
+      "repo": "ervareza/agent-skill-pixel-art",
+      "ref": "v4.3.0",
+      "commit": "0de5e49a9ce9c1a326910b4efe3420c030ce3856",
+      "paths": [
+        "skills/pixel-art"
+      ],
+      "installed": true
+    }
+  ],
+  "forge": {
+    "repo": "Tann2019/godot-mcp-server",
+    "commit": "b0da85fac67dd067c16bfe791227c0e7edb56d7e",
+    "distribution": "source (npm package returned 404)",
+    "package_version": "0.1.0",
+    "package_lock_sha256": "346fdcc67857dbbc46a82334ec57de6cfed5ed5a752e37de2f978709371aceb7"
+  },
+  "node": "24.18.0",
+  "python": "3.13.1",
+  "skills_install_root": "C:/Users/dell/.codex/skills",
+  "python_venv": "tools/.venv",
+  "python_requirements": "tools/requirements.lock.txt"
+}

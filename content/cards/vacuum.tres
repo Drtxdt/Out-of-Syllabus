@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/card_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "vacuum"
+title = "真空对照"
+kind = "实验"
+description = "移除空气阻力，但不能抹去原先的空气中观察。"
+effect = "vacuum"
+tier = 1

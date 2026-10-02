@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EncounterDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/encounter_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "drag"
+title = "失效边界 / 02"
+question = "为什么纸片在空气中更慢，而真空中差异消失？"
+requirements = PackedStringArray("observation", "controls", "evidence", "mass_independence", "air_difference", "vacuum_control")
+counterexamples = PackedStringArray("空气中的纸片仍比金属球慢，不能丢弃这条记录。", "真空里二者同时落地；改变环境不会改变过去的数据。")
+max_rounds = 8

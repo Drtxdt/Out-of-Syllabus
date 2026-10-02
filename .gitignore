@@ -1,0 +1,12 @@
+.godot/
+tools/.venv/
+tools/godot-forge/
+tools/node_modules/
+art_source/
+build/
+reports/*.png
+reports/*.log
+*.tmp
+
+reports/replay_*.json
+.godot-forge/

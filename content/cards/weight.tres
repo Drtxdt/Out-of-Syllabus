@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/card_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "weight"
+title = "质量假说"
+kind = "假说"
+description = "暂定：越重越快。它需要接受反例检验。"
+effect = "mass_model"
+tier = 1

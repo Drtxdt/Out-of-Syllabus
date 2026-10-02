@@ -1,0 +1,140 @@
+[
+  {
+    "name": "editor",
+    "args": {
+      "action": "restart",
+      "save": true
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"note\": \"The connection drops; the MCP server reconnects automatically.\",\n \"restarting\": true\n}"
+      }
+    ]
+  },
+  {
+    "name": "scene",
+    "args": {
+      "action": "tree"
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"scene\": \"res://app/main.tscn\",\n \"tree\": {\n  \"children\": [\n   {\n    \"children\": [\n     {\n      \"children\": [\n       {\n        \"children\": [\n         {\n          \"child_count\": 1,\n          \"class_name\": \"PixelActor\",\n          \"instance\": \"res://world/player.tscn\",\n          \"name\": \"Player\",\n          \"path\": \"WorldFrame/Viewport/World/Player\",\n          \"position\": \"Vector2(320, 224)\",\n          \"script\": \"res://world/pixel_actor.gd\",\n          \"type\": \"CharacterBody2D\"\n         }\n        ],\n        \"name\": \"World\",\n        \"path\": \"WorldFrame/Viewport/World\",\n        \"position\": \"Vector2(0, 0)\",\n        \"type\": \"Node2D\"\n       }\n      ],\n      \"name\": \"Viewport\",\n      \"path\": \"WorldFrame/Viewport\",\n      \"type\": \"SubViewport\"\n     }\n    ],\n    \"name\": \"WorldFrame\",\n    \"path\": \"WorldFrame\",\n    \"rect\": \"Rect2(0, 0, 1280, 720)\",\n    \"type\": \"SubViewportContainer\"\n   },\n   {\n    \"child_count\": 5,\n    \"class_name\": \"GameUI\",\n    \"instance\": \"res://ui/game_ui.tscn\",\n    \"name\": \"UI\",\n    \"path\": \"UI\",\n    \"rect\": \"Rect2(0, 0, 1280, 720)\",\n    \"script\": \"res://ui/game_ui.gd\",\n    \"type\": \"Control\"\n   },\n   {\n    \"name\": \"FeedbackSound\",\n    \"path\": \"FeedbackSound\",\n    \"type\": \"AudioStreamPlayer\"\n   }\n  ],\n  \"name\": \"Game\",\n  \"rect\": \"Rect2(0, 0, 1280, 720)\",\n  \"script\": \"res://app/main.gd\",\n  \"type\": \"Control\"\n }\n}"
+      }
+    ]
+  },
+  {
+    "name": "run",
+    "args": {
+      "action": "play",
+      "scene": "main",
+      "restart": true,
+      "timeout": 30,
+      "mute": true
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"connected\": true,\n \"game\": {\n  \"fps\": 1,\n  \"frame\": 0,\n  \"headless\": false,\n  \"node_count\": 52,\n  \"paused\": false,\n  \"pid\": 34364,\n  \"renderer\": \"gl_compatibility\",\n  \"scene\": \"res://app/main.tscn\",\n  \"scene_root\": \"Game\",\n  \"time_scale\": 1,\n  \"uptime_s\": 0.842,\n  \"viewport_size\": \"Vector2(1280, 720)\",\n  \"window_size\": \"Vector2i(1280, 720)\"\n },\n \"muted\": true,\n \"playing\": true,\n \"scene\": \"main\"\n}"
+      }
+    ]
+  },
+  {
+    "name": "game",
+    "args": {
+      "action": "tree",
+      "depth": 3
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"scene\": \"res://app/main.tscn\",\n \"tree\": {\n  \"children\": [\n   {\n    \"children\": [\n     {\n      \"children\": [\n       {\n        \"child_count\": 2,\n        \"name\": \"World\",\n        \"path\": \"WorldFrame/Viewport/World\",\n        \"position\": \"Vector2(0, 0)\",\n        \"type\": \"Node2D\"\n       }\n      ],\n      \"name\": \"Viewport\",\n      \"path\": \"WorldFrame/Viewport\",\n      \"type\": \"SubViewport\"\n     }\n    ],\n    \"name\": \"WorldFrame\",\n    \"path\": \"WorldFrame\",\n    \"rect\": \"Rect2(0, 0, 1280, 720)\",\n    \"type\": \"SubViewportContainer\"\n   },\n   {\n    \"children\": [\n     {\n      \"children\": [\n       {\n        \"child_count\": 1,\n        \"name\": \"Margin\",\n        \"path\": \"UI/Header/Margin\",\n        \"rect\": \"Rect2(1, 1, 1278, 99)\",\n        \"type\": \"MarginContainer\"\n       }\n      ],\n      \"name\": \"Header\",\n      \"path\": \"UI/Header\",\n      \"rect\": \"Rect2(0, 0, 1280, 101)\",\n      \"type\": \"PanelContainer\"\n     },\n     {\n      \"children\": [\n       {\n        \"child_count\": 1,\n        \"name\": \"Margin\",\n        \"path\": \"UI/Footer/Margin\",\n        \"rect\": \"Rect2(1, 1, 1278, 92)\",\n        \"type\": \"MarginContainer\"\n       }\n      ],\n      \"name\": \"Footer\",\n      \"path\": \"UI/Footer\",\n      \"rect\": \"Rect2(0, 626, 1280, 94)\",\n      \"type\": \"PanelContainer\"\n     },\n     {\n      \"name\": \"Toast\",\n      \"path\": \"UI/Toast\",\n      \"rect\": \"Rect2(192, 105, 896, 45)\",\n      \"type\": \"Label\",\n      \"visible\": false\n     },\n     {\n      \"name\": \"Shade\",\n      \"path\": \"UI/Shade\",\n      \"rect\": \"Rect2(0, 0, 1280, 720)\",\n      \"type\": \"ColorRect\"\n     },\n     {\n      \"children\": [\n       {\n        \"child_count\": 1,\n        \"name\": \"Margin\",\n        \"path\": \"UI/Modal/Margin\",\n        \"rect\": \"Rect2(1, 1, 1073.2, 638.80005)\",\n        \"type\": \"MarginContainer\"\n       }\n      ],\n      \"name\": \"Modal\",\n      \"path\": \"UI/Modal\",\n      \"rect\": \"Rect2(102.399994, 39.6, 1075.2, 640.80005)\",\n      \"type\": \"PanelContainer\"\n     }\n    ],\n    \"class_name\": \"GameUI\",\n    \"instance\": \"res://ui/game_ui.tscn\",\n    \"name\": \"UI\",\n    \"path\": \"UI\",\n    \"rect\": \"Rect2(0, 0, 1280, 720)\",\n    \"script\": \"res://ui/game_ui.gd\",\n    \"type\": \"Control\"\n   },\n   {\n    \"name\": \"FeedbackSound\",\n    \"path\": \"FeedbackSound\",\n    \"type\": \"AudioStreamPlayer\"\n   }\n  ],\n  \"name\": \"Game\",\n  \"rect\": \"Rect2(0, 0, 1280, 720)\",\n  \"script\": \"res://app/main.gd\",\n  \"type\": \"Control\"\n }\n}"
+      }
+    ]
+  },
+  {
+    "name": "input",
+    "args": {
+      "action": "send",
+      "steps": [
+        {
+          "key": "Escape"
+        },
+        {
+          "action": "move_right",
+          "hold": 0.25
+        }
+      ]
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"results\": [\n  \"key Escape\",\n  \"tapped move_right for 0.25s\"\n ],\n \"steps\": 2\n}"
+      }
+    ]
+  },
+  {
+    "name": "game",
+    "args": {
+      "action": "eval",
+      "expression": "session.player_position.x > 320"
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"value\": true\n}"
+      }
+    ]
+  },
+  {
+    "name": "view",
+    "args": {
+      "action": "game",
+      "max_size": 1280
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"image\": \"attached #1\",\n \"coord_scale\": 1,\n \"height\": 720,\n \"original_height\": 720,\n \"original_width\": 1280,\n \"viewport_size\": \"Vector2(1280, 720)\",\n \"width\": 1280\n}"
+      }
+    ]
+  },
+  {
+    "name": "run",
+    "args": {
+      "action": "errors"
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"entries\": [],\n \"last_seq\": 2\n}"
+      }
+    ]
+  },
+  {
+    "name": "editor",
+    "args": {
+      "action": "logs",
+      "limit": 20
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"entries\": [],\n \"last_seq\": 2\n}"
+      }
+    ]
+  },
+  {
+    "name": "run",
+    "args": {
+      "action": "stop"
+    },
+    "result": [
+      {
+        "type": "text",
+        "text": "{\n \"stopped\": true\n}"
+      }
+    ]
+  }
+]

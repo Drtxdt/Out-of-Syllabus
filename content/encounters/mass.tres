@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EncounterDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/encounter_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "mass"
+title = "异常落体 / 01"
+question = "质量是否决定物体下落快慢？"
+requirements = PackedStringArray("observation", "controls", "evidence", "mass_independence")
+counterexamples = PackedStringArray("同形状、不同质量的球，几乎同时落地。", "同一张纸揉成团后明显加快，质量没有变化。")
+max_rounds = 8

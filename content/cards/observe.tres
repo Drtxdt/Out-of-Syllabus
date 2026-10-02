@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/card_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "observe"
+title = "观察记录"
+kind = "观察"
+description = "读取当前现象，保留原始数据。"
+effect = "observe"
+tier = 1

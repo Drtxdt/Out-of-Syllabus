@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/card_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "shape"
+title = "形状比较"
+kind = "观察"
+description = "同一张纸，展开与揉团：质量不变，阻力变化。"
+effect = "shape"
+tier = 1

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/card_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "repeat"
+title = "重复验证"
+kind = "证据"
+description = "通过重复对照确认结果；可替代单次测量路线。"
+effect = "repeat"
+tier = 1

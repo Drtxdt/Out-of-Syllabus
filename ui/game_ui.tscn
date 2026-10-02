@@ -1,0 +1,84 @@
+[gd_scene load_steps=2 format=3]
+[ext_resource type="Script" path="res://ui/game_ui.gd" id="1"]
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1")
+[node name="Header" type="PanelContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+offset_bottom = 90.0
+[node name="Margin" type="MarginContainer" parent="Header"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 8
+[node name="Column" type="VBoxContainer" parent="Header/Margin"]
+layout_mode = 2
+[node name="Location" type="Label" parent="Header/Margin/Column"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "超纲 / OUT OF SYLLABUS"
+[node name="Toolbar" type="HBoxContainer" parent="Header/Margin/Column"]
+layout_mode = 2
+theme_override_constants/separation = 8
+[node name="Footer" type="PanelContainer" parent="."]
+layout_mode = 0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -94.0
+[node name="Margin" type="MarginContainer" parent="Footer"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 10
+[node name="Column" type="VBoxContainer" parent="Footer/Margin"]
+layout_mode = 2
+[node name="Objective" type="Label" parent="Footer/Margin/Column"]
+layout_mode = 2
+autowrap_mode = 2
+[node name="Prompt" type="Label" parent="Footer/Margin/Column"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88,0.74,0.47,1)
+autowrap_mode = 2
+[node name="Toast" type="Label" parent="."]
+layout_mode = 0
+anchor_left = 0.15
+anchor_right = 0.85
+offset_top = 105.0
+offset_bottom = 150.0
+horizontal_alignment = 1
+autowrap_mode = 2
+theme_override_colors/font_color = Color(0.95,0.78,0.5,1)
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.01,0.02,0.03,0.85)
+[node name="Modal" type="PanelContainer" parent="."]
+layout_mode = 0
+anchor_left = 0.08
+anchor_top = 0.055
+anchor_right = 0.92
+anchor_bottom = 0.945
+[node name="Margin" type="MarginContainer" parent="Modal"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_bottom = 22
+[node name="Scroll" type="ScrollContainer" parent="Modal/Margin"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+[node name="Body" type="VBoxContainer" parent="Modal/Margin/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12

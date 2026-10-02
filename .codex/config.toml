@@ -1,0 +1,5 @@
+[mcp_servers.godot]
+command = "D:/nodejs/node.exe"
+args = ["E:/my_code/Out-of-Syllabus/tools/godot-forge/dist/index.js", "--project", "E:/my_code/Out-of-Syllabus", "--godot", "D:/Godot_v4.7.2/Godot_v4.7.2-stable_win64.exe", "--launch", "gui"]
+startup_timeout_sec = 60
+tool_timeout_sec = 90

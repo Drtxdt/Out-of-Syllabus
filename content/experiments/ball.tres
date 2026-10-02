@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ExperimentDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/experiment_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "ball"
+title = "ball"
+height_m = 2.0
+mass_kg = 0.08
+area_m2 = 0.00025
+air_density = 1.225
+drag_coefficient = 0.47

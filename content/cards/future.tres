@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/card_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "future"
+title = "数值积分"
+kind = "超纲"
+description = "借用未来的数值方法，预测含阻力运动。违规 +1；它仍受模型条件约束。"
+effect = "future"
+tier = 3

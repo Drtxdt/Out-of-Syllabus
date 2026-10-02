@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="KnowledgeDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/knowledge_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "drag"
+title = "空气阻力"
+tier = 1
+prerequisites = PackedStringArray("gravity")
+valid_domains = PackedStringArray("给定流体与形状条件", "低速")
+unlocks = PackedStringArray("drag", "archive")

@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-02",
+  "build": "0.1.0",
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "core": {
+    "checks": 94,
+    "engine": "4.7.2-stable (official)",
+    "failures": []
+  },
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU / OpenGL Compatibility",
+  "resolutions": [
+    "1280x720",
+    "1920x1080",
+    "2560x1440"
+  ],
+  "export": {
+    "path": "build/windows/OutOfSyllabus.exe",
+    "size": 124574864,
+    "sha256": "37d6d65da757b2fb365bd1aa55fe402fc6de781a2bc67ccd0b86410a6a2eec62"
+  },
+  "external_playtest": "not performed",
+  "public_demo": "not accepted"
+}
