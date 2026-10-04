@@ -54,6 +54,7 @@ static func validate(data: Variant) -> String:
  for id: Variant in data.owned:
   if not id is String or id not in ACTIONS or owned.has(id): return "未知或重复动作卡。"
   owned[id]=true
+ if owned.has("pump") and not data.flags.joint or owned.has("fix") and not data.flags.hammer or (owned.has("raise") or owned.has("release_pair")) and not data.flags.rig_demo: return "动作卡缺少章节解锁来源。"
  for id: Variant in data.knowledge:
   if id not in ["gravity","drag","future"]: return "未知知识。"
   var access: Variant=data.knowledge[id]
@@ -61,6 +62,7 @@ static func validate(data: Variant) -> String:
   for field: String in ["discovered","understood","authorized"]:
    if not access[field] is bool: return "知识权限不是布尔值。"
   if id=="future" and access.authorized: return "未来知识不能伪造许可。"
+ if owned.has("future") and (not data.knowledge.has("future") or not data.knowledge.future.discovered): return "未来动作缺少知识发现来源。"
  var sources: Dictionary={}
  var error: String=track(data.events,data.samples,int(data.cycle),int(data.tick),sources)
  if not error.is_empty(): return error
@@ -75,13 +77,21 @@ static func validate(data: Variant) -> String:
   if not error.is_empty(): return error
  var seen: Dictionary={}
  for record: Variant in data.observations:
-  if not record is Dictionary or not record.has_all(["id","source_id","cycle","tick","trace","observed","summary"]): return "观察记录结构无效。"
+  if not record is Dictionary or not record.has_all(["id","source_id","cycle","tick","trace","observed","observed_tick","summary"]): return "观察记录结构无效。"
   if not record.source_id is String or not sources.has(record.source_id) or seen.has(record.source_id): return "观察来源不存在或重复。"
   if record.id!="observation_"+record.source_id or not record.observed is bool or not record.summary is String or not integer(record.cycle,1,int(data.cycle)) or not integer(record.tick): return "观察元数据无效。"
   if not Physics.valid_trace(record.trace): return "观察轨迹与模拟器不符。"
   var source: Dictionary=sources[record.source_id]
   if source.kind not in ["release","joint_release","interact"] or source.target not in ["paper","lab_drop"]: return "预测不能冒充实测。"
   if int(record.cycle)!=int(source.cycle) or int(record.tick)<int(source.tick) or not Physics.equivalent(source.payload.get("setup"),record.trace.setup): return "测量改变了原释放条件。"
+  var finish_tick: int=int(source.tick)+int(ceil(float(record.trace.arrival_s)*60.0))
+  if int(record.tick)<finish_tick or not integer(record.observed_tick,-1): return "测量或观察时间早于落地。"
+  if record.observed:
+   var witnessed: bool=false
+   for event: Dictionary in sources.values():
+    if event.kind=="observe" and event.payload.get("source_id")==record.source_id and event.cycle==record.cycle and int(event.tick)==int(record.observed_tick) and int(event.tick)>=finish_tick: witnessed=true;break
+   if not witnessed: return "已观察状态缺少实际读取事件。"
+  elif record.observed_tick!=-1: return "未观察记录含有读取时间。"
   seen[record.source_id]=true
  var o: Dictionary=data.opening
  if not o.has_all(["shape","phase","trace","release_tick","elapsed","door_until","source_id"]) or o.shape not in ["flat","crumpled"] or o.phase not in ["idle","falling","landed"]: return "开场装置状态无效。"

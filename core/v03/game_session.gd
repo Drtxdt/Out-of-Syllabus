@@ -293,6 +293,7 @@ func _record(kind: String, target: String, payload: Dictionary, origin: Dictiona
  var event_payload: Dictionary=payload.duplicate(true)
  if kind=="release" and target=="paper": event_payload["setup"]=state.opening.trace.setup.duplicate(true)
  if kind in ["joint_release","interact"] and target=="lab_drop" and not state.attempt.is_empty() and not state.attempt.joint_trace.is_empty(): event_payload["setup"]=state.attempt.joint_trace.setup.duplicate(true)
+ if kind=="observe": event_payload["source_id"]=state.opening.source_id if target=="paper" else state.attempt.source_event_id
  var event: Dictionary={"id":"c%d:e%d" % [source.cycle,next_seq],"cycle":source.cycle,"seq":next_seq,"tick":source.tick,"room":source.room,"position":source.position.duplicate(),"kind":kind,"target":target,"payload":event_payload,"scope":"device" if kind in ["bell","hold","joint_release","device_complete"] or (kind=="interact" and target in ["sync_bell","assist_a","assist_b","lab_drop"]) else "world"}
  if source.cycle==state.cycle: state.seq=next_seq;state.events.append(event)
  else: state.histories.back().events.append(event)
@@ -311,9 +312,9 @@ func _learn(id: String, authorized: bool) -> void:
 func _observe(trace_data: Dictionary, source: String, summary: String, observed: bool=true) -> void:
  for item: Dictionary in state.observations:
   if item.source_id==source:
-   if observed: item.observed=true
+   if observed and not item.observed: item.observed=true;item.observed_tick=state.tick
    return
- state.observations.append({"id":"observation_"+source,"source_id":source,"cycle":state.cycle,"tick":state.tick,"trace":trace_data.duplicate(true),"observed":observed,"summary":summary})
+ state.observations.append({"id":"observation_"+source,"source_id":source,"cycle":state.cycle,"tick":state.tick,"trace":trace_data.duplicate(true),"observed":observed,"observed_tick":state.tick if observed else -1,"summary":summary})
 
 func advance(steps: int=1) -> void:
  if state.mode!="world": return
