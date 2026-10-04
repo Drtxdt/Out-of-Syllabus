@@ -27,7 +27,7 @@ func _draw() -> void:
     draw_rect(Rect2(at+Vector2(-10,-22),Vector2(20,9)),Color("92c6bb") if context.get("holds",{}).has(item.id) else Color("6f4a3a"))
     draw_line(at+Vector2(-9,-3),at+Vector2(9,-3),Color("e1bc78"),3)
    "bell":
-    draw_polygon(PackedVector2Array([at+Vector2(-13,-7),at+Vector2(-9,-26),at+Vector2(9,-26),at+Vector2(13,-7)]),Color("e1bc78"))
+    draw_colored_polygon(PackedVector2Array([at+Vector2(-13,-7),at+Vector2(-9,-26),at+Vector2(9,-26),at+Vector2(13,-7)]),Color("e1bc78"))
     draw_rect(Rect2(at+Vector2(-3,-5),Vector2(6,7)),color)
    "experiment","rig":
     draw_rect(Rect2(at+Vector2(-23,-40),Vector2(46,46)),Color("172930"));draw_rect(Rect2(at+Vector2(-23,-40),Vector2(46,46)),color,false,2)
@@ -38,7 +38,7 @@ func _draw() -> void:
     draw_rect(Rect2(at+Vector2(-14,-22),Vector2(28,28)),Color("172930"));draw_rect(Rect2(at+Vector2(-14,-22),Vector2(28,28)),color,false,2)
     draw_line(at+Vector2(-7,-6),at+Vector2(7,-6),color,2)
    "enemy":
-    draw_polygon(PackedVector2Array([at+Vector2(-14,0),at+Vector2(-9,-28),at+Vector2(9,-28),at+Vector2(14,0)]),Color("6f4a3a"))
+    draw_colored_polygon(PackedVector2Array([at+Vector2(-14,0),at+Vector2(-9,-28),at+Vector2(9,-28),at+Vector2(14,0)]),Color("6f4a3a"))
     draw_rect(Rect2(at+Vector2(-7,-21),Vector2(4,3)),color);draw_rect(Rect2(at+Vector2(3,-21),Vector2(4,3)),color)
    _:
     draw_rect(Rect2(at+Vector2(-15,-20),Vector2(30,25)),Color("172930"));draw_rect(Rect2(at+Vector2(-15,-20),Vector2(30,25)),color,false,2)
@@ -46,3 +46,4 @@ func _draw() -> void:
   if str(item.id)==active_id:draw_arc(at,21,0,TAU,24,color,1)
   var title: String=str(item.title)
   draw_string(font,at+Vector2(-font.get_string_size(title,HORIZONTAL_ALIGNMENT_LEFT,-1,12).x/2,20),title,HORIZONTAL_ALIGNMENT_LEFT,-1,12,color)
+
