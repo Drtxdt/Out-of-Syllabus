@@ -59,6 +59,12 @@ func _ready() -> void:
  session.connect("notice",toast)
  _sync_world()
  if not suppress_intro:_welcome()
+ var profile: String=preload("res://core/v03/runtime_paths.gd").profile_id()
+ for argument: String in OS.get_cmdline_user_args():
+  if argument.begins_with("--qa-route="):
+   if profile.is_empty() or argument.trim_prefix("--qa-route=").is_empty():
+    push_error("QA route requires a nonempty QA profile and route");get_tree().quit(2);return
+   call_deferred("_start_qa_driver");break
 
 func state() -> Dictionary:
  return session.get("state") if session!=null else {}
@@ -441,3 +447,8 @@ func show_settings() -> void:
  var row: HBoxContainer=UI.row(modal_body)
  UI.button(row,"Save","保存",save_game);UI.button(row,"Load","读取",load_game);UI.button(row,"Retry","恢复检查点",func() -> void:_dispatch("retry");close_modal())
  UI.button(modal_body,"CloseSettings","返回",close_modal);UI.focus_first(modal_body)
+
+func _start_qa_driver() -> void:
+ var driver: Node=load("res://qa/v03_input_driver.gd").new()
+ get_tree().root.add_child(driver)
+ driver.start(self)
