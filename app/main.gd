@@ -123,11 +123,7 @@ func update_echoes() -> void:
    echo_nodes[i].tint=Color("e1bc78") if int(poses[i].cycle)==1 else Color("92aade")
    echo_nodes[i].position = Vector2(poses[i].x,poses[i].y);echo_nodes[i].facing = poses[i].direction;echo_nodes[i].moving = poses[i].moving
 func update_nearest() -> void:
- nearest = {};var distance: float = 48.0
- for item: Dictionary in content.room(session.room_id).objects:
-  var prop: Node2D = room_node.get_node("Props/"+item.id) as Node2D
-  var d: float = player.position.distance_to(prop.position)
-  if d<distance: distance=d;nearest=item
+ nearest = session.nearby_interaction()
  ui.prompt.text = "[%s] %s" % [settings.display("interact"),nearest.title] if not nearest.is_empty() else "%s%s%s%s 移动  ·  %s 闪避  ·  %s 日志  ·  %s 应用知识" % [settings.display("move_up"),settings.display("move_left"),settings.display("move_down"),settings.display("move_right"),settings.display("dodge"),settings.display("journal"),settings.display("apply_knowledge")]
 func _unhandled_input(event: InputEvent) -> void:
  if session == null: return

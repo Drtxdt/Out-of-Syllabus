@@ -40,6 +40,9 @@ func measure(session: Variant, experiment: String = "mass", medium: String = "ai
  return record.id
 
 func play_proof(session: Variant, ids: Array, repeat: bool = false) -> void:
+ if repeat:
+  session.loadout.erase("measurement")
+  if not "repeat" in session.loadout: session.loadout.append("repeat")
  for card: String in ["observe","control","repeat" if repeat else "measurement","gravity"]:
   check(session.play_card(card,ids).ok,"play " + card)
 

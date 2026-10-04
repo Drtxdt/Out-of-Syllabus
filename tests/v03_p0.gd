@@ -1,0 +1,30 @@
+extends "res://tests/v02_regression.gd"
+
+func _initialize() -> void:
+ if RuntimePaths.profile_id().is_empty(): quit(2);return
+ content=GameContent.new()
+ var s: Variant=fixture()
+ var first: String=measure(s)
+ s.cycle=2
+ check(s.start_battle("mass"),"open argument")
+ s.suspend_battle()
+ var second: String=measure(s)
+ check(s.resume_battle(),"resume after new observation")
+ check(s.play_card("control",[first,second]).ok,"fresh observation accepted after resume")
+ var before: String=canonical(s.snapshot())
+ check(not s.play_card("repeat",[first,second]).ok,"unavailable card rejected")
+ check(before==canonical(s.snapshot()),"unavailable card is atomic")
+ s.loadout.erase("measurement");s.loadout.append("repeat")
+ check(s.play_card("repeat",[first,second]).ok,"equipped repeated experiment accepted")
+ s.suspend_battle()
+ var restored: GameSession=GameSession.new(content)
+ check(restored.restore(s.snapshot()),"suspended snapshot restores")
+ check(restored.resume_battle(),"restored argument resumes")
+ check(restored.battle.records.size()==2,"restored evidence agrees with display")
+ s.mode="world";s.player_position=Vector2(144+40,144)
+ check(s.nearby_interaction().get("id","")!="assist_a","hold not advertised at 40 pixels")
+ s.player_position=Vector2(144+36,144)
+ check(s.nearby_interaction().get("id","")=="assist_a","hold advertised at exact 36 pixels")
+ write_text(RuntimePaths.report_path("p0.json"),JSON.stringify({"checks":checks,"failures":failures},"  "))
+ print("V03 P0: ",checks," checks; failures=",failures)
+ quit(0 if failures.is_empty() else 1)

@@ -96,6 +96,20 @@ func _near(actor: String, object_id: String, distance: float=48.0) -> bool:
    if item.id==object_id: return room.id==pose.room and pose.position.distance_to(Vector2(item.x,item.y))<=distance
  return false
 
+func interaction_radius(object_id: String) -> float:
+ return 36.0 if object_id in ["assist_a", "assist_b"] else 48.0
+
+func nearby_interaction() -> Dictionary:
+ var nearest: Dictionary = {}
+ var distance: float = INF
+ for item: Dictionary in content.room(room_id).objects:
+  var position: Vector2 = Vector2(item.x, item.y)
+  if item.id == "crate": position.x += 32 * int(world.crate)
+  var current: float = player_position.distance_to(position)
+  if current <= interaction_radius(item.id) and current < distance:
+   nearest = item;distance = current
+ return nearest
+
 func _record(kind: String,target: String,payload: Dictionary,actor: String,context: Dictionary) -> Dictionary:
  _seq+=1
  var event: Dictionary={"seq":_seq,"cycle":cycle,"tick":tick,"actor":actor,"room":context.get("source_room",room_id),"kind":kind,"target":target,"payload":payload.duplicate(true)}
@@ -356,10 +370,13 @@ func suspend_battle() -> void:
  mode="world"
 func resume_battle() -> bool:
  if battle==null or not _near("player","lab_drop"): return false
+ battle.records=evidence.duplicate(true)
  battle.state.suspended=false;mode="model"
  return true
 func play_card(id: String, ids: Array=[]) -> Dictionary:
  if mode!="model" or battle==null or battle.state.suspended or not content.cards.has(id): return _no("没有当前论证或未知卡牌。")
+ if not id in ["observe", "experiment"] and not id in loadout: return _no("这张卡没有装入当前卡组。")
+ battle.records=evidence.duplicate(true)
  var result: Dictionary=battle.play(content.cards[id],ids)
  if result.ok: _record("play_card",id,{"evidence_ids":ids},"player",{})
  return result
