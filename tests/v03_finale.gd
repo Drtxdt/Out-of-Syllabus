@@ -15,6 +15,11 @@ func run_cases() -> void:
  check(s.command("forecast","archive_terminal",{"model":"gravity","height":2.0,"medium":"air"}).ok,"wrong model remains selectable")
  at(s,"archive","fall_gate");denied(s,"gate_release","fall_gate")
  check(s.state.finale.prediction.model=="gravity","rejected gate cannot silently correct model")
+ for parameters: Dictionary in [{"model":"drag","height":1.0,"medium":"air"},{"model":"drag","height":2.0,"medium":"vacuum"}]:
+  at(s,"archive","archive_terminal")
+  check(s.command("forecast","archive_terminal",parameters).ok,"wrong physical parameters remain selectable")
+  at(s,"archive","fall_gate");denied(s,"gate_release","fall_gate")
+  check(s.state.finale.prediction.parameters==parameters and s.state.finale.violations==0,"parameter mismatch cannot be corrected or penalized before use")
  at(s,"archive","archive_terminal")
  check(s.command("forecast","archive_terminal",{"model":"drag","height":2.0,"medium":"air"}).ok,"valid forecast")
  check(s.state.finale.violations==0,"preview unpenalized")
