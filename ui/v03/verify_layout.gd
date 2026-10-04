@@ -38,11 +38,11 @@ func run() -> void:
   check(outcomes.size()==1 and outcomes[0][2].target=="paper","confirmed action emits target")
   view.cancel_selection();await settle()
   check(viewport.gui_get_focus_owner()!=null,"cancel returns to actionable control")
-  battle.ap=0;battle.revision+=1
+  battle.ap=0;battle.pending_release=true;battle.defending=true;battle.revision+=1
   view.render(battle,owned);await settle()
   print("V03_NO_AP_LAYOUT ",size," min=",view.get_combined_minimum_size())
   check(panel.get_global_rect().end.y<=size.y,"disabled action reasons fit height "+str(size))
-  battle.ap=2;battle.revision+=1
+  battle.ap=2;battle.pending_release=false;battle.defending=false;battle.revision+=1
   viewport.queue_free();await settle()
  print("V03_UI_CHECKS failures=",failures)
  quit(1 if failures else 0)

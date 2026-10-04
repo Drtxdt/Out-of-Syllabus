@@ -49,8 +49,10 @@ func render(value: Dictionary,actions: Array) -> void:
  if changed:
   revision=int(battle.get("revision",0));selected_action="";selected_target="";preview_result={}
  stats.text="%s  · 第 %s 回合 · AP %s/2 · 你 %s HP · 敌方 %s HP" % [{"patrol":"巡逻纸偶","hammer":"双锤看守","bellows":"风箱纸偶"}.get(str(battle.get("id","")),"交锋"),battle.get("round",1),battle.get("ap",2),battle.get("hp",0),battle.get("enemy_hp",0)]
+ if bool(battle.get("pending_release",false)):stats.text+=" · 本轮待释放"
  var next: Dictionary=battle.get("intent",{})
- intent.text="敌方意图：%s · 通道 %s · 伤害 %s  |  %s · 护盾 %s" % [next.get("title","等待"),int(next.get("lane",1))+1,next.get("damage",0),"真空舱" if battle.get("medium","air")=="vacuum" else "空气",battle.get("shield",false)]
+ intent.text="敌方意图：%s · 通道 %s · 伤害 %s  |  %s · 护盾%s" % [next.get("title","等待"),int(next.get("lane",1))+1,next.get("damage",0),"真空舱" if battle.get("medium","air")=="vacuum" else "空气","闭合" if bool(battle.get("shield",false)) else "已打开"]
+ if bool(battle.get("defending",false)):intent.text+=" · 已防御"
  _clear(lane_row)
  for index: int in range(3):
   var label: Label=UI.label(lane_row,("◆ 你" if int(battle.get("lane",1))==index else "◇")+"  通道 %s"%(index+1)+( "  ⚠" if int(next.get("lane",-1))==index else ""),16)
