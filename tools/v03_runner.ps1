@@ -8,12 +8,13 @@ function New-V03Run([string]$Root,[string]$Godot,[string]$RunId) {
  New-Item -ItemType Directory -Force -Path $report | Out-Null
  return @{root=$project;godot=$resolved;run_id=$RunId;workspace=$workspace;report=$report;qa_root=(Join-Path $project 'reports/v0.3');results=[System.Collections.Generic.List[object]]::new();errors=[System.Collections.Generic.List[string]]::new();started=[DateTime]::UtcNow.ToString('o')}
 }
-function Invoke-V03Check($Run,[string]$Name,[string[]]$Arguments,[int]$TimeoutSeconds=180,[string]$Executable='') {
+function Invoke-V03Check($Run,[string]$Name,[string[]]$Arguments,[int]$TimeoutSeconds=180,[string]$Executable='',[switch]$Standalone) {
  if(-not $Executable){$Executable=$Run.godot}
  $profile="$($Run.workspace)-$($Run.run_id)-$Name"
  $log=Join-Path $Run.report "$Name.log"
- $all=@('--path',$Run.root,'--log-file',$log)+$Arguments
+ $all=if($Standalone){@('--log-file',$log)+$Arguments}else{@('--path',$Run.root,'--log-file',$log)+$Arguments}
  $info=[System.Diagnostics.ProcessStartInfo]::new($Executable)
+ $info.WorkingDirectory=$Run.report
  $info.UseShellExecute=$false;$info.CreateNoWindow=$true;$info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true
  $info.Environment['GODOT_FORGE_NO_SERVER']='1'
  $info.Environment['OOS_QA_PROFILE']=$profile
@@ -47,5 +48,6 @@ function Complete-V03Run($Run,[hashtable]$Extra=@{}) {
  foreach($key in $Extra.Keys){$manifest[$key]=$Extra[$key]}
  $manifest | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath (Join-Path $Run.report 'manifest.json') -Encoding utf8
 }
+
 
 
