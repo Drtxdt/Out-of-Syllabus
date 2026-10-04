@@ -6,7 +6,7 @@ function New-V03Run([string]$Root,[string]$Godot,[string]$RunId) {
  $workspace=(Split-Path $project -Leaf) -replace '[^A-Za-z0-9_-]','_'
  $report=Join-Path $project "reports/v0.3/$RunId"
  New-Item -ItemType Directory -Force -Path $report | Out-Null
- return @{root=$project;godot=$resolved;run_id=$RunId;workspace=$workspace;report=$report;qa_root=(Join-Path $project 'reports/v0.3');qa_root=(Join-Path $project 'reports/v0.3');results=[System.Collections.Generic.List[object]]::new();errors=[System.Collections.Generic.List[string]]::new();started=[DateTime]::UtcNow.ToString('o')}
+ return @{root=$project;godot=$resolved;run_id=$RunId;workspace=$workspace;report=$report;qa_root=(Join-Path $project 'reports/v0.3');results=[System.Collections.Generic.List[object]]::new();errors=[System.Collections.Generic.List[string]]::new();started=[DateTime]::UtcNow.ToString('o')}
 }
 function Invoke-V03Check($Run,[string]$Name,[string[]]$Arguments,[int]$TimeoutSeconds=180,[string]$Executable='') {
  if(-not $Executable){$Executable=$Run.godot}
@@ -47,4 +47,5 @@ function Complete-V03Run($Run,[hashtable]$Extra=@{}) {
  foreach($key in $Extra.Keys){$manifest[$key]=$Extra[$key]}
  $manifest | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath (Join-Path $Run.report 'manifest.json') -Encoding utf8
 }
+
 
