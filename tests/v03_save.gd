@@ -69,3 +69,7 @@ func run_cases() -> void:
  restore_rejected(measured,fabricated,"repeated observation source")
  fabricated=good.duplicate(true);fabricated.observations[0].source_id="c1:e999"
  restore_rejected(measured,fabricated,"nonexistent observation source")
+ var unearned: Variant=session_new()
+ for action_id: String in ["future","pump","fix","raise","release_pair"]:
+  var forged_unlock: Dictionary=unearned.snapshot();forged_unlock.owned=[action_id]
+  restore_rejected(unearned,forged_unlock,"unearned action "+action_id)
