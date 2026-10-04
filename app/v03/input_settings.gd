@@ -1,6 +1,6 @@
 extends RefCounted
-const DEFAULTS: Dictionary={"move_up":KEY_W,"move_down":KEY_S,"move_left":KEY_A,"move_right":KEY_D,"interact":KEY_E,"dodge":KEY_SPACE,"journal":KEY_J,"wait":KEY_F,"pause":KEY_ESCAPE,"save":KEY_F5,"load":KEY_F9}
-const LABELS: Dictionary={"move_up":"向上","move_down":"向下","move_left":"向左","move_right":"向右","interact":"交互","dodge":"闪避","journal":"笔记","wait":"等待关键动作","pause":"设置 / 返回","save":"保存","load":"读取"}
+const DEFAULTS: Dictionary={"move_up":KEY_W,"move_down":KEY_S,"move_left":KEY_A,"move_right":KEY_D,"interact":KEY_E,"dodge":KEY_SPACE,"journal":KEY_J,"hint":KEY_H,"wait":KEY_F,"pause":KEY_ESCAPE,"save":KEY_F5,"load":KEY_F9}
+const LABELS: Dictionary={"move_up":"向上","move_down":"向下","move_left":"向左","move_right":"向右","interact":"交互","dodge":"闪避","journal":"笔记","hint":"提示","wait":"等待关键动作","pause":"设置 / 返回","save":"保存","load":"读取"}
 var keys: Dictionary=DEFAULTS.duplicate()
 var path: String
 var reduced_effects: bool=true

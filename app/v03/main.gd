@@ -14,6 +14,7 @@ var hud: VBoxContainer
 var objective: Label
 var prompt: Label
 var echo_status: Label
+var hint_status: Label
 var toast_label: Label
 var toast_remaining: float=0
 var shade: ColorRect
@@ -62,10 +63,12 @@ func state() -> Dictionary:
 func _build_ui() -> void:
  hud=VBoxContainer.new();hud.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE);hud.offset_left=20;hud.offset_right=-20;hud.offset_top=12;hud.mouse_filter=Control.MOUSE_FILTER_IGNORE;add_child(hud)
  objective=UI.label(hud,"超纲 / OUT OF SYLLABUS",20);objective.name="Objective"
+ hint_status=UI.label(hud,"",16);hint_status.name="HintStatus";hint_status.add_theme_color_override("font_color",UI.GOLD)
  echo_status=UI.label(hud,"",16);echo_status.name="EchoStatus"
  var footer: PanelContainer=PanelContainer.new();footer.name="Footer";footer.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE);footer.grow_vertical=Control.GROW_DIRECTION_BEGIN;add_child(footer)
  var foot: HBoxContainer=UI.row(footer)
  prompt=UI.label(foot,"",18);prompt.name="Nearby";prompt.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+ UI.button(foot,"Hint","提示",func() -> void:_dispatch("request_hint")).size_flags_horizontal=Control.SIZE_SHRINK_END
  UI.button(foot,"Notebook","笔记",show_notebook).size_flags_horizontal=Control.SIZE_SHRINK_END
  UI.button(foot,"Menu","设置",show_settings).size_flags_horizontal=Control.SIZE_SHRINK_END
  toast_label=Label.new();toast_label.name="Toast";toast_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE);toast_label.offset_top=76;toast_label.offset_left=50;toast_label.offset_right=-50;toast_label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;toast_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;toast_label.add_theme_color_override("font_color",UI.GOLD);add_child(toast_label)
@@ -120,6 +123,7 @@ func _unhandled_input(event: InputEvent) -> void:
  if event.is_action_pressed("interact"):_interact()
  elif event.is_action_pressed("dodge"):_dispatch("dodge","player")
  elif event.is_action_pressed("journal"):show_notebook()
+ elif event.is_action_pressed("hint"):_dispatch("request_hint")
  elif event.is_action_pressed("wait"):_dispatch("fast_forward")
  elif event.is_action_pressed("save"):save_game()
  elif event.is_action_pressed("load"):load_game()
@@ -167,8 +171,11 @@ func _sync_world() -> void:
  if finale.get("phase","")=="chase":echo_text="监考者追逐中 · "+str(settings.call("display","dodge"))+" 闪避，前往观测塔"
  var objective_text: String="第 %s 轮 · %s"%[s.cycle,session.call("objective")]
  var near_text: String=(str(settings.call("display","interact"))+"  "+str(near.title)) if not near.is_empty() else "移动探索 · "+str(settings.call("display","pause"))+" 设置"
- var key: String=objective_text+near_text+echo_text
- if key!=_hud_key:objective.text=objective_text;prompt.text=near_text;echo_status.text=echo_text;echo_status.visible=not echo_text.is_empty();_hud_key=key
+ var hint_text: String=str(session.call("hint")) if int(s.get("guide",{}).get("hint_level",0))>0 else ""
+ var key: String=objective_text+near_text+echo_text+hint_text
+ if key!=_hud_key:
+  objective.text=objective_text;prompt.text=near_text;echo_status.text=echo_text;echo_status.visible=not echo_text.is_empty();_hud_key=key
+  hint_status.text=hint_text;hint_status.visible=not hint_text.is_empty()
  _update_joint(near)
 
 func _update_joint(near: Dictionary) -> void:
