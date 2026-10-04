@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "calibrate"
+short_text = "到器材室校准远端刻度。"
+target_ids = PackedStringArray("calibration_marker")
+hint_sequence = PackedStringArray("安全路线使用已有的真实记录。","器材室左边有远端刻度。","在刻度处交互，然后回档案室闸门释放。")

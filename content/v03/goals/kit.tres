@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "kit"
+short_text = "固定器材室纸幕，取出密封组件。"
+target_ids = PackedStringArray("paper_barrier")
+hint_sequence = PackedStringArray("真空实验还缺密封组件。","纸幕晃动挡住了器材。","到器材室右上纸幕处交互，用夹具固定。")

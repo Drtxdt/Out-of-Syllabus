@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/encounter_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "bellows"
+title = "风箱纸偶"
+enemy_hp = 12
+shielded = true

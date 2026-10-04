@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "paper"
+short_text = "门关得太快——让这张纸慢一点。"
+target_ids = PackedStringArray("paper")
+hint_sequence = PackedStringArray("门与纸片的落地有关。","同一张纸展开后，迎风面积会变大。","展开纸片后释放，落地时看延时齿轮。")

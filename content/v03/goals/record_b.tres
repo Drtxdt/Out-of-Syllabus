@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "record_b"
+short_text = "敲铃，让过去的 A 配合现在的 B。"
+target_ids = PackedStringArray("sync_bell","assist_b")
+hint_sequence = PackedStringArray("一条过去的记录现在可以帮你。","敲铃后 A 会回放，你去右侧 B。","在倒数结束前操作 B，保持到有效重叠完成。")

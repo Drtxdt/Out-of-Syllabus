@@ -7,10 +7,11 @@ static func object(id: String, title: String, height: float=2.0, lane: int=1) ->
  return {"id":id,"title":title,"kind":"paper" if id=="paper" else "metal","mass":s.mass,"area":s.area,"coefficient":s.coefficient,"height":height,"shape":s.shape,"held":true,"fixed":false,"lane":lane}
 
 static func initial(id: String) -> Dictionary:
+ var definition: Resource=load("res://content/v03/encounters/%s.tres" % id)
  var objects: Dictionary={}
  if id=="hammer": objects={"left":object("left","重配重",2.0,0),"right":object("right","轻配重",1.0,2)}
  else: objects={"paper":object("paper","同一张纸",2.0,1),"weight":object("weight","金属配重",2.0,0)}
- return {"id":id,"round":1,"ap":2,"hp":14,"enemy_hp":9 if id=="patrol" else (6 if id=="hammer" else 12),"lane":1,"intent":{"title":"扫击中路" if id!="hammer" else "锤击高支架","lane":1,"damage":4},"objects":objects,"shield":id!="patrol","phase":"air","defending":false,"pending_release":false,"medium":"air","powered":true,"sealed":true,"log":[],"outcome":"active","revision":0,"traces":[],"trigger":"","device_tick":0}
+ return {"id":id,"round":1,"ap":2,"hp":14,"enemy_hp":definition.enemy_hp,"lane":1,"intent":{"title":"扫击中路" if id!="hammer" else "锤击高支架","lane":1,"damage":4},"objects":objects,"shield":definition.shielded,"phase":"air","defending":false,"pending_release":false,"medium":"air","powered":true,"sealed":true,"log":[],"outcome":"active","revision":0,"traces":[],"trigger":"","device_tick":0}
 
 static func apply(source: Dictionary, action: String, target: String, owned: Array) -> Dictionary:
  if source.is_empty() or source.outcome!="active": return deny("本场战斗已结束。")
@@ -19,6 +20,9 @@ static func apply(source: Dictionary, action: String, target: String, owned: Arr
  if targets.has(action) and target not in targets[action]: return deny("这个动作不能作用于该目标。")
  if action not in ["attack","defend","move_left","move_right","unfix","end_turn"] and action not in owned: return deny("还没有掌握这个动作。")
  var cost: int=int(COSTS.get(action,0))
+ if action in ["crumple","unfold","raise","release_pair","fix","pump","future"]:
+  var definition: Resource=load("res://content/v03/%s.tres" % action)
+  cost=int(definition.cost)
  if int(source.ap)<cost: return deny("行动点不足，先结束回合。")
  var s: Dictionary=source.duplicate(true)
  var obj: Dictionary=s.objects.get(target,{})
@@ -29,6 +33,7 @@ static func apply(source: Dictionary, action: String, target: String, owned: Arr
    obj.shape="crumpled" if action=="crumple" else "flat"
    obj.area=0.00025 if action=="crumple" else 0.006
    message="纸片形状改变；质量保持不变。"
+   if s.id=="patrol": message+="展开遮挡使下一次伤害减少 2 点。" if action=="unfold" else "揉团让出进攻线，攻击增加 1 点，但失去纸幕遮挡。"
    if s.medium=="vacuum": message+="真空里没有空气阻力，改变形状不改变落体时间。"
   "raise":
    if obj.is_empty() or not obj.held: return deny("需要夹具里尚未释放的物体。")

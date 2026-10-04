@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "submit"
+short_text = "到观测塔终端提交完整记录。"
+target_ids = PackedStringArray("cycle_console")
+hint_sequence = PackedStringArray("已经脱离追踪。","本轮记录还需要最终提交。","走到观测塔中央记录终端交互。")

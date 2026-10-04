@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "patrol"
+short_text = "走出教室，面对巡逻纸偶。"
+target_ids = PackedStringArray("patrol")
+hint_sequence = PackedStringArray("走廊有个拦路的纸偶。","看清它下一回合攻击的通道。","攻击削减生命；展开提供遮挡，揉团腾出进攻空间。")

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "retry"
+short_text = "恢复本次检查点，再试一次。"
+target_ids = PackedStringArray()
+hint_sequence = PackedStringArray("这次没有通过。","原始历史保留不变。","选择重试，不需要重新完成三个循环。")

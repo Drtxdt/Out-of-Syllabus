@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "chase"
+short_text = "监考者追踪中，闪避并抵达塔。"
+target_ids = PackedStringArray("to_tower")
+hint_sequence = PackedStringArray("你的能力使用留下了痕迹。","移动拉开距离，闪避能穿过接触判定。","追逐开始两秒后，进入走廊左下的观测塔。")

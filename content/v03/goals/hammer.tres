@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "hammer"
+short_text = "改变配重落地时刻，打开护盾。"
+target_ids = PackedStringArray("hammer")
+hint_sequence = PackedStringArray("护盾受两边配重控制。","同时释放不等于同时落地，检查高度。","抬高较低支架后齐放；也可防御让锤击压低另一边。")

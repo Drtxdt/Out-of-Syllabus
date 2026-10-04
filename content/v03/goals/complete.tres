@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "complete"
+short_text = "记录已提交，序章完成。"
+target_ids = PackedStringArray()
+hint_sequence = PackedStringArray("序章已经完成。","可以回看实验笔记。","保存完成记录，保留这次选择。")

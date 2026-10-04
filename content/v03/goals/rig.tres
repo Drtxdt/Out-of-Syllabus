@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "rig"
+short_text = "亲手调高、齐放实验室配重。"
+target_ids = PackedStringArray("rig_demo")
+hint_sequence = PackedStringArray("不同质量是否一定先后到达？","左侧配重示范台能统一释放条件。","走到实验室左下的示范台并交互。")

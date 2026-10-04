@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "gate"
+short_text = "释放档案室闸门，落地后通行。"
+target_ids = PackedStringArray("fall_gate")
+hint_sequence = PackedStringArray("预测与校准仍需要你实际操作。","纸片落地后会出现三秒窗口。","靠近闸门释放，等落地后从档案室出口走出。")

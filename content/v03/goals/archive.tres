@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "archive"
+short_text = "去档案室选择规律或未来轨迹。"
+target_ids = PackedStringArray("archive_terminal")
+hint_sequence = PackedStringArray("异常解除，档案室开放了。","已有观察能支持安全路线，未来知识能揭示捷径。","在档案终端选择路线；预测要自己选择模型。")

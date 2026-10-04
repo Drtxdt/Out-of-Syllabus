@@ -47,3 +47,13 @@ UI 从 owned 和基础动作生成按钮，先选动作再选目标，调用纯�
 新版 `core/v03/runtime_paths.gd` 解析相同 QA 参数，默认数据 user://v0.3；报告 reports/v0.3。输入设置支持传入新版路径，不使用旧用户设置文件。新主场景 `app/v03/main.tscn`；保留旧 app/main.tscn。所有测试显式 --log-file，避免初始化日志落入旧用户目录。
 
 允许为具体实现增加字段或展示方法；改变以上字段语义必须同步核心、UI 与测试。数值平衡可以更新，但轨迹、观察、结算、历史不可变与非法命令原子性不能弱化。
+
+## 集成后的补充
+
+`opening.elapsed` 为秒。`SimulationTrace.points` 使用 `[time_s,distance_m,velocity_m_s]`；Physics版本2，合法初速度范围±5m/s、高度0.25至8m。持久化比较采用数值容差，历史语义哈希将坐标量化到0.0001px，事件与tick仍另作精确整数验证。
+
+`objects()` 提供 active/fixed 展示字段，过滤已击败敌人。联合测量先产生未观察记录，UI实际呈现结果至少两帧后提交 `observe/lab_drop`；配重示范轨迹位于 `state.rig_demo.traces`。所有实测源事件保存核心生成的setup，加载重新求解核验。
+
+`state.guide` 包含 goal_id/idle_ticks/hint_level；`request_hint` 递进提示。目标和提示由 GoalDef Resource 定义；卡牌AP与遭遇初始生命由Resource读取。移动预算在同一tick累计检查。
+
+局部第一轮有效维持480tick，第二轮真实重叠360tick；区间0..359是360个已结算tick，结束事件也进入原来源。第三轮快进在A/B已就绪时停下，留给玩家操作C。设置与阅读暂停世界；纸片释放按统一3倍慢放推进世界，测量结果不变。

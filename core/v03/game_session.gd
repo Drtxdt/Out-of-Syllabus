@@ -4,6 +4,7 @@ signal notice(text: String)
 const Physics = preload("res://core/v03/physics.gd")
 const Combat = preload("res://core/v03/combat_session.gd")
 const Validator = preload("res://core/v03/save_validator.gd")
+const Guide = preload("res://core/v03/guide_director.gd")
 var state: Dictionary
 var checkpoint: Dictionary = {}
 var _content: Resource
@@ -12,7 +13,7 @@ func _init() -> void:
  _content=load("res://content/v03/chapter.tres")
  state={"cycle":1,"tick":0,"room":"classroom","position":[320.0,224.0],"direction":"down","mode":"world","revision":0,"seq":0,"stage":"paper","flags":{"paper_door":false,"patrol":false,"rig_demo":false,"hammer":false,"seal_kit":false,"joint":false,"bellows":false,"power":true,"safe_checked":false},"owned":[],"knowledge":{},"events":[],"samples":[],"histories":[],"segments":[],"attempt":{},"battle":{},"opening":{"shape":"crumpled","phase":"idle","trace":{},"release_tick":-1,"elapsed":0.0,"door_until":-1,"source_id":""},"observations":[],"finale":{"choice":"none","phase":"none","used":false,"violations":0,"prediction":{},"release_tick":-1,"open_tick":-1,"close_tick":-1,"examiner_room":"archive","examiner_position":[320.0,288.0],"warning_end":0,"dodge_until":0,"dodge_ready":0,"chase_started":0},"completed":false,"handled":[]}
  _sample();checkpoint=snapshot()
- state["motion_tick"]=-1;state["motion_distance"]=0.0;state["rig_demo"]={};checkpoint=snapshot()
+ state["motion_tick"]=-1;state["motion_distance"]=0.0;state["rig_demo"]={};state["guide"]={"goal_id":"paper","idle_ticks":0,"hint_level":0};checkpoint=snapshot()
 
 func snapshot() -> Dictionary:
  return state.duplicate(true)
@@ -27,7 +28,15 @@ func objects() -> Array:
    var result: Array=[]
    for obj: Dictionary in room.objects:
     if obj.kind=="enemy" and state.flags.get(obj.id,false): continue
-    result.append(obj.duplicate(true))
+    var item: Dictionary=obj.duplicate(true)
+    item["active"]=false
+    if obj.id=="rig_power": item.active=state.flags.power
+    elif obj.id=="paper_barrier": item.active=state.flags.seal_kit;item["fixed"]=state.flags.seal_kit
+    elif obj.id in ["assist_a","assist_b"] and not state.attempt.is_empty(): item.active=state.attempt.holds.has(obj.id)
+    elif obj.id=="lab_drop": item.active=state.flags.joint
+    elif obj.id=="paper": item.active=int(state.tick)<=int(state.opening.door_until)
+    elif obj.id=="fall_gate": item.active=state.finale.open_tick>=0 and state.tick>=state.finale.open_tick and state.tick<=state.finale.close_tick
+    result.append(item)
    return result
  return []
 
@@ -66,6 +75,7 @@ func command(kind: String, target: String="", payload: Dictionary={}) -> Diction
  var result: Dictionary=_execute(kind,target,payload)
  if not result.ok:
   state=before;checkpoint=old_checkpoint;return result
+ if kind!="request_hint": Guide.update(state,state.flags!=before.flags or state.owned!=before.owned)
  if kind not in ["move","retry","fast_forward"]:
   _record(kind,target,payload,before)
   if not request.is_empty():
@@ -79,6 +89,9 @@ func command(kind: String, target: String="", payload: Dictionary={}) -> Diction
  return result
 
 func _execute(kind: String, target: String, p: Dictionary) -> Dictionary:
+ if kind=="request_hint":
+  state.guide.hint_level=mini(2,int(state.guide.hint_level)+1)
+  return _ok(hint())
  if kind=="retry":
   if checkpoint.is_empty(): return _no("没有可重试的检查点。")
   return _ok("已恢复本次尝试，封存历史不变。") if restore(checkpoint) else _no("检查点无效。")
@@ -277,7 +290,10 @@ func _record(kind: String, target: String, payload: Dictionary, origin: Dictiona
  var source: Dictionary=state if origin.is_empty() else origin
  state.revision+=1
  var next_seq: int=int(state.seq)+1 if source.cycle==state.cycle else int(source.seq)+1
- var event: Dictionary={"id":"c%d:e%d" % [source.cycle,next_seq],"cycle":source.cycle,"seq":next_seq,"tick":source.tick,"room":source.room,"position":source.position.duplicate(),"kind":kind,"target":target,"payload":payload.duplicate(true),"scope":"device" if kind in ["bell","hold","joint_release","device_complete"] or (kind=="interact" and target in ["sync_bell","assist_a","assist_b","lab_drop"]) else "world"}
+ var event_payload: Dictionary=payload.duplicate(true)
+ if kind=="release" and target=="paper": event_payload["setup"]=state.opening.trace.setup.duplicate(true)
+ if kind in ["joint_release","interact"] and target=="lab_drop" and not state.attempt.is_empty() and not state.attempt.joint_trace.is_empty(): event_payload["setup"]=state.attempt.joint_trace.setup.duplicate(true)
+ var event: Dictionary={"id":"c%d:e%d" % [source.cycle,next_seq],"cycle":source.cycle,"seq":next_seq,"tick":source.tick,"room":source.room,"position":source.position.duplicate(),"kind":kind,"target":target,"payload":event_payload,"scope":"device" if kind in ["bell","hold","joint_release","device_complete"] or (kind=="interact" and target in ["sync_bell","assist_a","assist_b","lab_drop"]) else "world"}
  if source.cycle==state.cycle: state.seq=next_seq;state.events.append(event)
  else: state.histories.back().events.append(event)
  _sample()
@@ -311,6 +327,7 @@ func advance(steps: int=1) -> void:
     notice.emit("纸片到达，机械延时已开启。" if state.opening.trace.arrival_s>0.74 else "纸团落得太快，延时齿轮没有接上。试试展开。")
   _advance_attempt()
   _advance_chase()
+  Guide.update(state,false,true)
   if int(state.tick)%6==0: _sample()
   if state.mode!="world": break
 
@@ -382,7 +399,7 @@ func _segment_pose(segment: Dictionary, replay_tick: int) -> Dictionary:
 func _seal() -> void:
  var a: Dictionary=state.attempt
  var segment: Dictionary={"segment_id":"segment_%d" % state.cycle,"source_cycle":state.cycle,"source_begin_event_id":a.actions.front().event_id,"source_end_event_id":a.actions.back().event_id,"anchor_id":"sync_bell","relative_ticks":int(a.tick),"commands":a.actions.duplicate(true),"pose_samples":a.samples.duplicate(true)}
- segment["hash"]=JSON.stringify(segment).sha256_text();state.segments.append(segment)
+ segment["hash"]=Physics.semantic_hash(segment);state.segments.append(segment)
  state.histories.append({"cycle":state.cycle,"events":state.events.duplicate(true),"samples":state.samples.duplicate(true)})
  state.cycle+=1;state.tick=0;state.seq=0;state.room="classroom";state.position=[320.0,224.0];state.events=[];state.samples=[];state.attempt={};state.battle={};state.flags.power=true;state.stage="record_b" if state.cycle==2 else "joint"
  state.motion_tick=-1;state.motion_distance=0.0
@@ -416,30 +433,10 @@ func _advance_chase() -> void:
   f.phase="caught";state.mode="caught";notice.emit("被监考者拦截，恢复追逐前检查点。")
 
 func objective() -> String:
- if state.completed: return "记录已提交，序章完成。"
- if state.mode=="combat": return "看敌人预告，操作物体，结束回合看结果。"
- if state.mode=="caught": return "恢复追逐检查点，再次闪避。"
- if not state.flags.paper_door: return "门关得太快——让这张纸慢一点。"
- if not state.flags.patrol: return "走出教室，面对走廊的巡逻纸偶。"
- if not state.flags.rig_demo: return "在实验室亲手调高、齐放配重。"
- if not state.flags.hammer: return "改变配重落地时刻，打开双锤护盾。"
- if state.cycle==1: return "敲同步铃，操作 A；成功后去塔内封存。"
- if state.cycle==2:
-  return "用固定稳住器材室纸幕，取出密封组件。" if not state.flags.seal_kit else "敲铃，让过去的 A 配合现在的 B。"
- if not state.flags.joint: return "准备好后敲铃，让 A/B 回声配合你在 C 释放。"
- if not state.flags.bellows: return "应对风箱纸偶：真空后换一种控制落点的方法。"
- if state.finale.phase in ["warning","chase"]: return "监考者正在追踪，闪避并抵达观测塔。"
- if state.finale.phase=="escaped": return "到观测塔记录终端提交。"
- if state.finale.phase=="ready": return "到器材室校准刻度。" if state.finale.choice=="refuse" and not state.flags.safe_checked else "到档案室闸门释放，落地后走出档案室。"
- return "去档案室选择：已有规律，或借来的轨迹。"
+ return Guide.objective(state)
 
 func hint() -> String:
- if not state.flags.paper_door: return "展开同一张纸，再释放。看落地是否让延时齿轮接上。"
- if state.mode=="combat":
-  if state.battle.id=="hammer": return "调高较低支架后齐放；也可先防御，让锤击压低较高支架。"
-  if state.battle.id=="bellows": return "空气中形状能改变落点；真空阶段把纸片抬到 3.5 米再齐放。"
-  return "攻击造成伤害，防御减少伤害，左右移动避开预告通道。"
- return objective()+" 操作失败可以局部重试，过去的记录不会改变。"
+ return Guide.hint(state)
 
 static func _ok(message: String) -> Dictionary:
  return {"ok":true,"message":message}

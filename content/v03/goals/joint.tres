@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "joint"
+short_text = "敲铃，让 A/B 回声配合你在 C 释放。"
+target_ids = PackedStringArray("sync_bell","lab_drop")
+hint_sequence = PackedStringArray("两个过去的自己都已准备好。","你只需要操作中央的 C。","敲铃后走到 C，待 A/B 到位再释放；保持到落地。")

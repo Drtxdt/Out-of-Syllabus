@@ -74,3 +74,20 @@ static func equivalent(left: Variant, right: Variant) -> bool:
 
 static func numeric(value: Variant) -> bool:
  return (value is int or value is float) and is_finite(float(value))
+
+static func semantic_hash(value: Variant) -> String:
+ # Position precision is 0.0001 px for this fingerprint; integral event/tick
+ # identities are additionally validated exactly. JSON may round float text.
+ return JSON.stringify(_hash_value(value),"",true).sha256_text()
+
+static func _hash_value(value: Variant) -> Variant:
+ if numeric(value): return "number:%.4f" % float(value)
+ if value is Dictionary:
+  var result: Dictionary={}
+  for key: Variant in value: result[key]=_hash_value(value[key])
+  return result
+ if value is Array:
+  var result: Array=[]
+  for item: Variant in value: result.append(_hash_value(item))
+  return result
+ return value

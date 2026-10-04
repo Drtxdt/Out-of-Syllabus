@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "bellows"
+short_text = "面对风箱纸偶，留意介质变化。"
+target_ids = PackedStringArray("bellows")
+hint_sequence = PackedStringArray("纸片的动作还能改变战斗。","展开遮挡扫描，揉团能抢先触发开关。","真空阶段把纸片抬到 3.5 米后齐放，进入装置窗口。")

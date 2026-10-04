@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/goal_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "seal"
+short_text = "装置成功，去观测塔封存本轮。"
+target_ids = PackedStringArray("cycle_console")
+hint_sequence = PackedStringArray("当前轮已有真实成功片段。","观测塔终端能封存历史。","去走廊左下的观测塔，在终端封存进入下一轮。")

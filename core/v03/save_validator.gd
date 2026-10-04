@@ -3,7 +3,7 @@ const Physics = preload("res://core/v03/physics.gd")
 const Combat = preload("res://core/v03/combat_session.gd")
 const ROOMS: Array=["classroom","corridor","storage","lab","tower","archive"]
 const ACTIONS: Array=["crumple","unfold","raise","release_pair","fix","pump","future"]
-const KINDS: Array=["interact","paper_shape","release","observe","learn_rig","begin_battle","combat_action","end_turn","retreat","fix","power","bell","hold","joint_release","device_complete","seal","choose_future","forecast","calibrate","gate_release","dodge","submit"]
+const KINDS: Array=["interact","paper_shape","release","observe","learn_rig","begin_battle","combat_action","end_turn","retreat","fix","power","bell","hold","joint_release","device_complete","seal","choose_future","forecast","calibrate","gate_release","dodge","submit","request_hint"]
 
 static func integer(v: Variant, low: int=0, high: int=100000000) -> bool:
  return Physics.numeric(v) and float(v)==floorf(float(v)) and float(v)>=low and float(v)<=high
@@ -27,12 +27,18 @@ static func json_value(v: Variant, depth: int=0) -> bool:
 
 static func validate(data: Variant) -> String:
  if not data is Dictionary or not json_value(data): return "存档包含非 JSON 数据或过深结构。"
- var keys: Array=["cycle","tick","room","position","direction","mode","revision","seq","stage","flags","owned","knowledge","events","samples","histories","segments","attempt","battle","opening","observations","finale","completed","handled","motion_tick","motion_distance"]
+ var keys: Array=["cycle","tick","room","position","direction","mode","revision","seq","stage","flags","owned","knowledge","events","samples","histories","segments","attempt","battle","opening","observations","finale","completed","handled","motion_tick","motion_distance","rig_demo","guide"]
  if not data.has_all(keys): return "存档缺少版本定义字段。"
  if not integer(data.cycle,1,3) or not integer(data.tick) or not integer(data.seq) or not integer(data.revision): return "时间、循环或序号无效。"
  if data.room not in ROOMS or not position(data.position) or data.direction not in ["up","down","left","right"]: return "角色位置无效。"
  if data.mode not in ["world","combat","caught","complete"] or not data.stage is String or not data.completed is bool: return "章节状态无效。"
  if not integer(data.motion_tick,-1,int(data.tick)) or not Physics.numeric(data.motion_distance) or float(data.motion_distance)<0 or float(data.motion_distance)>4.01: return "移动预算无效。"
+ if not data.guide is Dictionary or not data.guide.has_all(["goal_id","idle_ticks","hint_level"]) or not data.guide.goal_id is String or not integer(data.guide.idle_ticks) or not integer(data.guide.hint_level,0,2): return "引导状态无效。"
+ if not data.rig_demo is Dictionary: return "配重示范状态无效。"
+ if not data.rig_demo.is_empty():
+  if not data.rig_demo.has_all(["traces","source_id"]) or not data.rig_demo.traces is Array or data.rig_demo.traces.size()!=2 or not data.rig_demo.source_id is String: return "配重示范来源无效。"
+  for t: Variant in data.rig_demo.traces:
+   if not Physics.valid_trace(t): return "配重示范轨迹无效。"
  for key: String in ["flags","knowledge","attempt","battle","opening","finale"]:
   if not data[key] is Dictionary: return "嵌套对象无效："+key
  for key: String in ["owned","events","samples","histories","segments","observations","handled"]:
@@ -75,12 +81,14 @@ static func validate(data: Variant) -> String:
   if not Physics.valid_trace(record.trace): return "观察轨迹与模拟器不符。"
   var source: Dictionary=sources[record.source_id]
   if source.kind not in ["release","joint_release","interact"] or source.target not in ["paper","lab_drop"]: return "预测不能冒充实测。"
+  if int(record.cycle)!=int(source.cycle) or int(record.tick)<int(source.tick) or not Physics.equivalent(source.payload.get("setup"),record.trace.setup): return "测量改变了原释放条件。"
   seen[record.source_id]=true
  var o: Dictionary=data.opening
  if not o.has_all(["shape","phase","trace","release_tick","elapsed","door_until","source_id"]) or o.shape not in ["flat","crumpled"] or o.phase not in ["idle","falling","landed"]: return "开场装置状态无效。"
  if not integer(o.release_tick,-1,int(data.tick)) or not integer(o.door_until,-1,100000000) or not Physics.numeric(o.elapsed) or o.elapsed<0 or not o.trace is Dictionary: return "开场时间无效。"
  if o.phase!="idle" and (not Physics.valid_trace(o.trace) or not sources.has(o.source_id)): return "开场释放缺少真实轨迹来源。"
- error=attempt(data.attempt,sources,int(data.cycle))
+ if o.phase!="idle" and not Physics.equivalent(o.trace.setup,sources[o.source_id].payload.get("setup")): return "开场轨迹与释放配置不符。"
+ error=attempt(data.attempt,sources,int(data.cycle),data.segments)
  if not error.is_empty(): return error
  error=combat(data.battle)
  if not error.is_empty(): return error
@@ -103,6 +111,10 @@ static func validate(data: Variant) -> String:
    if not match_record: return "校准冒充实测。"
   elif f.prediction.origin=="prediction":
    if f.choice!="accept" or f.prediction.get("model") not in ["gravity","drag"] or not f.prediction.get("parameters") is Dictionary: return "预测模型来源无效。"
+   var parameters: Dictionary=f.prediction.parameters
+   if parameters.get("model")!=f.prediction.model or parameters.get("medium") not in ["air","vacuum"] or not Physics.numeric(parameters.get("height")): return "预测参数无效。"
+   var predicted_setup: Dictionary=Physics.setup("paper","flat",float(parameters.height),0.0,"vacuum" if parameters.model=="gravity" else parameters.medium)
+   if not Physics.equivalent(f.prediction.trace,Physics.trace(predicted_setup)): return "预测轨迹与所选模型不符。"
   else: return "预测来源类型无效。"
  if f.phase!="none" and f.prediction.is_empty(): return "结尾缺少校准或预测。"
  if data.handled.size()>256: return "请求记录过多。"
@@ -131,7 +143,7 @@ static func segment(s: Variant, cycle: int, sources: Dictionary) -> String:
  if not s is Dictionary or not s.has_all(["segment_id","source_cycle","source_begin_event_id","source_end_event_id","anchor_id","relative_ticks","commands","pose_samples","hash"]): return "片段字段缺失。"
  if s.source_cycle!=cycle or s.anchor_id!="sync_bell" or not integer(s.relative_ticks,359,600) or not s.commands is Array or s.commands.size()<2 or not s.pose_samples is Array or s.pose_samples.is_empty(): return "片段范围无效。"
  var unsigned: Dictionary=s.duplicate(true);unsigned.erase("hash")
- if not s.hash is String or JSON.stringify(unsigned).sha256_text()!=s.hash: return "封存片段哈希已改变。"
+ if not s.hash is String or Physics.semantic_hash(unsigned)!=s.hash: return "封存片段哈希已改变。"
  if not sources.has(s.source_begin_event_id) or not sources.has(s.source_end_event_id): return "片段边界没有真实事件。"
  var last: int=-181
  for cmd: Variant in s.commands:
@@ -149,7 +161,7 @@ static func segment(s: Variant, cycle: int, sources: Dictionary) -> String:
   last=int(pose.tick)
  return ""
 
-static func attempt(a: Dictionary, sources: Dictionary, cycle: int) -> String:
+static func attempt(a: Dictionary, sources: Dictionary, cycle: int, segments: Array) -> String:
  if a.is_empty(): return ""
  if not a.has_all(["phase","tick","holds","powered","message","start_world_tick","actions","samples","executed","overlap","joint_trace","joint_start","source_event_id","origin_cycle"]): return "尝试状态缺失。"
  if a.phase not in ["countdown","recording","success","failed"] or not integer(a.tick,-180,601) or not a.holds is Dictionary or not a.powered is bool or not a.message is String or not integer(a.start_world_tick) or not integer(a.overlap,0,600) or a.origin_cycle!=cycle: return "尝试状态无效。"
@@ -159,15 +171,34 @@ static func attempt(a: Dictionary, sources: Dictionary, cycle: int) -> String:
  for station: Variant in a.holds:
   var h: Variant=a.holds[station]
   if station not in ["assist_a","assist_b"] or not h is Dictionary or not h.has_all(["actor","begin"]) or h.actor not in ["player","echo_1","echo_2"] or h.actor in actors or not integer(h.begin,-180,600): return "工位占用无效。"
+  if h.actor=="echo_1" and cycle<2 or h.actor=="echo_2" and cycle<3 or h.actor=="player" and (cycle==3 or station!=("assist_a" if cycle==1 else "assist_b")): return "角色不属于这个工位或循环。"
   actors.append(h.actor)
  for command: Variant in a.actions:
   if not command is Dictionary or not command.has_all(["tick","source_tick","event_id","kind","target","position","room"]) or not integer(command.tick,-180,600) or not sources.has(command.event_id) or not position(command.position): return "当前尝试缺少真实命令。"
+  var source: Dictionary=sources[command.event_id]
+  if command.kind not in ["hold_begin","hold_end"] or command.source_tick!=source.tick or command.target!=source.target or command.room!=source.room or not Physics.equivalent(command.position,source.position) or source.cycle!=cycle: return "当前尝试改写来源。"
  for pose: Variant in a.samples:
   if not pose is Dictionary or not pose.has_all(["tick","source_tick","room","position","direction"]) or not integer(pose.tick,-180,600) or not integer(pose.source_tick) or pose.room not in ROOMS or not position(pose.position): return "当前尝试采样无效。"
  for key: Variant in a.executed:
   if not key is String: return "执行游标不是来源 ID。"
+  var parts: PackedStringArray=key.split(":")
+  if parts.size()!=4 or not sources.has(parts[1]+":"+parts[2]) or parts[0] not in ["echo_1","echo_2"] or parts[3] not in ["hold_begin","hold_end"]: return "执行游标缺少真实来源。"
+ if a.phase in ["failed","success"] and not a.holds.is_empty(): return "已停止尝试仍占用工位。"
+ if a.phase in ["countdown","recording"] and int(a.tick)>-180:
+  var expected: Dictionary={}
+  for segment_data: Dictionary in segments:
+   var actor: String="echo_%d" % int(segment_data.source_cycle)
+   for cmd: Dictionary in segment_data.commands:
+    if int(cmd.tick)>int(a.tick): break
+    if cmd.kind=="hold_begin": expected[cmd.target]=actor
+    else: expected.erase(cmd.target)
+  for station: String in ["assist_a","assist_b"]:
+   var actual: String=str(a.holds.get(station,{}).get("actor",""))
+   if expected.has(station) and actual!=expected[station]: return "回声占用与片段时刻不符。"
+   if actual.begins_with("echo_") and not expected.has(station): return "凭空增加了历史持有。"
  if not a.joint_trace is Dictionary or not integer(a.joint_start,-1,600): return "联合释放状态无效。"
  if not a.joint_trace.is_empty() and (not Physics.valid_trace(a.joint_trace) or not sources.has(a.source_event_id)): return "联合实验来源无效。"
+ if not a.joint_trace.is_empty() and not Physics.equivalent(a.joint_trace.setup,sources[a.source_event_id].payload.get("setup")): return "联合轨迹与释放条件不符。"
  return ""
 
 static func combat(b: Dictionary) -> String:
