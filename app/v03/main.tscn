@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3]
+[ext_resource type="Script" path="res://app/v03/main.gd" id="1"]
+[ext_resource type="Script" path="res://app/world_frame.gd" id="2"]
+[ext_resource type="PackedScene" path="res://world/player.tscn" id="3"]
+[ext_resource type="Script" path="res://world/v03/objects.gd" id="4"]
+[node name="GameV03" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+[node name="WorldFrame" type="SubViewportContainer" parent="."]
+texture_filter = 1
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+script = ExtResource("2")
+[node name="Viewport" type="SubViewport" parent="WorldFrame"]
+handle_input_locally = false
+size = Vector2i(640,360)
+render_target_update_mode = 4
+[node name="World" type="Node2D" parent="WorldFrame/Viewport"]
+[node name="Objects" type="Node2D" parent="WorldFrame/Viewport/World"]
+script = ExtResource("4")
+[node name="Player" parent="WorldFrame/Viewport/World" instance=ExtResource("3")]
+position = Vector2(320,224)
