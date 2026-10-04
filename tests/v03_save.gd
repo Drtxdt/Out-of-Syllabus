@@ -65,6 +65,8 @@ func run_cases() -> void:
  fabricated=good.duplicate(true)
  fabricated.observations[0].trace=preload("res://core/v03/physics.gd").trace(preload("res://core/v03/physics.gd").setup("paper","flat",2.0,0.0,"vacuum"))
  restore_rejected(measured,fabricated,"legitimate simulator trace in wrong original medium")
+ fabricated=good.duplicate(true);fabricated.observations[0].tick=int(fabricated.opening.release_tick)+1
+ restore_rejected(measured,fabricated,"measurement timestamp precedes physical arrival")
  fabricated=good.duplicate(true);fabricated.observations.append(fabricated.observations[0].duplicate(true))
  restore_rejected(measured,fabricated,"repeated observation source")
  fabricated=good.duplicate(true);fabricated.observations[0].source_id="c1:e999"
@@ -73,3 +75,4 @@ func run_cases() -> void:
  for action_id: String in ["future","pump","fix","raise","release_pair"]:
   var forged_unlock: Dictionary=unearned.snapshot();forged_unlock.owned=[action_id]
   restore_rejected(unearned,forged_unlock,"unearned action "+action_id)
+
