@@ -102,6 +102,7 @@ func _physics_process(_delta: float) -> void:
 func _process(delta: float) -> void:
  toast_remaining=maxf(0,toast_remaining-delta)
  if toast_label!=null:toast_label.visible=toast_remaining>0
+ if session!=null:_observe_visible_results()
  if modal=="rig" and rig_visual!=null:
   rig_playback=minf(1.0,rig_playback+delta/2.4)
   rig_visual.render(rig_data,rig_playback)
@@ -192,14 +193,24 @@ func _update_joint(near: Dictionary) -> void:
  joint_visual.render({"trace":trace,"shape":"flat"},progress)
  var succeeded: bool=attempt.get("phase","")=="success"
  joint_summary.text="联合真空测量 · A/B 持续维持，C 释放" if not succeeded else "真空实测 %.3f 秒 · A/B/C 联合完成"%float(trace.get("arrival_s",0))
- if succeeded and str(near.get("id",""))=="lab_drop":
-  joint_result_frames+=1
-  var source: String=str(attempt.get("source_event_id",""))
-  if joint_result_frames>=2 and source!=joint_observed_source:
-   # Defer until this frame's displayed result has reached the scene tree.
-   joint_observed_source=source
-   _observe_joint.call_deferred(source)
- else:joint_result_frames=0
+ if not succeeded or str(near.get("id",""))!="lab_drop":joint_result_frames=0
+
+func _observe_visible_results() -> void:
+ # Count presentation frames, not physics ticks or repeated synchronization calls.
+ # The third process frame follows two opportunities to actually draw the result.
+ var s: Dictionary=state()
+ if modal=="paper" and paper_visual!=null and s.opening.get("phase","")=="landed":
+  paper_result_frames+=1
+  if paper_result_frames>=3 and paper_observed_release!=int(s.opening.get("release_tick",-1)):
+   var result: Dictionary=_dispatch("observe","paper")
+   if result.get("ok",false):paper_observed_release=int(s.opening.get("release_tick",-1))
+ if modal.is_empty() and joint_visual!=null and joint_visual.visible and s.attempt.get("phase","")=="success":
+  var near: Dictionary=session.call("nearby")
+  if str(near.get("id",""))=="lab_drop":
+   joint_result_frames+=1
+   var source: String=str(s.attempt.get("source_event_id",""))
+   if joint_result_frames>=3 and source!=joint_observed_source:
+    joint_observed_source=source;_observe_joint.call_deferred(source)
 
 func _observe_joint(source: String) -> void:
  var result: Dictionary=_dispatch("observe","lab_drop")
@@ -320,10 +331,6 @@ func _update_paper() -> void:
  paper_status.text="纸片：%s · %s"%["平展" if opening.get("shape","flat")=="flat" else "揉团",{"idle":"准备释放","falling":"下坠中 · 世界与机关同步 3 倍慢放","landed":"纸片到达传感器"}.get(phase,phase)]
  if phase=="landed":
   paper_status.text+="\n实测 %.3f 秒 · 门剩余 %.1f 秒"%[float(trace.get("arrival_s",0)),maxf(0,float(opening.get("door_until",0)-state().tick)/60.0)]
-  paper_result_frames+=1
-  if paper_result_frames>=2 and paper_observed_release!=int(opening.get("release_tick",-1)):
-   var result: Dictionary=_dispatch("observe","paper")
-   if result.get("ok",false):paper_observed_release=int(opening.get("release_tick",-1))
   modal="paper" # Landed result is visible; reading pauses the shared clock.
 
 func show_combat() -> void:
