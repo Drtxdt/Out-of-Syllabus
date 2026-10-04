@@ -58,7 +58,7 @@ func run_cases() -> void:
  measured.state.position=[320.0,152.0]
  measured.command("paper_shape","paper",{"shape":"flat"});measured.command("release","paper");measured.advance(120)
  var fabricated: Dictionary=measured.snapshot()
- fabricated.observations.append({"id":"observation_"+fabricated.opening.source_id,"source_id":fabricated.opening.source_id,"cycle":1,"tick":120,"trace":fabricated.opening.trace.duplicate(true),"observed":true,"summary":"forged without player observe"})
+ fabricated.observations.append({"id":"observation_"+fabricated.opening.source_id,"source_id":fabricated.opening.source_id,"cycle":1,"tick":120,"observed_tick":120,"trace":fabricated.opening.trace.duplicate(true),"observed":true,"summary":"forged without player observe"})
  restore_rejected(measured,fabricated,"read observation without observe event")
  check(measured.command("observe","paper").ok,"real observe command")
  var good: Dictionary=measured.snapshot()
@@ -75,4 +75,5 @@ func run_cases() -> void:
  for action_id: String in ["future","pump","fix","raise","release_pair"]:
   var forged_unlock: Dictionary=unearned.snapshot();forged_unlock.owned=[action_id]
   restore_rejected(unearned,forged_unlock,"unearned action "+action_id)
+
 
