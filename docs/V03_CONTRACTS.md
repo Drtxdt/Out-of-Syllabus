@@ -57,3 +57,5 @@ UI 从 owned 和基础动作生成按钮，先选动作再选目标，调用纯�
 `state.guide` 包含 goal_id/idle_ticks/hint_level；`request_hint` 递进提示。目标和提示由 GoalDef Resource 定义；卡牌AP与遭遇初始生命由Resource读取。移动预算在同一tick累计检查。
 
 局部第一轮有效维持480tick，第二轮真实重叠360tick；区间0..359是360个已结算tick，结束事件也进入原来源。第三轮快进在A/B已就绪时停下，留给玩家操作C。设置与阅读暂停世界；纸片释放按统一3倍慢放推进世界，测量结果不变。
+
+观察含 observed_tick：未读为 -1；已读必须存在同来源 observe 事件，时间不早于真实落地。读取事件 payload.source_id 由核心生成。高级动作拥有须满足对应章节或知识发现前置。
