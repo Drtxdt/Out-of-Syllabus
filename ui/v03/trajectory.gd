@@ -38,8 +38,9 @@ func _draw() -> void:
   var width: float=30 if paper and str(object.get("shape","flat"))=="flat" else 12
   draw_rect(Rect2(x-width/2,y,width,6 if width>12 else 12),Color("d8e2dd") if paper else Color("e1bc78"))
   if bool(object.get("held",false)):draw_line(Vector2(x,y-8),Vector2(x,8),Color("e1bc78"),2)
-  var text_width: float=minf(230,size.x/(objects.size()+1.0))
-  draw_string(font,Vector2(x-text_width/2,size.y-4),str(object.get("title",id))+" %.1f m"%height,HORIZONTAL_ALIGNMENT_LEFT,text_width,14)
+  if bool(data.get("show_labels",true)):
+   var text_width: float=minf(230,size.x/(objects.size()+1.0))
+   draw_string(font,Vector2(x-text_width/2,size.y-4),str(object.get("title",id))+" %.1f m"%height,HORIZONTAL_ALIGNMENT_LEFT,text_width,14)
   count+=1
  if data.has("phase") and data.has("door_until"):
   var gate_x: float=size.x-100

@@ -28,10 +28,13 @@ var echoes: Array[Node2D]=[]
 var examiner: Node2D
 var rebind: String=""
 var archive_model: String="drag"
+var archive_height: float=2.0
+var archive_medium: String="air"
 var paper_observed_release: int=-1
 var paper_result_frames: int=0
 var joint_visual: Control
 var joint_summary: Label
+var joint_panel: PanelContainer
 var joint_result_frames: int=0
 var joint_observed_source: String=""
 var rig_visual: Control
@@ -68,9 +71,8 @@ func _build_ui() -> void:
  var footer: PanelContainer=PanelContainer.new();footer.name="Footer";footer.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE);footer.grow_vertical=Control.GROW_DIRECTION_BEGIN;add_child(footer)
  var foot: HBoxContainer=UI.row(footer)
  prompt=UI.label(foot,"",18);prompt.name="Nearby";prompt.size_flags_horizontal=Control.SIZE_EXPAND_FILL
- UI.button(foot,"Hint","提示",func() -> void:_dispatch("request_hint")).size_flags_horizontal=Control.SIZE_SHRINK_END
- UI.button(foot,"Notebook","笔记",show_notebook).size_flags_horizontal=Control.SIZE_SHRINK_END
- UI.button(foot,"Menu","设置",show_settings).size_flags_horizontal=Control.SIZE_SHRINK_END
+ for button: Button in [UI.button(foot,"Hint","提示",func() -> void:_dispatch("request_hint")),UI.button(foot,"Notebook","笔记",show_notebook),UI.button(foot,"Menu","设置",show_settings)]:
+  button.size_flags_horizontal=Control.SIZE_SHRINK_END;button.custom_minimum_size.x=76
  toast_label=Label.new();toast_label.name="Toast";toast_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE);toast_label.offset_top=76;toast_label.offset_left=50;toast_label.offset_right=-50;toast_label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;toast_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER;toast_label.add_theme_color_override("font_color",UI.GOLD);add_child(toast_label)
  shade=ColorRect.new();shade.name="Shade";shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT);shade.color=Color(0.02,0.035,0.05,0.93);add_child(shade);shade.hide()
  panel=PanelContainer.new();panel.name="Modal";panel.anchor_left=0.025;panel.anchor_top=0.035;panel.anchor_right=0.975;panel.anchor_bottom=0.965;add_child(panel);panel.hide()
@@ -180,20 +182,27 @@ func _sync_world() -> void:
  _update_joint(near)
 
 func _update_joint(near: Dictionary) -> void:
- if joint_visual==null:
-  joint_visual=Control.new();joint_visual.set_script(preload("res://ui/v03/trajectory.gd"));joint_visual.position=Vector2(210,42);joint_visual.size=Vector2(220,92);world.add_child(joint_visual)
-  joint_summary=Label.new();joint_summary.position=Vector2(166,136);joint_summary.size=Vector2(310,42);joint_summary.add_theme_font_size_override("font_size",12);joint_summary.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;world.add_child(joint_summary)
+ if joint_panel==null:
+  joint_panel=PanelContainer.new();joint_panel.set_script(preload("res://ui/v03/joint_readout.gd"));add_child(joint_panel)
+  move_child(joint_panel,shade.get_index())
+  joint_visual=joint_panel.plot;joint_summary=joint_panel.summary
  var attempt: Dictionary=state().attempt
  var trace: Dictionary=attempt.get("joint_trace",{})
  var visible_here: bool=room_id=="lab" and not trace.is_empty()
- joint_visual.visible=visible_here;joint_summary.visible=visible_here
+ joint_panel.visible=visible_here
  if not visible_here:joint_result_frames=0;return
  var elapsed: float=(int(attempt.get("tick",0))-int(attempt.get("joint_start",0)))/60.0
  var progress: float=clampf(elapsed/maxf(0.01,float(trace.get("arrival_s",1))),0,1)
- joint_visual.render({"trace":trace,"shape":"flat"},progress)
  var succeeded: bool=attempt.get("phase","")=="success"
- joint_summary.text="联合真空测量 · A/B 持续维持，C 释放" if not succeeded else "真空实测 %.3f 秒 · A/B/C 联合完成"%float(trace.get("arrival_s",0))
+ joint_panel.render(trace,progress,succeeded)
+ _place_joint_panel()
  if not succeeded or str(near.get("id",""))!="lab_drop":joint_result_frames=0
+
+func _place_joint_panel() -> void:
+ if joint_panel==null:return
+ joint_panel.size=Vector2(336,112)
+ var footer: Control=get_node("Footer")
+ joint_panel.position=Vector2(maxf(12,size.x-joint_panel.size.x-16),maxf(100,footer.position.y-joint_panel.size.y-10))
 
 func _observe_visible_results() -> void:
  # Count presentation frames, not physics ticks or repeated synchronization calls.
@@ -204,7 +213,7 @@ func _observe_visible_results() -> void:
   if paper_result_frames>=3 and paper_observed_release!=int(s.opening.get("release_tick",-1)):
    var result: Dictionary=_dispatch("observe","paper")
    if result.get("ok",false):paper_observed_release=int(s.opening.get("release_tick",-1))
- if modal.is_empty() and joint_visual!=null and joint_visual.visible and s.attempt.get("phase","")=="success":
+ if modal.is_empty() and joint_panel!=null and joint_panel.visible and s.attempt.get("phase","")=="success":
   var near: Dictionary=session.call("nearby")
   if str(near.get("id",""))=="lab_drop":
    joint_result_frames+=1
@@ -274,6 +283,7 @@ func _welcome() -> void:
  UI.focus_first(modal_body)
 
 func new_game() -> void:
+ archive_model="drag";archive_height=2.0;archive_medium="air"
  var core: Script=load("res://core/v03/game_session.gd");session=core.new();session.connect("notice",toast);paper_observed_release=-1;joint_observed_source="";room_id="";close_modal();_sync_world();save_game(false)
 
 func save_game(notify: bool=true) -> void:
@@ -359,6 +369,8 @@ func show_cycle() -> void:
  UI.button(modal_body,"CancelSeal","继续准备",close_modal);UI.focus_first(modal_body)
 
 func show_archive() -> void:
+ var focused: Control=get_viewport().gui_get_focus_owner()
+ var focus_name: String=str(focused.name) if modal=="archive" and focused!=null and modal_body.is_ancestor_of(focused) else ""
  _open("archive","档案室 · 借来的轨迹")
  UI.label(modal_body,"已有观察支持安全校准。未来知识可以揭示更短路线的窗口；选择本身不会记违规，实际使用后才承担后果。",20)
  var row: HBoxContainer=UI.row(modal_body)
@@ -368,8 +380,12 @@ func show_archive() -> void:
  var models: HBoxContainer=UI.row(modal_body)
  UI.button(models,"ModelDrag",("● " if archive_model=="drag" else "")+"重力与空气阻力",func() -> void:archive_model="drag";show_archive())
  UI.button(models,"ModelGravity",("● " if archive_model=="gravity" else "")+"仅重力",func() -> void:archive_model="gravity";show_archive())
+ var parameters: HBoxContainer=UI.row(modal_body)
+ UI.button(parameters,"ForecastHeight","预测高度：%.1f 米"%archive_height,func() -> void:archive_height=3.5 if archive_height==2.0 else (1.0 if archive_height==3.5 else 2.0);show_archive())
+ UI.button(parameters,"ForecastMedium","预测介质："+("空气" if archive_medium=="air" else "真空"),func() -> void:archive_medium="vacuum" if archive_medium=="air" else "air";show_archive())
+ UI.label(modal_body,"现场实际条件：2.0 米 / 空气。预测参数与现场不符时，保留错误结果。",16)
  var operations: HBoxContainer=UI.row(modal_body)
- UI.button(operations,"Forecast","预览轨迹（2米 / 空气）",func() -> void:_dispatch("forecast","archive_terminal",{"model":archive_model,"height":2.0,"medium":"air"});show_archive())
+ UI.button(operations,"Forecast","预览所选轨迹",func() -> void:_dispatch("forecast","archive_terminal",{"model":archive_model,"height":archive_height,"medium":archive_medium});show_archive())
  UI.button(operations,"Calibrate","用已有观察校准",func() -> void:_dispatch("calibrate","archive_terminal");show_archive())
  var finale: Dictionary=state().finale
  var prediction: Dictionary=finale.get("prediction",{})
@@ -379,7 +395,10 @@ func show_archive() -> void:
   if prediction.get("origin","")=="measurement":summary+="\n下一步：器材室远端校准刻度，然后返回闸门。"
  UI.label(modal_body,"当前选择：%s\n%s"%[{"none":"尚未选择","accept":"接受","refuse":"拒绝"}.get(str(finale.get("choice","none")),""),summary],17)
  UI.label(modal_body,"完成准备后返回现场，走到落体闸门亲手释放并通行。")
- UI.button(modal_body,"CloseArchive","返回现场",close_modal);UI.focus_first(modal_body)
+ UI.button(modal_body,"CloseArchive","返回现场",close_modal)
+ var restored: Node=modal_body.find_child(focus_name,true,false) if not focus_name.is_empty() else null
+ if restored is Button:restored.call_deferred("grab_focus")
+ else:UI.focus_first(modal_body)
 
 func show_caught() -> void:
  _open("caught","这一次没能通过")

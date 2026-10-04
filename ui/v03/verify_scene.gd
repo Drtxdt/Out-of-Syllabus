@@ -11,6 +11,21 @@ func run() -> void:
   var scene: Control=load("res://app/v03/main.tscn").instantiate();scene.suppress_intro=true;viewport.add_child(scene)
   await settle()
   check(scene.session!=null,"scene core initialized")
+  for id: String in ["Hint","Notebook","Menu"]:
+   var button: Button=scene.find_child(id,true,false)
+   check(button.size.x>=76,"HUD readable button width "+id)
+  scene.joint_panel.show();scene.joint_panel.render({"arrival_s":0.639,"points":[],"setup":{"height":2.0}},1.0,true)
+  await settle();scene.call("_place_joint_panel");await settle()
+  var joint_rect: Rect2=scene.joint_panel.get_global_rect()
+  var footer_rect: Rect2=scene.get_node("Footer").get_global_rect()
+  check(joint_rect.end.x<=dimensions.x and joint_rect.end.y<footer_rect.position.y,"joint UI avoids footer "+str(dimensions))
+  check(scene.joint_panel.scale==Vector2.ONE,"joint text independent of world scaling")
+  var frame: Control=scene.get_node("WorldFrame")
+  for at: Vector2 in [Vector2(144,144),Vector2(464,144),Vector2(304,152)]:
+   var center: Vector2=frame.position+at*frame.scale
+   var actor_rect: Rect2=Rect2(center-Vector2(20,40)*frame.scale,Vector2(40,70)*frame.scale)
+   check(not joint_rect.intersects(actor_rect),"joint UI avoids A/B/C actors "+str(dimensions))
+  scene.joint_panel.hide()
   for method: String in ["show_paper","show_rig","show_settings","show_archive","show_cycle","show_notebook","show_ending"]:
    scene.call(method);await settle()
    var panel: PanelContainer=scene.panel
