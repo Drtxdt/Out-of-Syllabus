@@ -11,7 +11,7 @@ try {
  if(Test-Path -LiteralPath $stage){throw 'Export staging directory already exists; choose a new run ID.'}
  New-Item -ItemType Directory -Force -Path $stage,$destination | Out-Null
  foreach($entry in Get-ChildItem -LiteralPath $run.root -Force){
-  if($entry.Name -in @('.git','.godot','.codex','.agents','build','reports')){continue}
+  if($entry.Name -in @('.git','.godot','.codex','.agents','build','reports','tools','tests','docs','.godot-forge','node_modules','art_source')){continue}
   Copy-Item -LiteralPath $entry.FullName -Destination $stage -Recurse -Force
  }
  $projectPath=Join-Path $stage 'project.godot'
@@ -46,3 +46,4 @@ finally {
  Complete-V03Run $run @{binary=$binary;binary_sha256=$hash;staging=$stage}
 }
 if($run.errors.Count -gt 0){exit 1}
+
