@@ -1,0 +1,503 @@
+[
+  {
+    "kind": "button",
+    "id": "NewGame"
+  },
+  {
+    "kind": "interact",
+    "id": "paper"
+  },
+  {
+    "kind": "button",
+    "id": "PaperFlat"
+  },
+  {
+    "kind": "button",
+    "id": "PaperRelease"
+  },
+  {
+    "kind": "screenshot",
+    "name": "paper-experiment"
+  },
+  {
+    "kind": "until",
+    "path": "opening.phase",
+    "value": "landed",
+    "timeout": 1800
+  },
+  {
+    "kind": "wait",
+    "frames": 4
+  },
+  {
+    "kind": "button",
+    "id": "ClosePaper"
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_1"
+  },
+  {
+    "kind": "interact",
+    "id": "patrol"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "EndTurn"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "interact",
+    "id": "to_lab"
+  },
+  {
+    "kind": "interact",
+    "id": "rig_demo"
+  },
+  {
+    "kind": "screenshot",
+    "name": "rig-experiment"
+  },
+  {
+    "kind": "button",
+    "id": "CloseRig"
+  },
+  {
+    "kind": "interact",
+    "id": "hammer"
+  },
+  {
+    "kind": "screenshot",
+    "name": "hammer-battle"
+  },
+  {
+    "kind": "button",
+    "id": "Action_raise"
+  },
+  {
+    "kind": "button",
+    "id": "Target_right"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "Action_release_pair"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "EndTurn"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "interact",
+    "id": "sync_bell"
+  },
+  {
+    "kind": "interact",
+    "id": "assist_a"
+  },
+  {
+    "kind": "action",
+    "id": "wait"
+  },
+  {
+    "kind": "until",
+    "path": "attempt.phase",
+    "value": "success",
+    "timeout": 1800
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_3"
+  },
+  {
+    "kind": "interact",
+    "id": "to_tower"
+  },
+  {
+    "kind": "interact",
+    "id": "cycle_console"
+  },
+  {
+    "kind": "button",
+    "id": "SealCycle"
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_1"
+  },
+  {
+    "kind": "interact",
+    "id": "to_storage"
+  },
+  {
+    "kind": "interact",
+    "id": "paper_barrier"
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_2"
+  },
+  {
+    "kind": "interact",
+    "id": "to_lab"
+  },
+  {
+    "kind": "interact",
+    "id": "sync_bell"
+  },
+  {
+    "kind": "interact",
+    "id": "assist_b"
+  },
+  {
+    "kind": "action",
+    "id": "wait"
+  },
+  {
+    "kind": "until",
+    "path": "attempt.phase",
+    "value": "success",
+    "timeout": 1800
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_3"
+  },
+  {
+    "kind": "interact",
+    "id": "to_tower"
+  },
+  {
+    "kind": "interact",
+    "id": "cycle_console"
+  },
+  {
+    "kind": "button",
+    "id": "SealCycle"
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_1"
+  },
+  {
+    "kind": "interact",
+    "id": "to_lab"
+  },
+  {
+    "kind": "interact",
+    "id": "sync_bell"
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "action",
+    "id": "wait"
+  },
+  {
+    "kind": "interact",
+    "id": "lab_drop"
+  },
+  {
+    "kind": "until",
+    "path": "attempt.phase",
+    "value": "success",
+    "timeout": 1800
+  },
+  {
+    "kind": "wait",
+    "frames": 4
+  },
+  {
+    "kind": "interact",
+    "id": "bellows"
+  },
+  {
+    "kind": "screenshot",
+    "name": "bellows-battle"
+  },
+  {
+    "kind": "button",
+    "id": "Action_unfold"
+  },
+  {
+    "kind": "button",
+    "id": "Target_paper"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "Action_release_pair"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "EndTurn"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "EndTurn"
+  },
+  {
+    "kind": "button",
+    "id": "Action_raise"
+  },
+  {
+    "kind": "button",
+    "id": "Target_paper"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "Action_release_pair"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "EndTurn"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "button",
+    "id": "Action_attack"
+  },
+  {
+    "kind": "button",
+    "id": "Target_default"
+  },
+  {
+    "kind": "button",
+    "id": "ConfirmAction"
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_3"
+  },
+  {
+    "kind": "interact",
+    "id": "to_archive"
+  },
+  {
+    "kind": "interact",
+    "id": "archive_terminal"
+  },
+  {
+    "kind": "button",
+    "id": "AcceptFuture"
+  },
+  {
+    "kind": "button",
+    "id": "ModelDrag"
+  },
+  {
+    "kind": "button",
+    "id": "Forecast"
+  },
+  {
+    "kind": "button",
+    "id": "CloseArchive"
+  },
+  {
+    "kind": "interact",
+    "id": "fall_gate"
+  },
+  {
+    "kind": "wait",
+    "frames": 55
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_5"
+  },
+  {
+    "kind": "until",
+    "path": "mode",
+    "value": "caught",
+    "timeout": 600
+  },
+  {
+    "kind": "button",
+    "id": "RetryCheckpoint"
+  },
+  {
+    "kind": "assert",
+    "path": "finale.violations",
+    "value": 1
+  },
+  {
+    "kind": "wait",
+    "frames": 55
+  },
+  {
+    "kind": "interact",
+    "id": "to_corridor_5"
+  },
+  {
+    "kind": "auto_dodge",
+    "enabled": true
+  },
+  {
+    "kind": "move",
+    "x": 224,
+    "y": 80
+  },
+  {
+    "kind": "move",
+    "x": 80,
+    "y": 80
+  },
+  {
+    "kind": "move",
+    "x": 80,
+    "y": 260
+  },
+  {
+    "kind": "assert_chase"
+  },
+  {
+    "kind": "assert_dodge"
+  },
+  {
+    "kind": "interact",
+    "id": "to_tower"
+  },
+  {
+    "kind": "interact",
+    "id": "cycle_console"
+  },
+  {
+    "kind": "assert",
+    "path": "completed",
+    "value": true
+  },
+  {
+    "kind": "screenshot",
+    "name": "ending-accept"
+  }
+]

@@ -7,7 +7,7 @@ func rig(cycle: int=1) -> Variant:
  return s
 func record_first(s: Variant) -> void:
  check(s.command("bell","sync_bell").ok,"first bell accepted without history")
- at(s,"lab","assist_a");s.advance(6)
+ at(s,"lab","assist_a")
  check(s.command("hold","assist_a").ok,"first hold recorded")
  s.advance(660)
  check(s.state.attempt.phase=="success","zero history first recording succeeds")
@@ -29,7 +29,7 @@ func run_cases() -> void:
   check(command.source_tick>=50000,"original source timestamp remains unchanged")
  at(s,"lab","sync_bell")
  check(s.command("bell","sync_bell").ok,"second bell begins new local clock")
- at(s,"lab","assist_b");s.advance(6)
+ at(s,"lab","assist_b")
  check(s.command("hold","assist_b").ok,"player B joins historical A")
  var saved: Dictionary=s.snapshot()
  print("VALIDATOR: ",preload("res://core/v03/save_validator.gd").validate(saved))
@@ -37,6 +37,8 @@ func run_cases() -> void:
  var compressed: Variant=session_new();check(compressed.restore(saved),"fast-forward candidate valid")
  while normal.state.attempt.phase in ["countdown","recording"]:normal.advance(1)
  check(compressed.command("fast_forward").ok,"fast-forward through every local event")
+ for key: String in normal.state:
+  if canonical(normal.state[key])!=canonical(compressed.state[key]):print("DIFF ",key," ",normal.state[key]," vs ",compressed.state[key])
  check(canonical(normal.snapshot())==canonical(compressed.snapshot()),"normal and fast-forward settle same source/time state")
  s.advance(660)
  check(s.state.attempt.phase=="success","one-history second recording succeeds")
@@ -67,13 +69,15 @@ func run_cases() -> void:
  at(release_early,"lab","assist_a");release_early.command("hold","assist_a");release_early.advance(200)
  check(release_early.command("hold","assist_a").ok and release_early.state.attempt.phase=="failed","early manual release fails local attempt")
  var late: Variant=session_new()
- var third_start: Dictionary=s.checkpoint.duplicate(true)
+ var third_start: Dictionary=JSON.parse_string(JSON.stringify(s.checkpoint))
  print("CHECKPOINT VALIDATOR: ",preload("res://core/v03/save_validator.gd").validate(third_start))
  check(late.restore(third_start),"third pre-bell checkpoint restores")
  check(late.command("bell","sync_bell").ok,"third late-release attempt starts")
  at(late,"lab","lab_drop");late.advance(580)
  denied(late,"joint_release","lab_drop")
  check(canonical(late.state.histories)==sealed,"missed source duration does not extend historical holds")
+
+
 
 
 
