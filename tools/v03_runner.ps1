@@ -8,7 +8,7 @@ function New-V03Run([string]$Root,[string]$Godot,[string]$RunId) {
  New-Item -ItemType Directory -Force -Path $report | Out-Null
  return @{root=$project;godot=$resolved;run_id=$RunId;workspace=$workspace;report=$report;qa_root=(Join-Path $project 'reports/v0.3');results=[System.Collections.Generic.List[object]]::new();errors=[System.Collections.Generic.List[string]]::new();started=[DateTime]::UtcNow.ToString('o')}
 }
-function Invoke-V03Check($Run,[string]$Name,[string[]]$Arguments,[int]$TimeoutSeconds=180,[string]$Executable='',[switch]$Standalone) {
+function Invoke-V03Check($Run,[string]$Name,[string[]]$Arguments,[int]$TimeoutSeconds=180,[string]$Executable='',[switch]$Standalone,[switch]$RequireInputStart) {
  if(-not $Executable){$Executable=$Run.godot}
  $profile="$($Run.workspace)-$($Run.run_id)-$Name"
  $log=Join-Path $Run.report "$Name.log"
@@ -30,11 +30,16 @@ function Invoke-V03Check($Run,[string]$Name,[string[]]$Arguments,[int]$TimeoutSe
  foreach($arg in $all){$info.ArgumentList.Add($arg)}
  $process=[System.Diagnostics.Process]::new();$process.StartInfo=$info
  $watch=[System.Diagnostics.Stopwatch]::StartNew()
- $code=125;$output='';$timedOut=$false
+ $code=125;$output='';$timedOut=$false;$startupTimedOut=$false
+ $startMarker=Join-Path $Run.qa_root ($profile+'/input-started.json')
  try {
   if(-not $process.Start()){throw 'Process start failed'}
   $stdout=$process.StandardOutput.ReadToEndAsync();$stderr=$process.StandardError.ReadToEndAsync()
-  $timedOut=-not $process.WaitForExit($TimeoutSeconds*1000)
+  $exited=$false
+  while(-not ($exited=$process.WaitForExit(250))){
+   if($RequireInputStart -and $watch.Elapsed.TotalSeconds -ge 30 -and -not(Test-Path -LiteralPath $startMarker)){$startupTimedOut=$true;$timedOut=$true;break}
+   if($watch.Elapsed.TotalSeconds -ge $TimeoutSeconds){$timedOut=$true;break}
+  }
   if($timedOut){$process.Kill($true);$process.WaitForExit()}
   $output=$stdout.Result+$stderr.Result
   $code=if($timedOut){124}else{$process.ExitCode}
@@ -42,9 +47,10 @@ function Invoke-V03Check($Run,[string]$Name,[string[]]$Arguments,[int]$TimeoutSe
  finally {$watch.Stop();$process.Dispose()}
  $environmentError=$output -match 'Failed to read the root certificate store'
  $runtimeError=$output -match '(?m)^(SCRIPT ERROR:|ERROR:)'
- $passed=$code -eq 0 -and -not $runtimeError
+ $startupMissing=$RequireInputStart -and -not(Test-Path -LiteralPath $startMarker)
+ $passed=$code -eq 0 -and -not $runtimeError -and -not $startupMissing
  Set-Content -LiteralPath (Join-Path $Run.report "$Name-process.txt") -Value $output -Encoding utf8
- $entry=@{name=$Name;command=@($Executable)+$all;qa_profile=$profile;qa_root=$info.Environment['OOS_QA_ROOT'];exit_code=$code;timed_out=$timedOut;runtime_error=$runtimeError;environment_certificate_error=$environmentError;passed=$passed;elapsed_ms=$watch.ElapsedMilliseconds;log=$log}
+ $entry=@{name=$Name;command=@($Executable)+$all;qa_profile=$profile;qa_root=$info.Environment['OOS_QA_ROOT'];exit_code=$code;timed_out=$timedOut;startup_timed_out=$startupTimedOut;startup_marker_missing=$startupMissing;input_start_marker=if($RequireInputStart){$startMarker}else{$null};runtime_error=$runtimeError;environment_certificate_error=$environmentError;passed=$passed;elapsed_ms=$watch.ElapsedMilliseconds;log=$log}
  $Run.results.Add($entry)
  if(-not $passed){$Run.errors.Add("$Name failed: exit=$code runtime_error=$runtimeError")}
  Write-Output "$Name : exit=$code runtime_error=$runtimeError elapsed_ms=$($watch.ElapsedMilliseconds)"
@@ -55,6 +61,7 @@ function Complete-V03Run($Run,[hashtable]$Extra=@{}) {
  foreach($key in $Extra.Keys){$manifest[$key]=$Extra[$key]}
  $manifest | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath (Join-Path $Run.report 'manifest.json') -Encoding utf8
 }
+
 
 
 
