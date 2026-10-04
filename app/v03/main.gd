@@ -29,6 +29,14 @@ var rebind: String=""
 var archive_model: String="drag"
 var paper_observed_release: int=-1
 var paper_result_frames: int=0
+var joint_visual: Control
+var joint_summary: Label
+var joint_result_frames: int=0
+var joint_observed_source: String=""
+var rig_visual: Control
+var rig_status: Label
+var rig_playback: float=0.0
+var rig_data: Dictionary={}
 var _hud_key: String=""
 var _battle_revision: int=-1
 var _request_seq: int=0
@@ -91,6 +99,13 @@ func _physics_process(_delta: float) -> void:
 func _process(delta: float) -> void:
  toast_remaining=maxf(0,toast_remaining-delta)
  if toast_label!=null:toast_label.visible=toast_remaining>0
+ if modal=="rig" and rig_visual!=null:
+  rig_playback=minf(1.0,rig_playback+delta/2.4)
+  rig_visual.render(rig_data,rig_playback)
+  if rig_playback>=1.0:
+   var times: PackedStringArray=[]
+   for trace: Dictionary in rig_data.get("traces",[]):times.append("%.3f 秒"%float(trace.get("arrival_s",0)))
+   rig_status.text="实际到达："+" / ".join(times)+"\n同形、同高度、同初速度，只改变质量。调高与齐放已经成为可用动作。"
 
 func _unhandled_input(event: InputEvent) -> void:
  if session==null or settings==null:return
@@ -122,7 +137,8 @@ func _sync_world() -> void:
    if props!=null:props.hide()
  player.position=Vector2(float(s.position[0]),float(s.position[1]));player.set("facing",str(s.direction))
  var near: Dictionary=session.call("nearby")
- objects_view.call("render",session.call("objects"),str(near.get("id","")),{"shape":s.opening.get("shape","flat"),"holds":s.attempt.get("holds",{}),"powered":s.flags.get("power",true)})
+ var gate_open: bool=int(s.finale.get("open_tick",-1))>=0 and int(s.tick)>=int(s.finale.open_tick) and int(s.tick)<=int(s.finale.close_tick)
+ objects_view.call("render",session.call("objects"),str(near.get("id","")),{"shape":s.opening.get("shape","flat"),"holds":s.attempt.get("holds",{}),"powered":s.flags.get("power",true),"gate_open":gate_open})
  var poses: Array=session.call("echo_poses")
  while echoes.size()<poses.size():
   var echo: Node2D=load("res://world/player.tscn").instantiate();echo.set("echo",true);echo.set("collision_layer",0);echo.set("collision_mask",0);world.add_child(echo);echoes.append(echo)
@@ -145,12 +161,42 @@ func _sync_world() -> void:
    var holds: Dictionary=attempt.get("holds",{})
    echo_text="同步 %.1f 秒 · A %s · B %s · %s"%[device_tick/60.0,"维持中" if holds.has("assist_a") else "空缺","维持中" if holds.has("assist_b") else "空缺","你操作 C 释放" if int(s.cycle)==3 else "留在自己的操作区"]
   else:echo_text="同步装置 · "+str(attempt.get("message",""))
+ if room_id=="archive" and int(finale.get("release_tick",-1))>=0:
+  echo_text="闸门已开启 · 剩余 %.1f 秒，走向出口"%maxf(0,(int(finale.close_tick)-int(s.tick))/60.0) if gate_open else "落体闸门正在计时，观察锁扣。"
  if finale.get("phase","")=="warning":echo_text="监考者的脚步接近了。准备移动与闪避。"
  if finale.get("phase","")=="chase":echo_text="监考者追逐中 · "+str(settings.call("display","dodge"))+" 闪避，前往观测塔"
  var objective_text: String="第 %s 轮 · %s"%[s.cycle,session.call("objective")]
  var near_text: String=(str(settings.call("display","interact"))+"  "+str(near.title)) if not near.is_empty() else "移动探索 · "+str(settings.call("display","pause"))+" 设置"
  var key: String=objective_text+near_text+echo_text
  if key!=_hud_key:objective.text=objective_text;prompt.text=near_text;echo_status.text=echo_text;echo_status.visible=not echo_text.is_empty();_hud_key=key
+ _update_joint(near)
+
+func _update_joint(near: Dictionary) -> void:
+ if joint_visual==null:
+  joint_visual=Control.new();joint_visual.set_script(preload("res://ui/v03/trajectory.gd"));joint_visual.position=Vector2(210,42);joint_visual.size=Vector2(220,92);world.add_child(joint_visual)
+  joint_summary=Label.new();joint_summary.position=Vector2(166,136);joint_summary.size=Vector2(310,42);joint_summary.add_theme_font_size_override("font_size",12);joint_summary.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;world.add_child(joint_summary)
+ var attempt: Dictionary=state().attempt
+ var trace: Dictionary=attempt.get("joint_trace",{})
+ var visible_here: bool=room_id=="lab" and not trace.is_empty()
+ joint_visual.visible=visible_here;joint_summary.visible=visible_here
+ if not visible_here:joint_result_frames=0;return
+ var elapsed: float=(int(attempt.get("tick",0))-int(attempt.get("joint_start",0)))/60.0
+ var progress: float=clampf(elapsed/maxf(0.01,float(trace.get("arrival_s",1))),0,1)
+ joint_visual.render({"trace":trace,"shape":"flat"},progress)
+ var succeeded: bool=attempt.get("phase","")=="success"
+ joint_summary.text="联合真空测量 · A/B 持续维持，C 释放" if not succeeded else "真空实测 %.3f 秒 · A/B/C 联合完成"%float(trace.get("arrival_s",0))
+ if succeeded and str(near.get("id",""))=="lab_drop":
+  joint_result_frames+=1
+  var source: String=str(attempt.get("source_event_id",""))
+  if joint_result_frames>=2 and source!=joint_observed_source:
+   # Defer until this frame's displayed result has reached the scene tree.
+   joint_observed_source=source
+   _observe_joint.call_deferred(source)
+ else:joint_result_frames=0
+
+func _observe_joint(source: String) -> void:
+ var result: Dictionary=_dispatch("observe","lab_drop")
+ if not bool(result.get("ok",false)) and joint_observed_source==source:joint_observed_source=""
 
 func _dispatch(kind: String,target: String="",payload: Dictionary={}) -> Dictionary:
  _request_seq+=1
@@ -160,6 +206,7 @@ func _dispatch(kind: String,target: String="",payload: Dictionary={}) -> Diction
  if not str(result.get("message","")).is_empty():toast(str(result.message))
  _sync_world()
  if bool(result.get("ok",false)):
+  if kind=="retry":joint_observed_source="";paper_observed_release=-1
   if kind not in ["move","fast_forward","dodge"]:save_game(false)
   if state().mode=="combat":show_combat()
   elif modal=="combat":close_modal()
@@ -171,7 +218,9 @@ func _interact() -> void:
  var id: String=str(item.id)
  match id:
   "paper":show_paper()
-  "rig_demo":_dispatch("learn_rig",id)
+  "rig_demo":
+   var result: Dictionary=_dispatch("learn_rig",id)
+   if bool(result.get("ok",false)):show_rig()
   "sync_bell":_dispatch("bell",id)
   "assist_a","assist_b":_dispatch("hold",id)
   "lab_drop":_dispatch("joint_release",id)
@@ -185,7 +234,7 @@ func _interact() -> void:
   _: _dispatch("interact",id)
 
 func _open(id: String,title: String="") -> void:
- modal=id;combat=null;paper_visual=null;paper_status=null
+ modal=id;combat=null;paper_visual=null;paper_status=null;rig_visual=null;rig_status=null
  for child: Node in modal_body.get_children():modal_body.remove_child(child);child.queue_free()
  shade.show();panel.show()
  if not title.is_empty():UI.label(modal_body,title,23)
@@ -207,7 +256,7 @@ func _welcome() -> void:
  UI.focus_first(modal_body)
 
 func new_game() -> void:
- var core: Script=load("res://core/v03/game_session.gd");session=core.new();session.connect("notice",toast);paper_observed_release=-1;room_id="";close_modal();_sync_world();save_game(false)
+ var core: Script=load("res://core/v03/game_session.gd");session=core.new();session.connect("notice",toast);paper_observed_release=-1;joint_observed_source="";room_id="";close_modal();_sync_world();save_game(false)
 
 func save_game(notify: bool=true) -> void:
  if saves==null:return
@@ -216,7 +265,7 @@ func save_game(notify: bool=true) -> void:
 
 func load_game() -> void:
  if saves.call("load_session",session):
-  room_id="";modal="";_sync_world();close_modal();toast("已恢复 v0.3 记录。")
+  room_id="";modal="";paper_observed_release=-1;joint_observed_source="";_sync_world();close_modal();toast("已恢复 v0.3 记录。")
  else:toast(str(saves.get("last_error")))
 
 func show_paper() -> void:
@@ -232,6 +281,24 @@ func show_paper() -> void:
   if result.get("ok",false):modal="paper_live";paper_result_frames=0;_slow_frame=0)
  UI.button(row,"ClosePaper","返回现场",close_modal)
  _update_paper();UI.focus_first(row)
+
+func show_rig() -> void:
+ _open("rig","配重示范 · 两个质量，同一动作")
+ var demo: Dictionary=state().get("rig_demo",{})
+ var traces: Array=demo.get("traces",[])
+ var visual_traces: Array=[]
+ var objects: Dictionary={}
+ for index: int in range(traces.size()):
+  var trace: Dictionary=traces[index]
+  var setup: Dictionary=trace.get("setup",{})
+  var id: String=str(trace.get("id",setup.get("id","weight%s"%index)))
+  var visual_trace: Dictionary=trace.duplicate(true);visual_trace["id"]=id;visual_traces.append(visual_trace)
+  objects[id]={"title":"配重%s · %.3f kg"%[index+1,float(setup.get("mass",0))],"height":setup.get("height",2.0),"kind":"metal","held":false}
+ rig_data={"objects":objects,"traces":visual_traces};rig_playback=0.0
+ UI.label(modal_body,"调高夹具并同步释放。下面的动作与到达时间来自这次装置实际计算的轨迹。",18)
+ rig_visual=Control.new();rig_visual.set_script(preload("res://ui/v03/trajectory.gd"));rig_visual.custom_minimum_size.y=170;modal_body.add_child(rig_visual)
+ rig_status=UI.label(modal_body,"同形金属配重释放中 · 共同慢放",18)
+ UI.button(modal_body,"CloseRig","返回实验室",close_modal);UI.focus_first(modal_body)
 
 func _update_paper() -> void:
  if paper_visual==null:return
@@ -325,7 +392,7 @@ func show_notebook() -> void:
  UI.label(body,"已学动作："+"、".join(names))
  for observation: Dictionary in state().observations:
   var trace: Dictionary=observation.get("trace",{})
-  UI.label(body,str(observation.get("summary","已完成观察"))+"\n来源 %s · 第 %s 轮 · 到达 %.3f 秒"%[observation.get("source_id",""),observation.get("cycle",1),float(trace.get("arrival_s",0))],16)
+  UI.label(body,str(observation.get("summary","已完成观察"))+"\n第 %s 轮 · %s · 到达 %.3f 秒"%[observation.get("cycle",1),"真空装置" if trace.get("setup",{}).get("medium","air")=="vacuum" else "空气中的落体",float(trace.get("arrival_s",0))],16)
  UI.label(body,"已封存 %s 轮历史，%s 个装置片段。"%[state().histories.size(),state().segments.size()])
  UI.button(modal_body,"CloseNotebook","返回",close_modal);UI.focus_first(modal_body)
 

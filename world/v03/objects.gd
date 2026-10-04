@@ -16,6 +16,12 @@ func _draw() -> void:
   var at: Vector2=Vector2(float(item.x),float(item.y))
   var color: Color=Color("e1bc78") if str(item.id)==active_id else Color("92c6bb")
   match str(item.kind):
+   "gate":
+    draw_rect(Rect2(at+Vector2(-20,-40),Vector2(40,45)),Color("172930"))
+    draw_rect(Rect2(at+Vector2(-20,-40),Vector2(40,45)),color,false,2)
+    if not bool(context.get("gate_open",false)):
+     for x: int in range(-15,20,10):draw_rect(Rect2(at+Vector2(x,-35),Vector2(4,35)),Color("6f4a3a"))
+    else:draw_rect(Rect2(at+Vector2(-15,-35),Vector2(30,5)),Color("92c6bb"))
    "paper","barrier":
     draw_rect(Rect2(at+Vector2(-20,0),Vector2(40,5)),Color("537879"))
     draw_line(at+Vector2(-17,-35),at+Vector2(-17,0),color,2)

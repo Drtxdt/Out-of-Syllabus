@@ -11,7 +11,7 @@ func run() -> void:
   var scene: Control=load("res://app/v03/main.tscn").instantiate();scene.suppress_intro=true;viewport.add_child(scene)
   await settle()
   check(scene.session!=null,"scene core initialized")
-  for method: String in ["show_paper","show_settings","show_archive","show_cycle","show_notebook","show_ending"]:
+  for method: String in ["show_paper","show_rig","show_settings","show_archive","show_cycle","show_notebook","show_ending"]:
    scene.call(method);await settle()
    var panel: PanelContainer=scene.panel
    print("V03_SCENE_LAYOUT ",dimensions," ",method," ",panel.get_global_rect())
