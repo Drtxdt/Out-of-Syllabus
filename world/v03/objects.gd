@@ -3,10 +3,11 @@ extends Node2D
 var objects: Array=[]
 var active_id: String=""
 var powered: bool=true
+var context: Dictionary={}
 
-func render(items: Array,nearby_id: String) -> void:
- if objects==items and active_id==nearby_id:return
- objects=items.duplicate(true);active_id=nearby_id;queue_redraw()
+func render(items: Array,nearby_id: String,projection: Dictionary={}) -> void:
+ if objects==items and active_id==nearby_id and context==projection:return
+ objects=items.duplicate(true);active_id=nearby_id;context=projection.duplicate(true);queue_redraw()
 
 func _draw() -> void:
  var font: Font=load("res://assets/fonts/NotoSansCJKsc-Regular.otf")
@@ -15,6 +16,24 @@ func _draw() -> void:
   var at: Vector2=Vector2(float(item.x),float(item.y))
   var color: Color=Color("e1bc78") if str(item.id)==active_id else Color("92c6bb")
   match str(item.kind):
+   "paper","barrier":
+    draw_rect(Rect2(at+Vector2(-20,0),Vector2(40,5)),Color("537879"))
+    draw_line(at+Vector2(-17,-35),at+Vector2(-17,0),color,2)
+    var flat: bool=context.get("shape","flat")=="flat" or item.kind=="barrier"
+    draw_rect(Rect2(at+Vector2(-11,-22),Vector2(24,4) if flat else Vector2(10,10)),Color("d8e2dd"))
+   "hold":
+    draw_rect(Rect2(at+Vector2(-17,-29),Vector2(34,35)),Color("172930"))
+    draw_rect(Rect2(at+Vector2(-17,-29),Vector2(34,35)),color,false,2)
+    draw_rect(Rect2(at+Vector2(-10,-22),Vector2(20,9)),Color("92c6bb") if context.get("holds",{}).has(item.id) else Color("6f4a3a"))
+    draw_line(at+Vector2(-9,-3),at+Vector2(9,-3),Color("e1bc78"),3)
+   "bell":
+    draw_polygon(PackedVector2Array([at+Vector2(-13,-7),at+Vector2(-9,-26),at+Vector2(9,-26),at+Vector2(13,-7)]),Color("e1bc78"))
+    draw_rect(Rect2(at+Vector2(-3,-5),Vector2(6,7)),color)
+   "experiment","rig":
+    draw_rect(Rect2(at+Vector2(-23,-40),Vector2(46,46)),Color("172930"));draw_rect(Rect2(at+Vector2(-23,-40),Vector2(46,46)),color,false,2)
+    draw_rect(Rect2(at+Vector2(-14,-28),Vector2(9,9)),Color("e1bc78"));draw_rect(Rect2(at+Vector2(5,-28),Vector2(9,4)),Color("d8e2dd"))
+   "switch":
+    draw_rect(Rect2(at+Vector2(-13,-24),Vector2(26,30)),Color("172930"));draw_rect(Rect2(at+Vector2(-5,-18),Vector2(10,12)),color if context.get("powered",true) else Color("6f4a3a"))
    "exit":
     draw_rect(Rect2(at+Vector2(-14,-22),Vector2(28,28)),Color("172930"));draw_rect(Rect2(at+Vector2(-14,-22),Vector2(28,28)),color,false,2)
     draw_line(at+Vector2(-7,-6),at+Vector2(7,-6),color,2)

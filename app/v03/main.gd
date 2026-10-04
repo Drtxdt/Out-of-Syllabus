@@ -122,7 +122,7 @@ func _sync_world() -> void:
    if props!=null:props.hide()
  player.position=Vector2(float(s.position[0]),float(s.position[1]));player.set("facing",str(s.direction))
  var near: Dictionary=session.call("nearby")
- objects_view.call("render",session.call("objects"),str(near.get("id","")))
+ objects_view.call("render",session.call("objects"),str(near.get("id","")),{"shape":s.opening.get("shape","flat"),"holds":s.attempt.get("holds",{}),"powered":s.flags.get("power",true)})
  var poses: Array=session.call("echo_poses")
  while echoes.size()<poses.size():
   var echo: Node2D=load("res://world/player.tscn").instantiate();echo.set("echo",true);echo.set("collision_layer",0);echo.set("collision_mask",0);world.add_child(echo);echoes.append(echo)
@@ -138,7 +138,13 @@ func _sync_world() -> void:
   var position_data: Array=finale.get("examiner_position",[320,200]);examiner.position=Vector2(position_data[0],position_data[1])
  var attempt: Dictionary=s.attempt
  var echo_text: String=""
- if not attempt.is_empty():echo_text="同步装置 · "+str(attempt.get("message",attempt.get("phase","")))
+ if not attempt.is_empty() and room_id=="lab":
+  var device_tick: int=int(attempt.get("tick",0))
+  if attempt.get("phase","")=="countdown":echo_text="同步倒数 %s · 到自己的工位，交互开始维持"%maxi(1,int(ceil(-device_tick/60.0)))
+  elif attempt.get("phase","")=="recording":
+   var holds: Dictionary=attempt.get("holds",{})
+   echo_text="同步 %.1f 秒 · A %s · B %s · %s"%[device_tick/60.0,"维持中" if holds.has("assist_a") else "空缺","维持中" if holds.has("assist_b") else "空缺","你操作 C 释放" if int(s.cycle)==3 else "留在自己的操作区"]
+  else:echo_text="同步装置 · "+str(attempt.get("message",""))
  if finale.get("phase","")=="warning":echo_text="监考者的脚步接近了。准备移动与闪避。"
  if finale.get("phase","")=="chase":echo_text="监考者追逐中 · "+str(settings.call("display","dodge"))+" 闪避，前往观测塔"
  var objective_text: String="第 %s 轮 · %s"%[s.cycle,session.call("objective")]
@@ -285,7 +291,12 @@ func show_archive() -> void:
  UI.button(operations,"Forecast","预览轨迹（2米 / 空气）",func() -> void:_dispatch("forecast","archive_terminal",{"model":archive_model,"height":2.0,"medium":"air"});show_archive())
  UI.button(operations,"Calibrate","用已有观察校准",func() -> void:_dispatch("calibrate","archive_terminal");show_archive())
  var finale: Dictionary=state().finale
- UI.label(modal_body,"当前选择：%s · %s"%[{"none":"尚未选择","accept":"接受","refuse":"拒绝"}.get(str(finale.get("choice","none")),""),finale.get("prediction",{})],17)
+ var prediction: Dictionary=finale.get("prediction",{})
+ var summary: String="尚未准备轨迹或校准记录。"
+ if not prediction.is_empty():
+  summary="%s · 到达 %.3f 秒"%["未来预测（尚未实际使用）" if prediction.get("origin","")=="prediction" else "已观察的实测记录",float(prediction.get("trace",{}).get("arrival_s",0))]
+  if prediction.get("origin","")=="measurement":summary+="\n下一步：器材室远端校准刻度，然后返回闸门。"
+ UI.label(modal_body,"当前选择：%s\n%s"%[{"none":"尚未选择","accept":"接受","refuse":"拒绝"}.get(str(finale.get("choice","none")),""),summary],17)
  UI.label(modal_body,"完成准备后返回现场，走到落体闸门亲手释放并通行。")
  UI.button(modal_body,"CloseArchive","返回现场",close_modal);UI.focus_first(modal_body)
 
@@ -312,7 +323,9 @@ func show_notebook() -> void:
  var names: PackedStringArray=[]
  for id: Variant in state().owned:names.append(UI.action_name(str(id)))
  UI.label(body,"已学动作："+"、".join(names))
- for observation: Dictionary in state().observations:UI.label(body,str(observation.get("message",observation.get("summary",observation))),16)
+ for observation: Dictionary in state().observations:
+  var trace: Dictionary=observation.get("trace",{})
+  UI.label(body,str(observation.get("summary","已完成观察"))+"\n来源 %s · 第 %s 轮 · 到达 %.3f 秒"%[observation.get("source_id",""),observation.get("cycle",1),float(trace.get("arrival_s",0))],16)
  UI.label(body,"已封存 %s 轮历史，%s 个装置片段。"%[state().histories.size(),state().segments.size()])
  UI.button(modal_body,"CloseNotebook","返回",close_modal);UI.focus_first(modal_body)
 
