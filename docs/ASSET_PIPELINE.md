@@ -18,3 +18,8 @@ imagegen 是默认生成入口。sprite-gen 已安装，但它调用额外 Codex
 - Godot Forge：固定仓库源码，保留其 LICENSE 于 addons/godot_forge/LICENSE。
 
 正式生产首先打磨主角、监考者、实验台与观测塔；卡牌用清楚的科学图示和一致符号。公开包必须再次核对字体及依赖许可，保留制作来源清单。
+
+## v0.3 实际结果
+
+生成参考位于 assets/art_source/v03/hammer-reference.png；像素审计未通过，未进入运行时资源。新版 world/v03/objects.gd 与 ui/v03/trajectory.gd 使用可编辑占位，保留原始生成与审计供后续重绘。实际引擎画面验收见 V03_VALIDATION.md。
+
