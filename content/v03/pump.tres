@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/action_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "pump"
+title = "抽气"
+cost = 2
+description = "抽出密封玻璃舱中的空气"
+target_kind = "chamber"

@@ -13,3 +13,4 @@ reports/replay_*.json
 
 # Raw v0.2 QA runs stay local; curated acceptance artifacts are added explicitly.
 reports/v0.2/
+reports/v0.3/

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/action_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "crumple"
+title = "揉团"
+cost = 1
+description = "改变纸片形状和迎风面积"
+target_kind = "paper"

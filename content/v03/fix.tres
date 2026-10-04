@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://core/v03/action_def.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = "fix"
+title = "固定"
+cost = 1
+description = "固定纸片作为遮挡"
+target_kind = "paper"
