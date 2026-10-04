@@ -38,6 +38,8 @@ try {
  if($run.errors.Count -eq 0 -and -not(Test-Path -LiteralPath $binary)){$run.errors.Add('Exporter returned success without binary')}
  if($run.errors.Count -eq 0){
   Copy-Item -LiteralPath (Join-Path $run.root 'assets/fonts/LICENSE.txt') -Destination (Join-Path $destination 'FONT-LICENSE.txt')
+  Copy-Item -LiteralPath (Join-Path $run.root 'addons/godot_forge/LICENSE') -Destination (Join-Path $destination 'FORGE-LICENSE.txt')
+  $null=Invoke-V03Check $run 'license-notices' @('--headless','--script','res://qa/v03_licenses.gd','--',"--license-output=$destination")
   Set-Content -LiteralPath (Join-Path $destination 'PLAYTEST-STATUS.txt') -Value 'v0.3 local release candidate. Automated verification and visual evidence are separate. Human blind playtest is pending. Existing v0.2 builds and saves are retained.'
  }
 } catch {$run.errors.Add($_.Exception.Message)}
