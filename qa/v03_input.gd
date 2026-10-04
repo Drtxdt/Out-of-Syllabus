@@ -6,6 +6,7 @@ var route: String="accept"
 var failures: Array[String]=[]
 var focus_log: Array[String]=[]
 var screenshots: Array[String]=[]
+var persistence: Dictionary={"checked":false}
 var steps: int=0
 var started: int=0
 var process_samples: Array[float]=[]
@@ -164,9 +165,43 @@ func timing(samples: Array[float]) -> Dictionary:
  var sorted: Array[float]=samples.duplicate();sorted.sort();var total: float=0.0
  for sample: float in sorted:total+=sample
  return {"samples":sorted.size(),"max_ms":sorted.back(),"mean_ms":total/sorted.size(),"p95_ms":sorted[mini(sorted.size()-1,int(ceil(sorted.size()*0.95))-1)]}
+func verify_persistence() -> void:
+ # Read main file directly: backup fallback must not hide a failed final UI save.
+ var path: String=str(app.saves.path)
+ var active_before: String=JSON.stringify(app.session.snapshot())
+ var checkpoint_before: String=JSON.stringify(app.session.checkpoint)
+ persistence={"checked":true,"path":path,"passed":false,"source":"actual UI main save; no fallback or writes"}
+ if not FileAccess.file_exists(path):fail("Completed UI route has no main save");return
+ var raw: String=FileAccess.get_file_as_string(path)
+ persistence["file_sha256"]=raw.sha256_text()
+ var parser: JSON=JSON.new()
+ if parser.parse(raw)!=OK:fail("UI main save envelope is malformed");return
+ var envelope: Variant=parser.data
+ if not envelope is Dictionary or not envelope.get("payload") is String or not envelope.get("sha256") is String:fail("UI save envelope fields invalid");return
+ if envelope.payload.sha256_text()!=envelope.sha256:fail("UI save checksum mismatch");return
+ if parser.parse(envelope.payload)!=OK:fail("UI main save payload is malformed");return
+ var payload: Variant=parser.data
+ if not payload is Dictionary or payload.get("schema")!=4 or payload.get("content_version")!=3 or payload.get("chapter")!="fall_v03":fail("UI save version mismatch");return
+ var validator: Script=load("res://core/v03/save_validator.gd")
+ var error: String=validator.validate(payload.get("state"))
+ if not error.is_empty():fail("UI disk session invalid: "+error);return
+ if not payload.get("checkpoint") is Dictionary:fail("UI disk checkpoint missing");return
+ if not payload.checkpoint.is_empty():
+  error=validator.validate(payload.checkpoint)
+  if not error.is_empty():fail("UI disk checkpoint invalid: "+error);return
+ var physics: Script=load("res://core/v03/physics.gd")
+ if not payload.checkpoint.is_empty() and not physics.equivalent(payload.checkpoint.histories,payload.state.histories):fail("UI disk checkpoint has different sealed history");return
+ if not payload.state.completed or payload.state.mode!="complete" or payload.state.finale.phase!="complete":fail("UI final completion was not persisted");return
+ if not physics.equivalent(payload.state,app.session.snapshot()):fail("UI persisted session differs from completed active session");return
+ if active_before!=JSON.stringify(app.session.snapshot()) or checkpoint_before!=JSON.stringify(app.session.checkpoint):fail("Persistence verification changed active session");return
+ if FileAccess.get_file_as_string(path)!=raw:fail("Persistence verification changed main save");return
+ persistence["passed"]=true
+ persistence["completed"]=true
+ persistence["validator_error"]=""
 func finish() -> void:
  if app!=null:release_motion()
- var report: Dictionary={"suite":"v03-input","route":route,"natural_focus_navigation":natural,"focus_log":focus_log,"steps":steps,"failures":failures,"screenshots":screenshots,"completed":app.session.state.completed if app!=null else false,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started,"timing":{"process":timing(process_samples),"physics":timing(physics_samples),"wall_process_frame_intervals":timing(wall_samples),"wall_note":"Real process_frame intervals include screenshots, synchronous saves, fast-forward and all pauses. Fixed-fps scripted execution is not stable display FPS or human playtime.","note":"Retained Performance monitor samples, not independent frame stopwatch or human playtime"}}
+ if app!=null and failures.is_empty():verify_persistence()
+ var report: Dictionary={"suite":"v03-input","route":route,"natural_focus_navigation":natural,"focus_log":focus_log,"steps":steps,"failures":failures,"screenshots":screenshots,"persistence":persistence,"completed":app.session.state.completed if app!=null else false,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started,"timing":{"process":timing(process_samples),"physics":timing(physics_samples),"wall_process_frame_intervals":timing(wall_samples),"wall_note":"Real process_frame intervals include screenshots, synchronous saves, fast-forward and all pauses. Fixed-fps scripted execution is not stable display FPS or human playtime.","note":"Retained Performance monitor samples, not independent frame stopwatch or human playtime"}}
  var output: FileAccess=FileAccess.open(root_path.path_join("input.json"),FileAccess.WRITE)
  if output==null:fail("Could not write input report")
  else:output.store_string(JSON.stringify(report,"  "));output.close()
@@ -174,6 +209,7 @@ func finish() -> void:
  if app!=null:app.queue_free();app=null
  await process_frame;await process_frame
  quit(0 if failures.is_empty() else 1)
+
 
 
 
