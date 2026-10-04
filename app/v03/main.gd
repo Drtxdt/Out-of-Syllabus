@@ -33,6 +33,7 @@ var _hud_key: String=""
 var _battle_revision: int=-1
 var _request_seq: int=0
 var _last_mode: String=""
+var _slow_frame: int=0
 var suppress_intro: bool=false
 
 func _ready() -> void:
@@ -69,7 +70,8 @@ func _physics_process(_delta: float) -> void:
  var s: Dictionary=state()
  if modal.is_empty() or modal=="paper_live":
   if s.mode=="world":
-   session.call("advance",1)
+   _slow_frame+=1
+   if modal!="paper_live" or _slow_frame%3==0:session.call("advance",1)
    if modal.is_empty():
     var movement: Vector2=Input.get_vector("move_left","move_right","move_up","move_down")
     var direction: String=str(s.direction)
@@ -221,7 +223,7 @@ func show_paper() -> void:
  UI.button(row,"PaperCrumpled","揉团",func() -> void:_dispatch("paper_shape","paper",{"shape":"crumpled"}))
  UI.button(row,"PaperRelease","释放",func() -> void:
   var result: Dictionary=_dispatch("release","paper")
-  if result.get("ok",false):modal="paper_live";paper_result_frames=0)
+  if result.get("ok",false):modal="paper_live";paper_result_frames=0;_slow_frame=0)
  UI.button(row,"ClosePaper","返回现场",close_modal)
  _update_paper();UI.focus_first(row)
 
@@ -232,8 +234,10 @@ func _update_paper() -> void:
  var trace: Dictionary=opening.get("trace",{})
  var elapsed: float=float(opening.get("elapsed",0))
  var duration: float=maxf(0.01,float(trace.get("arrival_s",1)))
- paper_visual.render(opening,clampf(elapsed/duration,0,1))
- paper_status.text="纸片：%s · %s"%["平展" if opening.get("shape","flat")=="flat" else "揉团",{"idle":"准备释放","falling":"下坠中，世界与机关同步运行","landed":"纸片到达传感器"}.get(phase,phase)]
+ var view_data: Dictionary=opening.duplicate(true)
+ view_data["door_open"]=int(state().tick)<=int(opening.get("door_until",-1))
+ paper_visual.render(view_data,clampf(elapsed/duration,0,1))
+ paper_status.text="纸片：%s · %s"%["平展" if opening.get("shape","flat")=="flat" else "揉团",{"idle":"准备释放","falling":"下坠中 · 世界与机关同步 3 倍慢放","landed":"纸片到达传感器"}.get(phase,phase)]
  if phase=="landed":
   paper_status.text+="\n实测 %.3f 秒 · 门剩余 %.1f 秒"%[float(trace.get("arrival_s",0)),maxf(0,float(opening.get("door_until",0)-state().tick)/60.0)]
   paper_result_frames+=1

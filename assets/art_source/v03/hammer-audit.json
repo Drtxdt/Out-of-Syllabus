@@ -1,0 +1,24 @@
+{
+  "status": "fail",
+  "file": "assets\\art_source\\v03\\hammer-reference.png",
+  "antialiasing": {
+    "semi_transparent_pixels": 0,
+    "total_pixels": 1573352,
+    "clean": true
+  },
+  "orphan_pixels": {
+    "orphan_pixels": 0,
+    "clean": true
+  },
+  "palette": {
+    "unique_colors": 92672,
+    "max_allowed": 12,
+    "clean": false
+  },
+  "grid_alignment": {
+    "width": 1672,
+    "height": 941,
+    "grid_size": 32,
+    "aligned": false
+  }
+}
