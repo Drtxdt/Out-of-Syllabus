@@ -23,6 +23,7 @@ static func theme() -> Theme:
 static func label(parent: Node, text: String, font_size: int = 18) -> Label:
  var node: Label = Label.new()
  node.text=text;node.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+ node.size_flags_horizontal=Control.SIZE_EXPAND_FILL
  node.add_theme_font_size_override("font_size",font_size)
  parent.add_child(node)
  return node

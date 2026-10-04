@@ -21,13 +21,14 @@ var cancel: Button
 var end_turn: Button
 var log_label: Label
 var playback: float=1.0
+var last_round: int=-1
 
 func _ready() -> void:
  add_theme_constant_override("separation",5)
  stats=UI.label(self,"",20);stats.name="CombatStats"
  intent=UI.label(self,"",17);intent.name="EnemyIntent"
  lane_row=UI.row(self);lane_row.name="Lanes"
- board=Control.new();board.set_script(preload("res://ui/v03/trajectory.gd"));board.custom_minimum_size.y=88;add_child(board)
+ board=Control.new();board.set_script(preload("res://ui/v03/trajectory.gd"));board.custom_minimum_size.y=64;add_child(board)
  targets=UI.row(self);targets.name="Targets"
  cards=GridContainer.new();cards.columns=4;cards.add_theme_constant_override("h_separation",5);cards.add_theme_constant_override("v_separation",5);cards.name="Actions";add_child(cards)
  explanation=UI.label(self,"选择动作，再选择目标；预览不会消耗行动。",16);explanation.custom_minimum_size.y=44;explanation.name="Preview"
@@ -37,13 +38,15 @@ func _ready() -> void:
  end_turn=UI.button(row,"EndTurn","结束回合 / 执行释放",func() -> void: command_requested.emit("end_turn","",{}))
  UI.button(row,"Retreat","撤退",func() -> void: command_requested.emit("retreat","",{}))
  log_label=UI.label(self,"",15);log_label.name="CombatLog"
+ log_label.max_lines_visible=1;log_label.text_overrun_behavior=TextServer.OVERRUN_TRIM_ELLIPSIS
 
 func render(value: Dictionary,actions: Array) -> void:
  if not is_node_ready(): await ready
  var focus: Control=get_viewport().gui_get_focus_owner()
  _focus_name=str(focus.name) if focus!=null and is_ancestor_of(focus) else ""
  battle=value.duplicate(true);owned=actions.duplicate()
- if int(battle.get("revision",0))!=revision:
+ var changed: bool=int(battle.get("revision",0))!=revision
+ if changed:
   revision=int(battle.get("revision",0));selected_action="";selected_target="";preview_result={}
  stats.text="%s  · 第 %s 回合 · AP %s/2 · 你 %s HP · 敌方 %s HP" % [{"patrol":"巡逻纸偶","hammer":"双锤看守","bellows":"风箱纸偶"}.get(str(battle.get("id","")),"交锋"),battle.get("round",1),battle.get("ap",2),battle.get("hp",0),battle.get("enemy_hp",0)]
  var next: Dictionary=battle.get("intent",{})
@@ -52,10 +55,12 @@ func render(value: Dictionary,actions: Array) -> void:
  for index: int in range(3):
   var label: Label=UI.label(lane_row,("◆ 你" if int(battle.get("lane",1))==index else "◇")+"  通道 %s"%(index+1)+( "  ⚠" if int(next.get("lane",-1))==index else ""),16)
   label.size_flags_horizontal=Control.SIZE_EXPAND_FILL;label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
- if not battle.get("traces",[]).is_empty() and int(battle.get("revision",0))!=revision:playback=0.0
+ if not battle.get("traces",[]).is_empty() and int(battle.get("round",0))!=last_round:playback=0.0
+ last_round=int(battle.get("round",0))
  board.render(battle,playback)
  var logs: Array=battle.get("log",[])
  log_label.text=str(logs.back()) if not logs.is_empty() else "通过实际操作改变物体与机关。"
+ log_label.tooltip_text=log_label.text
  _render_actions();_render_targets();_render_preview()
  if not _focus_name.is_empty():
   var previous: Node=find_child(_focus_name,true,false)
@@ -81,8 +86,9 @@ func _render_actions() -> void:
   var cost: int=0 if action=="unfix" else (2 if action in ["pump","future"] else 1)
   var label: String=("● " if selected_action==action else "")+UI.action_name(action)+" · %s AP"%cost
   var button: Button=UI.button(cards,"Action_"+action,label,func() -> void:_select_action(action),possible)
+  button.add_theme_font_size_override("font_size",16)
   button.tooltip_text=reason if not possible else "选择后查看目标与预览"
-  if not possible:button.text+=" · 不可用"
+  if not possible:button.text+="\n"+("行动点不足" if int(battle.get("ap",0))<cost else reason.trim_suffix("。").left(16))
 
 func _target_ids() -> Array[String]:
  var ids: Array[String]=[""]

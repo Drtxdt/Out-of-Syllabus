@@ -43,6 +43,7 @@ func _ready() -> void:
  if core==null or storage==null:
   _open("error","v0.3 核心尚未连接");UI.label(modal_body,"缺少新版会话或保存模块。保留旧版记录，等待集成。");return
  session=core.new();saves=storage.new();settings=Settings.new()
+ session.connect("notice",toast)
  _sync_world()
  if not suppress_intro:_welcome()
 
@@ -74,7 +75,7 @@ func _physics_process(_delta: float) -> void:
     var direction: String=str(s.direction)
     if not movement.is_zero_approx():
      direction=("left" if movement.x<0 else "right") if absf(movement.x)>absf(movement.y) else ("up" if movement.y<0 else "down")
-     player.velocity=movement*100.0
+     player.velocity=movement*(235.0 if int(s.tick)<int(s.finale.get("dodge_until",0)) else 100.0)
      player.move_and_slide()
      session.call("command","move","player",{"x":player.position.x,"y":player.position.y,"direction":direction})
     player.set("moving",not movement.is_zero_approx())
@@ -83,7 +84,7 @@ func _physics_process(_delta: float) -> void:
  if modal in ["paper","paper_live"]:_update_paper()
  if state().mode=="combat" and modal.is_empty():show_combat()
  elif state().mode=="caught" and modal!="caught":show_caught()
- elif bool(state().completed) and modal!="ending":show_ending()
+ elif bool(state().completed) and modal.is_empty():show_ending()
 
 func _process(delta: float) -> void:
  toast_remaining=maxf(0,toast_remaining-delta)
@@ -151,7 +152,7 @@ func _dispatch(kind: String,target: String="",payload: Dictionary={}) -> Diction
  if not str(result.get("message","")).is_empty():toast(str(result.message))
  _sync_world()
  if bool(result.get("ok",false)):
-  if kind not in ["move","observe","fast_forward"]:save_game(false)
+  if kind not in ["move","fast_forward","dodge"]:save_game(false)
   if state().mode=="combat":show_combat()
   elif modal=="combat":close_modal()
  return result
@@ -198,7 +199,7 @@ func _welcome() -> void:
  UI.focus_first(modal_body)
 
 func new_game() -> void:
- var core: Script=load("res://core/v03/game_session.gd");session=core.new();paper_observed_release=-1;room_id="";close_modal();_sync_world();save_game(false)
+ var core: Script=load("res://core/v03/game_session.gd");session=core.new();session.connect("notice",toast);paper_observed_release=-1;room_id="";close_modal();_sync_world();save_game(false)
 
 func save_game(notify: bool=true) -> void:
  if saves==null:return
@@ -229,7 +230,7 @@ func _update_paper() -> void:
  var opening: Dictionary=state().opening
  var phase: String=str(opening.get("phase","idle"))
  var trace: Dictionary=opening.get("trace",{})
- var elapsed: float=float(opening.get("elapsed",0))/60.0
+ var elapsed: float=float(opening.get("elapsed",0))
  var duration: float=maxf(0.01,float(trace.get("arrival_s",1)))
  paper_visual.render(opening,clampf(elapsed/duration,0,1))
  paper_status.text="纸片：%s · %s"%["平展" if opening.get("shape","flat")=="flat" else "揉团",{"idle":"准备释放","falling":"下坠中，世界与机关同步运行","landed":"纸片到达传感器"}.get(phase,phase)]
