@@ -54,3 +54,18 @@ func run_cases() -> void:
  check(not filesystem.save_session(s),"real filesystem ENOTDIR write fails")
  check(FileAccess.get_file_as_string(blocker)=="real filesystem obstruction","real filesystem obstruction remains unchanged")
  notes.append("Simulated faults: open/write/copy/rename. Real filesystem fault: child path below regular file. No disk-full/physical-loss simulation.")
+ var measured: Variant=session_new()
+ measured.state.position=[320.0,152.0]
+ measured.command("paper_shape","paper",{"shape":"flat"});measured.command("release","paper");measured.advance(120)
+ var fabricated: Dictionary=measured.snapshot()
+ fabricated.observations.append({"id":"observation_"+fabricated.opening.source_id,"source_id":fabricated.opening.source_id,"cycle":1,"tick":120,"trace":fabricated.opening.trace.duplicate(true),"observed":true,"summary":"forged without player observe"})
+ restore_rejected(measured,fabricated,"read observation without observe event")
+ check(measured.command("observe","paper").ok,"real observe command")
+ var good: Dictionary=measured.snapshot()
+ fabricated=good.duplicate(true)
+ fabricated.observations[0].trace=preload("res://core/v03/physics.gd").trace(preload("res://core/v03/physics.gd").setup("paper","flat",2.0,0.0,"vacuum"))
+ restore_rejected(measured,fabricated,"legitimate simulator trace in wrong original medium")
+ fabricated=good.duplicate(true);fabricated.observations.append(fabricated.observations[0].duplicate(true))
+ restore_rejected(measured,fabricated,"repeated observation source")
+ fabricated=good.duplicate(true);fabricated.observations[0].source_id="c1:e999"
+ restore_rejected(measured,fabricated,"nonexistent observation source")
