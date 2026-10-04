@@ -16,6 +16,13 @@ function Invoke-V03Check($Run,[string]$Name,[string[]]$Arguments,[int]$TimeoutSe
  $info=[System.Diagnostics.ProcessStartInfo]::new($Executable)
  $info.WorkingDirectory=$Run.report
  $info.UseShellExecute=$false;$info.CreateNoWindow=$true;$info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true
+ $engineData=Join-Path $Run.report ("engine-userdata/"+$Name)
+ foreach($folder in @('roaming','local','data','config','cache')){New-Item -ItemType Directory -Force -Path (Join-Path $engineData $folder) | Out-Null}
+ $info.Environment['APPDATA']=Join-Path $engineData 'roaming'
+ $info.Environment['LOCALAPPDATA']=Join-Path $engineData 'local'
+ $info.Environment['XDG_DATA_HOME']=Join-Path $engineData 'data'
+ $info.Environment['XDG_CONFIG_HOME']=Join-Path $engineData 'config'
+ $info.Environment['XDG_CACHE_HOME']=Join-Path $engineData 'cache'
  $info.Environment['GODOT_FORGE_NO_SERVER']='1'
  $info.Environment['OOS_QA_PROFILE']=$profile
  $info.Environment['OOS_QA_ROOT']=$Run.qa_root
@@ -48,6 +55,7 @@ function Complete-V03Run($Run,[hashtable]$Extra=@{}) {
  foreach($key in $Extra.Keys){$manifest[$key]=$Extra[$key]}
  $manifest | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath (Join-Path $Run.report 'manifest.json') -Encoding utf8
 }
+
 
 
 
