@@ -84,3 +84,16 @@ func run_cases() -> void:
 
 
 
+ var store: RefCounted=preload("res://core/v03/save_store.gd").new(report_root.path_join("sealed.json"))
+ check(store.save_session(s),"complete two-history session saves")
+ var loaded: Variant=session_new()
+ check(store.load_session(loaded),"sealed segment hashes survive actual JSON disk load")
+ check(canonical(s.snapshot())==canonical(loaded.snapshot()),"two-history disk load preserves semantic state")
+ var altered: Dictionary=JSON.parse_string(JSON.stringify(s.snapshot()))
+ altered.segments[0].hash="forged"
+ restore_rejected(loaded,altered,"forged sealed hash")
+ altered=JSON.parse_string(JSON.stringify(s.snapshot()))
+ altered.segments[0].commands[0].source_tick+=1
+ var unsigned: Dictionary=altered.segments[0].duplicate(true);unsigned.erase("hash")
+ altered.segments[0].hash=preload("res://core/v03/physics.gd").semantic_hash(unsigned)
+ restore_rejected(loaded,altered,"rehashed forged source time")

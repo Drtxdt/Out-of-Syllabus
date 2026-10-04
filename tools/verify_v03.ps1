@@ -5,7 +5,7 @@ $ErrorActionPreference='Stop'
 $run=New-V03Run (Split-Path $PSScriptRoot -Parent) $Godot $RunId
 try {
  $import=Invoke-V03Check $run 'import' @('--headless','--editor','--import','--quit')
- foreach($suite in @('physics','combat','session','echo','save','performance')) {
+ foreach($suite in @('physics','combat','session','finale','content','enumeration','echo','save','performance')) {
   $null=Invoke-V03Check $run $suite @('--headless','--script',"res://tests/v03_$suite.gd")
  }
  if(-not $SkipInput){
@@ -21,4 +21,6 @@ try {
 } catch {$run.errors.Add($_.Exception.Message)}
 finally {Complete-V03Run $run}
 if($run.errors.Count -gt 0){exit 1}
+
+
 

@@ -10,6 +10,8 @@ var steps: int=0
 var started: int=0
 var process_samples: Array[float]=[]
 var physics_samples: Array[float]=[]
+var wall_samples: Array[float]=[]
+var wall_previous: int=0
 var auto_dodge: bool=false
 var root_path: String=""
 
@@ -24,7 +26,12 @@ func _initialize() -> void:
  if paths==null:push_error("v0.3 runtime missing");quit(2);return
  root_path=paths.report_root()
  DirAccess.make_dir_recursive_absolute(root_path)
+ process_frame.connect(_wall_frame)
  call_deferred("run")
+func _wall_frame() -> void:
+ var now: int=Time.get_ticks_usec()
+ if wall_previous>0:wall_samples.append((now-wall_previous)/1000.0)
+ wall_previous=now
 func fail(message: String) -> void:
  failures.append(message);push_error(message)
 func frames(count: int=1) -> void:
@@ -159,7 +166,7 @@ func timing(samples: Array[float]) -> Dictionary:
  return {"samples":sorted.size(),"max_ms":sorted.back(),"mean_ms":total/sorted.size(),"p95_ms":sorted[mini(sorted.size()-1,int(ceil(sorted.size()*0.95))-1)]}
 func finish() -> void:
  if app!=null:release_motion()
- var report: Dictionary={"suite":"v03-input","route":route,"natural_focus_navigation":natural,"focus_log":focus_log,"steps":steps,"failures":failures,"screenshots":screenshots,"completed":app.session.state.completed if app!=null else false,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started,"timing":{"process":timing(process_samples),"physics":timing(physics_samples),"note":"Retained Performance monitor samples, not independent frame stopwatch or human playtime"}}
+ var report: Dictionary={"suite":"v03-input","route":route,"natural_focus_navigation":natural,"focus_log":focus_log,"steps":steps,"failures":failures,"screenshots":screenshots,"completed":app.session.state.completed if app!=null else false,"engine":Engine.get_version_info().string,"elapsed_ms":Time.get_ticks_msec()-started,"timing":{"process":timing(process_samples),"physics":timing(physics_samples),"wall_process_frame_intervals":timing(wall_samples),"wall_note":"Real process_frame intervals include screenshots, synchronous saves, fast-forward and all pauses. Fixed-fps scripted execution is not stable display FPS or human playtime.","note":"Retained Performance monitor samples, not independent frame stopwatch or human playtime"}}
  var output: FileAccess=FileAccess.open(root_path.path_join("input.json"),FileAccess.WRITE)
  if output==null:fail("Could not write input report")
  else:output.store_string(JSON.stringify(report,"  "));output.close()
@@ -167,6 +174,7 @@ func finish() -> void:
  if app!=null:app.queue_free();app=null
  await process_frame;await process_frame
  quit(0 if failures.is_empty() else 1)
+
 
 
 

@@ -33,7 +33,7 @@
   },
   {
     "kind": "screenshot",
-    "name": "paper-experiment"
+    "name": "paper_falling"
   },
   {
     "kind": "until",
@@ -119,7 +119,7 @@
   },
   {
     "kind": "screenshot",
-    "name": "hammer-battle"
+    "name": "hammer_intent"
   },
   {
     "kind": "button",
@@ -128,6 +128,10 @@
   {
     "kind": "button",
     "id": "Target_right"
+  },
+  {
+    "kind": "screenshot",
+    "name": "hammer_preview"
   },
   {
     "kind": "button",
@@ -286,10 +290,18 @@
     "id": "lab_drop"
   },
   {
+    "kind": "screenshot",
+    "name": "joint_release"
+  },
+  {
     "kind": "until",
     "path": "attempt.phase",
     "value": "success",
     "timeout": 1800
+  },
+  {
+    "kind": "screenshot",
+    "name": "joint_result"
   },
   {
     "kind": "wait",
@@ -354,6 +366,10 @@
   {
     "kind": "button",
     "id": "ConfirmAction"
+  },
+  {
+    "kind": "screenshot",
+    "name": "bellows_vacuum"
   },
   {
     "kind": "button",
