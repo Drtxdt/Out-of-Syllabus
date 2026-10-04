@@ -1,0 +1,20 @@
+{
+  "zip": "E:\\my_game\\Out-of-Syllabus\\build\\v0.3\\OutOfSyllabus-v0.3-5c3b439-windows.zip",
+  "zip_bytes": 54606658,
+  "zip_sha256": "e5111ee14c7e6fadf121a37b5c1276bdcbe557f139f2c32d412a5c2ff1e10e11",
+  "binary_sha256": "006ee9ba3d5baeac8fafded274d045eaea641dcb348c9b4d18d9bb4b6f22c54b",
+  "archive_crc_passed": true,
+  "binary_matches_tested_exe": true,
+  "files": [
+    "开始试玩.txt",
+    "ACCEPTANCE.md",
+    "BUILD-INFO.json",
+    "FONT-LICENSE.txt",
+    "FORGE-LICENSE.txt",
+    "GODOT-LICENSE.txt",
+    "GODOT-THIRD-PARTY.json",
+    "OutOfSyllabusV03.exe",
+    "PLAYTEST-FORM.md",
+    "PLAYTEST-STATUS.txt"
+  ]
+}

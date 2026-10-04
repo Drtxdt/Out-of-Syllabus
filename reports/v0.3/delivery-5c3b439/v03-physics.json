@@ -1,0 +1,11 @@
+{
+  "checks": 244,
+  "commit": "5c3b4393d9ae2fb25b8fd12fd80a475bf12c3348",
+  "elapsed_ms": 20.09,
+  "engine": "4.7.2-stable (official)",
+  "failures": [],
+  "kind": "domain fixtures, not user input or human playtest",
+  "notes": [],
+  "suite": "v03-physics",
+  "version": "v0.3"
+}

@@ -1,0 +1,55 @@
+{
+  "completed": true,
+  "elapsed_ms": 20357,
+  "engine": "4.7.2-stable (official)",
+  "failures": [],
+  "focus_log": [],
+  "natural_focus_navigation": false,
+  "persistence": {
+    "checked": true,
+    "completed": true,
+    "file_sha256": "e2a89fffd8c87745b4147cc68e74e47aa970b718b5ab38b958fab06b04798dfb",
+    "passed": true,
+    "path": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/userdata/progress.json",
+    "source": "actual UI main save; no fallback or writes",
+    "validator_error": ""
+  },
+  "route": "accept",
+  "screenshots": [
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/paper_falling.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/rig-experiment.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/hammer_intent.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/hammer_preview.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/joint_release.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/joint_result.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/bellows-battle.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/bellows_vacuum.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/future_forecast.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/chase.png",
+    "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-render-960x540/ending-accept.png"
+  ],
+  "steps": 128,
+  "suite": "v03-input",
+  "timing": {
+    "note": "Retained Performance monitor samples, not independent frame stopwatch or human playtime",
+    "physics": {
+      "max_ms": 13.0,
+      "mean_ms": 4.77665269903849,
+      "p95_ms": 6.313,
+      "samples": 4057
+    },
+    "process": {
+      "max_ms": 87.933,
+      "mean_ms": 12.3768057678088,
+      "p95_ms": 59.873,
+      "samples": 4057
+    },
+    "wall_note": "Real process_frame intervals include screenshots, synchronous saves, fast-forward and all pauses. Fixed-fps scripted execution is not stable display FPS or human playtime.",
+    "wall_process_frame_intervals": {
+      "max_ms": 124.645,
+      "mean_ms": 5.00234458959823,
+      "p95_ms": 7.642,
+      "samples": 4057
+    }
+  }
+}

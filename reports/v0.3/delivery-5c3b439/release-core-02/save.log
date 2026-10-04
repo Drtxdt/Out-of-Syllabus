@@ -1,0 +1,10 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+WARNING: Exponent too high
+   at: built_in_strtod (core/string/ustring.cpp:2553)
+   GDScript backtrace (most recent call first):
+       [0] _read (res://core/v03/save_store.gd:47)
+       [1] load_session (res://core/v03/save_store.gd:62)
+       [2] run_cases (res://tests/v03_save.gd:49)
+       [3] _initialize (res://tests/v03_test_base.gd:24)
+V03-SAVE: 87 checks; failures=[]

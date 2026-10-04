@@ -1,0 +1,136 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+V03 INPUT START: natural-keyboard
+V03 INPUT STEP 0 {"id":"NewGame","kind":"button"} state=paper tick=0
+V03 INPUT STEP 1 {"id":"Menu","kind":"button"} state=paper tick=3
+V03 INPUT STEP 2 {"id":"Bind_move_up","kind":"button"} state=paper tick=18
+V03 INPUT STEP 3 {"code":73.0,"kind":"key"} state=paper tick=18
+V03 INPUT STEP 4 {"id":"CloseSettings","kind":"button"} state=paper tick=18
+V03 INPUT STEP 5 {"id":"paper","kind":"interact"} state=paper tick=21
+V03 INPUT STEP 6 {"id":"PaperFlat","kind":"button"} state=paper tick=54
+V03 INPUT STEP 7 {"id":"PaperRelease","kind":"button"} state=paper tick=54
+V03 INPUT STEP 8 {"kind":"screenshot","name":"paper_falling"} state=paper tick=55
+SCREENSHOT SKIPPED: headless
+V03 INPUT STEP 9 {"kind":"until","path":"opening.phase","timeout":1800.0,"value":"landed"} state=paper tick=55
+V03 INPUT STEP 10 {"frames":4.0,"kind":"wait"} state=paper tick=104
+V03 INPUT STEP 11 {"id":"ClosePaper","kind":"button"} state=paper tick=104
+V03 INPUT STEP 12 {"id":"to_corridor_1","kind":"interact"} state=paper tick=107
+V03 INPUT STEP 13 {"id":"patrol","kind":"interact"} state=paper tick=188
+V03 INPUT STEP 14 {"id":"Action_attack","kind":"button"} state=paper tick=221
+V03 INPUT STEP 15 {"id":"Target_default","kind":"button"} state=paper tick=221
+V03 INPUT STEP 16 {"id":"ConfirmAction","kind":"button"} state=paper tick=221
+V03 INPUT STEP 17 {"id":"Action_attack","kind":"button"} state=paper tick=221
+V03 INPUT STEP 18 {"id":"Target_default","kind":"button"} state=paper tick=221
+V03 INPUT STEP 19 {"id":"ConfirmAction","kind":"button"} state=paper tick=221
+V03 INPUT STEP 20 {"id":"EndTurn","kind":"button"} state=paper tick=221
+V03 INPUT STEP 21 {"id":"Action_attack","kind":"button"} state=paper tick=221
+V03 INPUT STEP 22 {"id":"Target_default","kind":"button"} state=paper tick=221
+V03 INPUT STEP 23 {"id":"ConfirmAction","kind":"button"} state=paper tick=221
+V03 INPUT STEP 24 {"id":"to_lab","kind":"interact"} state=rig tick=224
+V03 INPUT STEP 25 {"id":"rig_demo","kind":"interact"} state=rig tick=265
+V03 INPUT STEP 26 {"kind":"screenshot","name":"rig-experiment"} state=rig tick=369
+SCREENSHOT SKIPPED: headless
+V03 INPUT STEP 27 {"id":"CloseRig","kind":"button"} state=rig tick=369
+V03 INPUT STEP 28 {"id":"hammer","kind":"interact"} state=rig tick=372
+V03 INPUT STEP 29 {"kind":"screenshot","name":"hammer_intent"} state=rig tick=467
+SCREENSHOT SKIPPED: headless
+V03 INPUT STEP 30 {"id":"Action_raise","kind":"button"} state=rig tick=467
+V03 INPUT STEP 31 {"id":"Target_right","kind":"button"} state=rig tick=467
+V03 INPUT STEP 32 {"kind":"screenshot","name":"hammer_preview"} state=rig tick=467
+SCREENSHOT SKIPPED: headless
+V03 INPUT STEP 33 {"id":"ConfirmAction","kind":"button"} state=rig tick=467
+V03 INPUT STEP 34 {"id":"Action_release_pair","kind":"button"} state=rig tick=467
+V03 INPUT STEP 35 {"id":"Target_default","kind":"button"} state=rig tick=467
+V03 INPUT STEP 36 {"id":"ConfirmAction","kind":"button"} state=rig tick=467
+V03 INPUT STEP 37 {"id":"EndTurn","kind":"button"} state=rig tick=467
+V03 INPUT STEP 38 {"id":"Action_attack","kind":"button"} state=rig tick=467
+V03 INPUT STEP 39 {"id":"Target_default","kind":"button"} state=rig tick=467
+V03 INPUT STEP 40 {"id":"ConfirmAction","kind":"button"} state=rig tick=467
+V03 INPUT STEP 41 {"id":"Action_attack","kind":"button"} state=rig tick=467
+V03 INPUT STEP 42 {"id":"Target_default","kind":"button"} state=rig tick=467
+V03 INPUT STEP 43 {"id":"ConfirmAction","kind":"button"} state=rig tick=467
+V03 INPUT STEP 44 {"id":"sync_bell","kind":"interact"} state=record_a tick=470
+V03 INPUT STEP 45 {"id":"assist_a","kind":"interact"} state=record_a tick=582
+V03 INPUT STEP 46 {"id":"wait","kind":"action"} state=record_a tick=707
+V03 INPUT STEP 47 {"kind":"until","path":"attempt.phase","timeout":1800.0,"value":"success"} state=record_a tick=1241
+V03 INPUT STEP 48 {"id":"to_corridor_3","kind":"interact"} state=record_a tick=1241
+V03 INPUT STEP 49 {"id":"to_tower","kind":"interact"} state=record_a tick=1385
+V03 INPUT STEP 50 {"id":"cycle_console","kind":"interact"} state=record_a tick=1467
+V03 INPUT STEP 51 {"id":"SealCycle","kind":"button"} state=record_a tick=1505
+V03 INPUT STEP 52 {"id":"to_corridor_1","kind":"interact"} state=record_b tick=3
+V03 INPUT STEP 53 {"id":"to_storage","kind":"interact"} state=record_b tick=55
+V03 INPUT STEP 54 {"id":"paper_barrier","kind":"interact"} state=record_b tick=207
+V03 INPUT STEP 55 {"id":"to_corridor_2","kind":"interact"} state=record_b tick=308
+V03 INPUT STEP 56 {"id":"to_lab","kind":"interact"} state=record_b tick=565
+V03 INPUT STEP 57 {"id":"sync_bell","kind":"interact"} state=record_b tick=635
+V03 INPUT STEP 58 {"id":"assist_b","kind":"interact"} state=record_b tick=668
+V03 INPUT STEP 59 {"id":"wait","kind":"action"} state=record_b tick=793
+V03 INPUT STEP 60 {"kind":"until","path":"attempt.phase","timeout":1800.0,"value":"success"} state=record_b tick=1207
+V03 INPUT STEP 61 {"id":"to_corridor_3","kind":"interact"} state=record_b tick=1207
+V03 INPUT STEP 62 {"id":"to_tower","kind":"interact"} state=record_b tick=1331
+V03 INPUT STEP 63 {"id":"cycle_console","kind":"interact"} state=record_b tick=1413
+V03 INPUT STEP 64 {"id":"SealCycle","kind":"button"} state=record_b tick=1451
+V03 INPUT STEP 65 {"id":"to_corridor_1","kind":"interact"} state=joint tick=3
+V03 INPUT STEP 66 {"id":"to_lab","kind":"interact"} state=joint tick=55
+V03 INPUT STEP 67 {"id":"sync_bell","kind":"interact"} state=joint tick=125
+V03 INPUT STEP 68 {"id":"lab_drop","kind":"interact"} state=joint tick=158
+V03 INPUT STEP 69 {"id":"wait","kind":"action"} state=joint tick=216
+V03 INPUT STEP 70 {"id":"lab_drop","kind":"interact"} state=joint tick=338
+V03 INPUT STEP 71 {"kind":"screenshot","name":"joint_release"} state=joint tick=345
+SCREENSHOT SKIPPED: headless
+V03 INPUT STEP 72 {"kind":"until","path":"attempt.phase","timeout":1800.0,"value":"success"} state=joint tick=345
+V03 INPUT STEP 73 {"kind":"screenshot","name":"joint_result"} state=joint tick=381
+SCREENSHOT SKIPPED: headless
+V03 INPUT STEP 74 {"frames":4.0,"kind":"wait"} state=joint tick=381
+V03 INPUT STEP 75 {"id":"bellows","kind":"interact"} state=joint tick=385
+V03 INPUT STEP 76 {"kind":"screenshot","name":"bellows-battle"} state=joint tick=479
+SCREENSHOT SKIPPED: headless
+V03 INPUT STEP 77 {"id":"Action_unfold","kind":"button"} state=joint tick=479
+V03 INPUT STEP 78 {"id":"Target_paper","kind":"button"} state=joint tick=479
+V03 INPUT STEP 79 {"id":"ConfirmAction","kind":"button"} state=joint tick=479
+V03 INPUT STEP 80 {"id":"Action_release_pair","kind":"button"} state=joint tick=479
+V03 INPUT STEP 81 {"id":"Target_default","kind":"button"} state=joint tick=479
+V03 INPUT STEP 82 {"id":"ConfirmAction","kind":"button"} state=joint tick=479
+V03 INPUT STEP 83 {"id":"EndTurn","kind":"button"} state=joint tick=479
+V03 INPUT STEP 84 {"id":"Action_attack","kind":"button"} state=joint tick=479
+V03 INPUT STEP 85 {"id":"Target_default","kind":"button"} state=joint tick=479
+V03 INPUT STEP 86 {"id":"ConfirmAction","kind":"button"} state=joint tick=479
+V03 INPUT STEP 87 {"id":"Action_attack","kind":"button"} state=joint tick=479
+V03 INPUT STEP 88 {"id":"Target_default","kind":"button"} state=joint tick=479
+V03 INPUT STEP 89 {"id":"ConfirmAction","kind":"button"} state=joint tick=479
+V03 INPUT STEP 90 {"kind":"screenshot","name":"bellows_vacuum"} state=joint tick=479
+SCREENSHOT SKIPPED: headless
+V03 INPUT STEP 91 {"id":"EndTurn","kind":"button"} state=joint tick=479
+V03 INPUT STEP 92 {"id":"Action_raise","kind":"button"} state=joint tick=479
+V03 INPUT STEP 93 {"id":"Target_paper","kind":"button"} state=joint tick=479
+V03 INPUT STEP 94 {"id":"ConfirmAction","kind":"button"} state=joint tick=479
+V03 INPUT STEP 95 {"id":"Action_release_pair","kind":"button"} state=joint tick=479
+V03 INPUT STEP 96 {"id":"Target_default","kind":"button"} state=joint tick=479
+V03 INPUT STEP 97 {"id":"ConfirmAction","kind":"button"} state=joint tick=479
+V03 INPUT STEP 98 {"id":"EndTurn","kind":"button"} state=joint tick=479
+V03 INPUT STEP 99 {"id":"Action_attack","kind":"button"} state=joint tick=479
+V03 INPUT STEP 100 {"id":"Target_default","kind":"button"} state=joint tick=479
+V03 INPUT STEP 101 {"id":"ConfirmAction","kind":"button"} state=joint tick=479
+V03 INPUT STEP 102 {"id":"Action_attack","kind":"button"} state=joint tick=479
+V03 INPUT STEP 103 {"id":"Target_default","kind":"button"} state=joint tick=479
+V03 INPUT STEP 104 {"id":"ConfirmAction","kind":"button"} state=joint tick=479
+V03 INPUT STEP 105 {"id":"to_corridor_3","kind":"interact"} state=finale tick=482
+V03 INPUT STEP 106 {"id":"to_archive","kind":"interact"} state=finale tick=624
+V03 INPUT STEP 107 {"id":"archive_terminal","kind":"interact"} state=finale tick=716
+V03 INPUT STEP 108 {"id":"RefuseFuture","kind":"button"} state=finale tick=744
+V03 INPUT STEP 109 {"id":"Calibrate","kind":"button"} state=finale tick=744
+V03 INPUT STEP 110 {"id":"CloseArchive","kind":"button"} state=finale tick=744
+V03 INPUT STEP 111 {"id":"to_corridor_5","kind":"interact"} state=finale tick=747
+V03 INPUT STEP 112 {"id":"to_storage","kind":"interact"} state=finale tick=823
+V03 INPUT STEP 113 {"id":"calibration_marker","kind":"interact"} state=finale tick=975
+V03 INPUT STEP 114 {"id":"to_corridor_2","kind":"interact"} state=finale tick=1095
+V03 INPUT STEP 115 {"id":"to_archive","kind":"interact"} state=finale tick=1198
+V03 INPUT STEP 116 {"id":"fall_gate","kind":"interact"} state=finale tick=1290
+V03 INPUT STEP 117 {"frames":55.0,"kind":"wait"} state=finale tick=1359
+V03 INPUT STEP 118 {"id":"to_corridor_5","kind":"interact"} state=finale tick=1414
+V03 INPUT STEP 119 {"id":"to_tower","kind":"interact"} state=finale tick=1490
+V03 INPUT STEP 120 {"id":"cycle_console","kind":"interact"} state=finale tick=1572
+V03 INPUT STEP 121 {"kind":"assert","path":"completed","value":true} state=complete tick=1610
+V03 INPUT STEP 122 {"kind":"screenshot","name":"ending-natural-keyboard"} state=complete tick=1610
+SCREENSHOT SKIPPED: headless
+V03 INPUT: {"completed":true,"elapsed_ms":7888,"engine":"4.7.2-stable (official)","failures":[],"focus_log":["/root/GameV03/Modal/Body/NewGame","none","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@GridContainer@20/Bind_move_up","/root/GameV03/Modal/Body/@GridContainer@23/Bind_move_up","/root/GameV03/Modal/Body/@GridContainer@23/Bind_move_down","/root/GameV03/Modal/Body/@GridContainer@23/Bind_move_left","/root/GameV03/Modal/Body/@GridContainer@23/Bind_move_right","/root/GameV03/Modal/Body/@GridContainer@23/Bind_interact","/root/GameV03/Modal/Body/@GridContainer@23/Bind_dodge","/root/GameV03/Modal/Body/@GridContainer@23/Bind_journal","/root/GameV03/Modal/Body/@GridContainer@23/Bind_hint","/root/GameV03/Modal/Body/@GridContainer@23/Bind_wait","/root/GameV03/Modal/Body/@GridContainer@23/Bind_pause","/root/GameV03/Modal/Body/@GridContainer@23/Bind_save","/root/GameV03/Modal/Body/@GridContainer@23/Bind_load","/root/GameV03/Modal/Body/ReducedEffects","/root/GameV03/Modal/Body/Volume","/root/GameV03/Modal/Body/@HBoxContainer@24/Save","/root/GameV03/Modal/Body/@HBoxContainer@24/Load","/root/GameV03/Modal/Body/@HBoxContainer@24/Retry","/root/GameV03/Modal/Body/CloseSettings","/root/GameV03/Modal/Body/@HBoxContainer@29/PaperFlat","/root/GameV03/Modal/Body/@HBoxContainer@29/PaperFlat","/root/GameV03/Modal/Body/@HBoxContainer@29/PaperCrumpled","/root/GameV03/Modal/Body/@HBoxContainer@29/PaperRelease","/root/GameV03/Modal/Body/@HBoxContainer@29/PaperRelease","/root/GameV03/Modal/Body/@HBoxContainer@29/ClosePaper","/root/GameV03/Modal/Body/@VBoxContainer@30/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@30/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@30/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@30/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@30/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@30/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@30/@HBoxContainer@37/ConfirmAction","/root/GameV03/Modal/Body/CloseRig","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_defend","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_move_left","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_move_right","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_unfold","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_crumple","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_raise","/root/GameV03/Modal/Body/@VBoxContainer@59/Targets/Target_left","/root/GameV03/Modal/Body/@VBoxContainer@59/Targets/Target_right","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_defend","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_move_left","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_move_right","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_unfold","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_crumple","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_raise","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_release_pair","/root/GameV03/Modal/Body/@VBoxContainer@59/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@59/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@59/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@59/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@59/@HBoxContainer@66/ConfirmAction","/root/GameV03/Modal/Body/SealCycle","/root/GameV03/Modal/Body/SealCycle","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_defend","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_move_left","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_move_right","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_unfold","/root/GameV03/Modal/Body/@VBoxContainer@96/Targets/Target_paper","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_defend","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_move_left","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_move_right","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_unfold","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_crumple","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_raise","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_release_pair","/root/GameV03/Modal/Body/@VBoxContainer@96/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@96/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@96/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_defend","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_move_left","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_move_right","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_unfold","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_crumple","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_raise","/root/GameV03/Modal/Body/@VBoxContainer@96/Targets/Target_paper","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_defend","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_move_left","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_move_right","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_unfold","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_crumple","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_raise","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_release_pair","/root/GameV03/Modal/Body/@VBoxContainer@96/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@96/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/CancelAction","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/EndTurn","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/Retreat","/root/GameV03/Footer/@HBoxContainer@6/Hint","/root/GameV03/Footer/@HBoxContainer@6/Notebook","/root/GameV03/Footer/@HBoxContainer@6/Menu","/root/GameV03/Modal/Body/@VBoxContainer@96/Actions/Action_attack","/root/GameV03/Modal/Body/@VBoxContainer@96/Targets/Target_default","/root/GameV03/Modal/Body/@VBoxContainer@96/@HBoxContainer@103/ConfirmAction","/root/GameV03/Modal/Body/@HBoxContainer@151/AcceptFuture","/root/GameV03/Modal/Body/@HBoxContainer@151/RefuseFuture","/root/GameV03/Modal/Body/@HBoxContainer@161/RefuseFuture","/root/GameV03/Modal/Body/@HBoxContainer@163/ModelDrag","/root/GameV03/Modal/Body/@HBoxContainer@163/ModelGravity","/root/GameV03/Modal/Body/@HBoxContainer@164/ForecastHeight","/root/GameV03/Modal/Body/@HBoxContainer@164/ForecastMedium","/root/GameV03/Modal/Body/@HBoxContainer@166/Forecast","/root/GameV03/Modal/Body/@HBoxContainer@166/Calibrate","/root/GameV03/Modal/Body/@HBoxContainer@176/Calibrate","/root/GameV03/Modal/Body/CloseArchive"],"natural_focus_navigation":true,"persistence":{"checked":true,"completed":true,"file_sha256":"ebb726cf13ccfc8f905cb5dc101cd6483ad6ee31cb2bee5eb220d430904b8519","passed":true,"path":"E:\\my_game\\Out-of-Syllabus\\reports\\v0.3/Out-of-Syllabus-exe-release-02-exe-natural-keyboard/userdata/progress.json","source":"actual UI main save; no fallback or writes","validator_error":""},"route":"natural-keyboard","screenshots":[],"steps":123,"suite":"v03-input","timing":{"note":"Retained Performance monitor samples, not independent frame stopwatch or human playtime","physics":{"max_ms":9.662,"mean_ms":3.01049694989112,"p95_ms":9.662,"samples":4590},"process":{"max_ms":136.86,"mean_ms":13.6991952069717,"p95_ms":136.86,"samples":4590},"wall_note":"Real process_frame intervals include screenshots, synchronous saves, fast-forward and all pauses. Fixed-fps scripted execution is not stable display FPS or human playtime.","wall_process_frame_intervals":{"max_ms":181.056,"mean_ms":1.70820745260405,"p95_ms":0.417,"samples":4589}}}

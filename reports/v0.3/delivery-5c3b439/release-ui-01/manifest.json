@@ -1,0 +1,76 @@
+{
+  "project": "E:\\my_game\\Out-of-Syllabus",
+  "started_utc": "2026-10-04T08:03:18.0487639Z",
+  "checks": [
+    {
+      "input_start_marker": null,
+      "exit_code": 0,
+      "name": "verify_layout",
+      "startup_marker_missing": false,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3\\release-ui-01\\verify_layout.log",
+        "--headless",
+        "--script",
+        "res://ui/v03/verify_layout.gd"
+      ],
+      "qa_profile": "Out-of-Syllabus-release-ui-01-verify_layout",
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3\\release-ui-01\\verify_layout.log",
+      "qa_root": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3",
+      "runtime_error": false,
+      "environment_certificate_error": false,
+      "startup_timed_out": false,
+      "elapsed_ms": 1217,
+      "timed_out": false,
+      "passed": true
+    },
+    {
+      "input_start_marker": null,
+      "exit_code": 0,
+      "name": "verify_scene",
+      "startup_marker_missing": false,
+      "command": [
+        "E:\\my_game\\Out-of-Syllabus\\build\\qa-engine\\Godot_v4.7.2-stable_win64_console.exe",
+        "--path",
+        "E:\\my_game\\Out-of-Syllabus",
+        "--log-file",
+        "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3\\release-ui-01\\verify_scene.log",
+        "--headless",
+        "--script",
+        "res://ui/v03/verify_scene.gd"
+      ],
+      "qa_profile": "Out-of-Syllabus-release-ui-01-verify_scene",
+      "log": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3\\release-ui-01\\verify_scene.log",
+      "qa_root": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3",
+      "runtime_error": false,
+      "environment_certificate_error": false,
+      "startup_timed_out": false,
+      "elapsed_ms": 2046,
+      "timed_out": false,
+      "passed": true
+    }
+  ],
+  "workspace": "Out-of-Syllabus",
+  "passed": true,
+  "finished_utc": "2026-10-04T08:03:21.4323350Z",
+  "working_tree": [
+    "?? qa/v03_input_driver.gd.uid",
+    "?? qa/v03_licenses.gd.uid",
+    "?? ui/v03/joint_readout.gd.uid"
+  ],
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "errors": [],
+  "limitations": [
+    "No human blind playtest",
+    "No OS scaling validation",
+    "No physical disk loss or full-disk test",
+    "Headless input is not visual acceptance",
+    "Fixed-fps simulation is not a human duration or FPS measurement"
+  ],
+  "run_id": "release-ui-01",
+  "commit": "5c3b4393d9ae2fb25b8fd12fd80a475bf12c3348",
+  "version": "v0.3"
+}

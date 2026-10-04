@@ -1,0 +1,20 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+V03_COMBAT_LAYOUT (960, 540) panel=[P: (24.0, 18.9), S: (912.0, 502.2)] min=(104.0, 423.0)
+  CombatStats (884.0, 30.0) min=(1.0, 30.0)
+  EnemyIntent (884.0, 25.0) min=(1.0, 25.0)
+  Lanes (884.0, 24.0) min=(19.0, 24.0)
+  @Control@8 (884.0, 64.0) min=(0.0, 64.0)
+  Targets (884.0, 24.0) min=(1.0, 24.0)
+  Actions (884.0, 112.0) min=(95.0, 112.0)
+  Preview (884.0, 44.0) min=(1.0, 44.0)
+  @HBoxContainer@11 (884.0, 37.0) min=(104.0, 37.0)
+  CombatLog (884.0, 23.0) min=(1.0, 23.0)
+V03_NO_AP_LAYOUT (960, 540) min=(104.0, 495.0)
+V03_COMBAT_LAYOUT (1280, 720) panel=[P: (32.0, 25.2), S: (1216.0, 669.6)] min=(104.0, 423.0)
+V03_NO_AP_LAYOUT (1280, 720) min=(104.0, 495.0)
+V03_COMBAT_LAYOUT (1366, 768) panel=[P: (34.15, 26.88), S: (1297.7, 714.24)] min=(104.0, 423.0)
+V03_NO_AP_LAYOUT (1366, 768) min=(104.0, 495.0)
+V03_COMBAT_LAYOUT (1920, 1080) panel=[P: (48.0, 37.8), S: (1824.0, 1004.4)] min=(104.0, 423.0)
+V03_NO_AP_LAYOUT (1920, 1080) min=(104.0, 495.0)
+V03_UI_CHECKS failures=0

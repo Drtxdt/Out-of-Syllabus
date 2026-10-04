@@ -1,0 +1,35 @@
+{
+  "accept": {
+    "save": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3\\delivery-5c3b439\\Out-of-Syllabus-exe-release-02-exe-accept\\progress.json",
+    "sha256": "6a5d1a5f5b293ca2d99fadf9c6a463325c996f1b7586aba76efeec4a7dbe9135",
+    "choice": "accept",
+    "completed": true,
+    "choice_tick": 744,
+    "gate_release_tick": 823,
+    "pre_chase_world_ticks": 79,
+    "pre_chase_sampled_walk_px": 119.238,
+    "sampled_rooms": [
+      "archive"
+    ],
+    "violations": 1
+  },
+  "refuse": {
+    "save": "E:\\my_game\\Out-of-Syllabus\\reports\\v0.3\\delivery-5c3b439\\Out-of-Syllabus-exe-release-02-exe-refuse\\progress.json",
+    "sha256": "9378673abc841670b65d8912e0a8ce5c019d3da53a9af33bb3935b33968f10a0",
+    "choice": "refuse",
+    "completed": true,
+    "choice_tick": 744,
+    "gate_release_tick": 1356,
+    "pre_chase_world_ticks": 612,
+    "pre_chase_sampled_walk_px": 942.146,
+    "sampled_rooms": [
+      "archive",
+      "corridor",
+      "storage"
+    ],
+    "violations": 0
+  },
+  "saved_sampled_walk_px": 822.908,
+  "saved_world_ticks": 533,
+  "method": "Actual input route saves: choose_future through gate_release, before pursuit. Sum consecutive same-room position samples; room transitions excluded. Sampled distance is approximate. Fixed ticks exclude paused menus, not human duration."
+}

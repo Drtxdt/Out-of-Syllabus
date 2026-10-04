@@ -1,0 +1,343 @@
+{
+  "code_commit": "5c3b4393d9ae2fb25b8fd12fd80a475bf12c3348",
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "runs": {
+    "candidate-03": {
+      "passed": true,
+      "checks": 3,
+      "commit": "5c3b4393d9ae2fb25b8fd12fd80a475bf12c3348"
+    },
+    "release-core-02": {
+      "passed": true,
+      "checks": 10,
+      "commit": "5c3b4393d9ae2fb25b8fd12fd80a475bf12c3348"
+    },
+    "release-ui-01": {
+      "passed": true,
+      "checks": 2,
+      "commit": "5c3b4393d9ae2fb25b8fd12fd80a475bf12c3348"
+    },
+    "exe-release-02": {
+      "passed": true,
+      "checks": 7,
+      "commit": "5c3b4393d9ae2fb25b8fd12fd80a475bf12c3348"
+    }
+  },
+  "domain_checks": 1060,
+  "input_routes": {
+    "Out-of-Syllabus-exe-release-02-exe-accept": {
+      "steps": 128,
+      "natural_keyboard": false,
+      "completed": true,
+      "persistence_passed": true,
+      "timing": {
+        "max_ms": 181.14,
+        "mean_ms": 1.61776627218935,
+        "p95_ms": 0.316,
+        "samples": 4056
+      }
+    },
+    "Out-of-Syllabus-exe-release-02-exe-natural-keyboard": {
+      "steps": 123,
+      "natural_keyboard": true,
+      "completed": true,
+      "persistence_passed": true,
+      "timing": {
+        "max_ms": 181.056,
+        "mean_ms": 1.70820745260405,
+        "p95_ms": 0.417,
+        "samples": 4589
+      }
+    },
+    "Out-of-Syllabus-exe-release-02-exe-refuse": {
+      "steps": 119,
+      "natural_keyboard": false,
+      "completed": true,
+      "persistence_passed": true,
+      "timing": {
+        "max_ms": 192.425,
+        "mean_ms": 1.87753496932515,
+        "p95_ms": 0.443,
+        "samples": 4075
+      }
+    },
+    "Out-of-Syllabus-exe-release-02-exe-render-1280x720": {
+      "steps": 128,
+      "natural_keyboard": false,
+      "completed": true,
+      "persistence_passed": true,
+      "timing": {
+        "max_ms": 134.822,
+        "mean_ms": 5.14551515898446,
+        "p95_ms": 4.64,
+        "samples": 4057
+      }
+    },
+    "Out-of-Syllabus-exe-release-02-exe-render-1366x768": {
+      "steps": 128,
+      "natural_keyboard": false,
+      "completed": true,
+      "persistence_passed": true,
+      "timing": {
+        "max_ms": 137.473,
+        "mean_ms": 5.17107838304165,
+        "p95_ms": 4.702,
+        "samples": 4057
+      }
+    },
+    "Out-of-Syllabus-exe-release-02-exe-render-1920x1080": {
+      "steps": 128,
+      "natural_keyboard": false,
+      "completed": true,
+      "persistence_passed": true,
+      "timing": {
+        "max_ms": 133.414,
+        "mean_ms": 5.26097436529456,
+        "p95_ms": 4.666,
+        "samples": 4057
+      }
+    },
+    "Out-of-Syllabus-exe-release-02-exe-render-960x540": {
+      "steps": 128,
+      "natural_keyboard": false,
+      "completed": true,
+      "persistence_passed": true,
+      "timing": {
+        "max_ms": 124.645,
+        "mean_ms": 5.00234458959823,
+        "p95_ms": 7.642,
+        "samples": 4057
+      }
+    }
+  },
+  "screenshots": [
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\bellows-battle.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\bellows_vacuum.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\chase.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\ending-accept.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\future_forecast.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\hammer_intent.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\hammer_preview.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\joint_release.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\joint_result.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\paper_falling.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1280x720\\rig-experiment.png",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\bellows-battle.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\bellows_vacuum.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\chase.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\ending-accept.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\future_forecast.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\hammer_intent.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\hammer_preview.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\joint_release.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\joint_result.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\paper_falling.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1366x768\\rig-experiment.png",
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\bellows-battle.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\bellows_vacuum.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\chase.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\ending-accept.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\future_forecast.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\hammer_intent.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\hammer_preview.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\joint_release.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\joint_result.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\paper_falling.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-1920x1080\\rig-experiment.png",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\bellows-battle.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\bellows_vacuum.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\chase.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\ending-accept.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\future_forecast.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\hammer_intent.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\hammer_preview.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\joint_release.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\joint_result.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\paper_falling.png",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "file": "Out-of-Syllabus-exe-release-02-exe-render-960x540\\rig-experiment.png",
+      "width": 960,
+      "height": 540
+    }
+  ],
+  "binary_sha256": "006ee9ba3d5baeac8fafded274d045eaea641dcb348c9b4d18d9bb4b6f22c54b",
+  "limitations": [
+    "Human blind playtesting pending",
+    "OS DPI and other hardware not tested",
+    "Disk full and physical power loss not tested",
+    "Fixed-fps scripted frame samples are not display FPS or human duration",
+    "Runtime art includes labeled editable placeholders"
+  ]
+}
